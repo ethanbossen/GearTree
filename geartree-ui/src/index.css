@@ -1,0 +1,27 @@
+@import '@mantine/core/styles.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* small brand overrides (plain CSS) */
+a {
+  font-weight: 500;
+  color: #7828BE;
+  text-decoration: none;
+}
+a:hover {
+  color: #8F4CD1;
+}
+
+button {
+  border-radius: 0.5rem;
+  padding: 0.6em 1.2em;
+  font-weight: 500;
+  color: #fff;
+  background-color: #7828BE;
+  transition: background-color 0.25s ease;
+}
+button:hover {
+  background-color: #8F4CD1;
+}

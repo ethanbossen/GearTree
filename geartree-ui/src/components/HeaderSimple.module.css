@@ -1,0 +1,47 @@
+.header {
+  height: 76px;
+  margin-bottom: 24px;
+  background-color: #000000;
+  border-bottom: 1px solid #333333;
+}
+
+.inner {
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brandText {
+  color: white;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.link {
+  display: block;
+  line-height: 1;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.link:last-of-type {
+  background-color: #7828BE;
+  color: white;
+}
