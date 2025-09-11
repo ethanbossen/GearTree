@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using GearTree.Models;
 using GearTree.Data; // so it knows about GearContext and SeedData
 using System.Text.Json.Serialization;
+using GearTree.Dtos;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,34 +41,70 @@ app.UseCors();
 // Endpoints (DB-backed)
 // -------------------------
 
-// Get all amps
-app.MapGet("/amps", async (GearContext db) => await db.Amplifiers.ToListAsync());
+// Get all amps (DTOs)
+app.MapGet("/amps", async (GearContext db) =>
+{
+    var amps = await db.Amplifiers
+        .Include(a => a.Artists)
+        .ToListAsync();
+
+    return Results.Ok(amps.Select(a => a.ToDto()));
+});
+
 
 // Get amp by Id
 app.MapGet("/amps/{id}", async (int id, GearContext db) =>
-    await db.Amplifiers.FindAsync(id) is Amplifier amp ? Results.Ok(amp) : Results.NotFound());
+{
+    var amp = await db.Amplifiers
+        .Include(a => a.Artists)
+        .FirstOrDefaultAsync(a => a.Id == id);
 
-// Get all artists
+    return amp is null ? Results.NotFound() : Results.Ok(amp.ToDto());
+});
+
+// Get all artists (DTOs)
 app.MapGet("/artists", async (GearContext db) =>
-    await db.Artists
+{
+    var artists = await db.Artists
         .Include(a => a.Amplifiers)
         .Include(a => a.Guitars)
-        .ToListAsync());
+        .ToListAsync();
+
+    return Results.Ok(artists.Select(a => a.ToDto()));
+});
+
 
 // Get artist by Id
 app.MapGet("/artists/{id}", async (int id, GearContext db) =>
-    await db.Artists
+{
+    var artist = await db.Artists
         .Include(a => a.Amplifiers)
         .Include(a => a.Guitars)
-        .FirstOrDefaultAsync(a => a.Id == id)
-        is Artist artist ? Results.Ok(artist) : Results.NotFound());
+        .FirstOrDefaultAsync(a => a.Id == id);
 
-// Get all guitars
-app.MapGet("/guitars", async (GearContext db) => await db.Guitars.ToListAsync());
+    return artist is null ? Results.NotFound() : Results.Ok(artist.ToDto());
+});
+
+// Get all guitars (DTOs)
+app.MapGet("/guitars", async (GearContext db) =>
+{
+    var guitars = await db.Guitars
+        .Include(g => g.Artists)
+        .ToListAsync();
+
+    return Results.Ok(guitars.Select(g => g.ToDto()));
+});
+
 
 // Get guitar by Id
 app.MapGet("/guitars/{id}", async (int id, GearContext db) =>
-    await db.Guitars.FindAsync(id) is Guitar guitar ? Results.Ok(guitar) : Results.NotFound());
+{
+    var g = await db.Guitars
+        .Include(g => g.Artists)
+        .FirstOrDefaultAsync(g => g.Id == id);
+
+    return g is null ? Results.NotFound() : Results.Ok(g.ToDto());
+});
 
 // Seed initial data
 using (var scope = app.Services.CreateScope())
@@ -88,9 +125,15 @@ app.MapPost("/amps", async (Amplifier amp, GearContext db) =>
     {
         return Results.Conflict($"An amplifier with the name '{amp.Name}' already exists.");
     }
+
     db.Amplifiers.Add(amp);
     await db.SaveChangesAsync();
-    return Results.Created($"/amps/{amp.Id}", amp);
+
+    var created = await db.Amplifiers
+        .Include(a => a.Artists)
+        .FirstOrDefaultAsync(a => a.Id == amp.Id);
+
+    return Results.Created($"/amps/{amp.Id}", created!.ToDto());
 });
 
 // Update (PUT)
@@ -122,11 +165,6 @@ app.MapDelete("/amps/{id}", async (int id, GearContext db) =>
     return Results.NoContent();
 });
 
-
-// -------------------------
-// Artists CRUD
-// -------------------------
-
 // -------------------------
 // Artists CRUD
 // -------------------------
@@ -135,11 +173,9 @@ app.MapDelete("/amps/{id}", async (int id, GearContext db) =>
 app.MapPost("/artists", async (Artist artist, GearContext db) =>
 {
     if (await db.Artists.AnyAsync(a => a.Name == artist.Name))
-    {
         return Results.Conflict($"An artist with the name '{artist.Name}' already exists.");
-    }
 
-    // Resolve amplifiers from DB
+    // Resolve amplifiers from DB (if any)
     if (artist.Amplifiers != null && artist.Amplifiers.Any())
     {
         var ampIds = artist.Amplifiers.Select(a => a.Id).ToList();
@@ -148,7 +184,7 @@ app.MapPost("/artists", async (Artist artist, GearContext db) =>
             .ToListAsync();
     }
 
-    // Resolve guitars from DB
+    // Resolve guitars from DB (if any)
     if (artist.Guitars != null && artist.Guitars.Any())
     {
         var guitarIds = artist.Guitars.Select(g => g.Id).ToList();
@@ -160,9 +196,16 @@ app.MapPost("/artists", async (Artist artist, GearContext db) =>
     db.Artists.Add(artist);
     await db.SaveChangesAsync();
 
-    return Results.Created($"/artists/{artist.Id}", artist);
+    // re-load with includes and return DTO
+    var created = await db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == artist.Id);
+
+    return Results.Created($"/artists/{created!.Id}", created.ToDto());
 });
 
+// Update (PUT)
 app.MapPut("/artists/{id}", async (int id, Artist updatedArtist, GearContext db) =>
 {
     var artist = await db.Artists
@@ -186,7 +229,7 @@ app.MapPut("/artists/{id}", async (int id, Artist updatedArtist, GearContext db)
     if (updatedArtist.OtherPhotos != null)
         artist.OtherPhotos = updatedArtist.OtherPhotos;
 
-    // Update amps
+    // Amps: null = leave unchanged, [] = clear, non-empty = replace
     if (updatedArtist.Amplifiers != null)
     {
         artist.Amplifiers.Clear();
@@ -194,14 +237,11 @@ app.MapPut("/artists/{id}", async (int id, Artist updatedArtist, GearContext db)
         {
             var ampIds = updatedArtist.Amplifiers.Select(a => a.Id).ToList();
             var amps = await db.Amplifiers.Where(a => ampIds.Contains(a.Id)).ToListAsync();
-
-            foreach (var amp in amps)
-                db.Attach(amp); // ensure tracked
             artist.Amplifiers = amps;
         }
     }
 
-    // Update guitars
+    // Guitars: null = leave unchanged, [] = clear, non-empty = replace
     if (updatedArtist.Guitars != null)
     {
         artist.Guitars.Clear();
@@ -209,16 +249,21 @@ app.MapPut("/artists/{id}", async (int id, Artist updatedArtist, GearContext db)
         {
             var guitarIds = updatedArtist.Guitars.Select(g => g.Id).ToList();
             var guitars = await db.Guitars.Where(g => guitarIds.Contains(g.Id)).ToListAsync();
-
-            foreach (var guitar in guitars)
-                db.Attach(guitar);
             artist.Guitars = guitars;
         }
     }
 
     await db.SaveChangesAsync();
-    return Results.NoContent();
+
+    // return updated DTO so client sees linked amps/guitars
+    var updated = await db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == id);
+
+    return Results.Ok(updated!.ToDto());
 });
+
 
 
 // Delete
@@ -244,10 +289,17 @@ app.MapPost("/guitars", async (Guitar guitar, GearContext db) =>
     {
         return Results.Conflict($"A guitar with the name '{guitar.Name}' already exists.");
     }
+
     db.Guitars.Add(guitar);
     await db.SaveChangesAsync();
-    return Results.Created($"/guitars/{guitar.Id}", guitar);
+
+    var created = await db.Guitars
+        .Include(g => g.Artists)
+        .FirstOrDefaultAsync(g => g.Id == guitar.Id);
+
+    return Results.Created($"/guitars/{guitar.Id}", created!.ToDto());
 });
+
 
 // Update (PUT)
 app.MapPut("/guitars/{id}", async (int id, Guitar updatedGuitar, GearContext db) =>
