@@ -22,7 +22,7 @@ var artists = new List<Artist>
     new Artist
     {
         Name = "Zakk Wylde",
-        PhotoUrl = "https://picsum.photos/seed/zakkwylde/300/300",
+        PhotoUrl = "/images/artists/zakk-wylde.jpg",
         Summary = "High-gain Les Paul virtuoso known for thick rhythm and searing sustain.",
         Description = @"Zakk Wylde’s early tone with Ozzy Osbourne came from his Gibson Les Paul Customs—most famously the bullseye model—loaded with EMG 81/85 pickups, cranked through Marshall JCM800s and JCM900s. This combo gave him the tight, high-gain crunch and searing sustain that defined his late-’80s and ’90s sound.
 
@@ -35,7 +35,7 @@ In recent years, Zakk has carried that formula into his own Wylde Audio guitars 
     new Artist
     {
         Name = "Eddie Van Halen",
-        PhotoUrl = "https://picsum.photos/seed/eddievanhalen/300/300",
+        PhotoUrl = "/images/artists/eddie-van-halen.jpg",
         Summary = "Innovative rock guitarist famous for two-handed tapping and tone.",
         Description = @"Eddie Van Halen revolutionized electric guitar technique and tone in the late 1970s and 80s. He is best known for two-handed tapping, harmonics, and his high-gain, mid-forward sound built around modified amps and Frankenstrat guitars.
 
@@ -46,7 +46,7 @@ His playing inspired generations of rock and metal players and helped define the
     new Artist
     {
         Name = "Stevie Ray Vaughan",
-        PhotoUrl = "https://picsum.photos/seed/stevieray/300/300",
+        PhotoUrl = "/images/artists/stevie-ray.jpg",
         Summary = "Texas blues guitar legend with fierce vibrato and tone.",
         Description = @"Stevie Ray Vaughan brought blues to a new mainstream audience in the 1980s with burning single-note runs, heavy strings, and soulful playing. His tone combined Fender Stratocaster clarity with hard, aggressive attack and wide vibrato.
 

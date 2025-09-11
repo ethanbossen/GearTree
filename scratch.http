@@ -1,0 +1,59 @@
+### Update Zakk Wylde photo
+PUT http://localhost:5262/artists/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "name": "Zakk Wylde",
+  "photoUrl": "/images/artists/zakk-wylde.jpg"
+}
+
+### Update Eddie Van Halen photo
+PUT http://localhost:5262/artists/2
+Content-Type: application/json
+
+{
+  "id": 2,
+  "name": "Eddie Van Halen",
+  "photoUrl": "/images/artists/eddie-van-halen.jpg"
+}
+
+### Update Stevie Ray Vaughan photo
+PUT http://localhost:5262/artists/3
+Content-Type: application/json
+
+{
+  "id": 3,
+  "name": "Stevie Ray Vaughan",
+  "photoUrl": "/images/artists/stevie-ray.jpg"
+}
+
+### Update David Gilmour photo
+PUT http://localhost:5262/artists/4
+Content-Type: application/json
+
+{
+  "id": 4,
+  "name": "David Gilmour",
+  "photoUrl": "/images/artists/david-gilmour.jpg"
+}
+
+### Update John Mayer photo
+PUT http://localhost:5262/artists/5
+Content-Type: application/json
+
+{
+  "id": 5,
+    "name": "John Mayer",
+  "photoUrl": "/images/artists/john-mayer.jpg"
+}
+
+### Update B.B. King photo
+PUT http://localhost:5262/artists/6
+Content-Type: application/json
+
+{
+  "id": 6,
+    "name": "B.B. King",
+  "photoUrl": "/images/artists/bb-king.jpg"
+}

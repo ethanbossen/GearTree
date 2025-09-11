@@ -9,12 +9,12 @@ function ArtistsContainer() {
   useEffect(() => {
     fetchArtists().then((data) => {
       // Just grab the first 3 for now
-      setArtists(data.slice(2, 5));
+      setArtists(data.slice(0, 3));
     });
   }, []);
 
   return (
-    <section className="px-8 py-12 max-w-7xl mx-auto">
+    <section className="px-8 max-w-7xl mx-auto">
       {/* Section title */}
       <h2 className="text-3xl font-bold border-b-4 inline-block mb-8">
         Featured Artists:
