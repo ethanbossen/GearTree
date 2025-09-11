@@ -1,11 +1,13 @@
-// src/pages/Home.tsx or src/components/Home.tsx
 import { LandingSection } from "../components/LandingSection";
+import ArtistsContainer from "../components/ArtistsContainer";
+import AmpsContainer from "../components/AmpsContainer";
 
 export default function Home() {
   return (
     <div>
       <LandingSection />
-      {/* You can add more sections here later */}
+      <ArtistsContainer />
+      <AmpsContainer />
     </div>
   );
 }

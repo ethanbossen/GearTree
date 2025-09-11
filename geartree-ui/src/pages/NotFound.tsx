@@ -7,7 +7,7 @@ import Phaser from "../assets/Phaser.svg";
 
 function NotFound() {
   return (
-    <div className="relative min-h-screen ">
+    <div className="relative">
       {/* Background pedals */}
       <img
         src={Distortion}
@@ -27,7 +27,7 @@ function NotFound() {
       <img
         src={Overdrive}
         alt="Overdrive"
-        className="absolute top-[75%] left-[60%] rotate-[-8deg] opacity-40 w-28"
+        className="absolute top-[75%] left-[60%] rotate-[-8deg] opacity-40 w-28 z-[-1]"
       />
       <img
         src={DigitalDelay}
@@ -42,7 +42,7 @@ function NotFound() {
 
       {/* Main content */}
       <div className="relative z-10">
-        <div className="pl-[8%] pr-10 pt-10 pb-20 flex flex-col gap-4">
+        <div className="pl-[8%] pr-10 pt-10 pb-40 flex flex-col gap-4">
           <h1 className="text-4xl font-bold">Bad News, Bucko.</h1>
           <p className="text-lg max-w-xl">
             The page you are looking for hasn't been created yet, but it could

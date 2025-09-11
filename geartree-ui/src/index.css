@@ -5,6 +5,16 @@
 @tailwind utilities;
 
 /* small brand overrides (plain CSS) */
+:root {
+  --mantine-color-primary-filled: #7828BE;
+  --mantine-color-primary-hover: #8F4CD1;
+  --mantine-color-primary-light: #F3E8FF;
+  --mantine-color-primary-outline: #E9D7FE;
+  --mantine-color-primary-gradient: linear-gradient(135deg, #7828BE 0%, #8F4CD1 100%);
+  --brand-purple: #7828BE;
+  --brand-purple-light: #8F4CD1;
+}
+
 a {
   font-weight: 500;
   color: #7828BE;
@@ -15,6 +25,11 @@ a:hover {
 }
 main {
   flex: 1;
+}
+
+h2 {
+  color: var(--brand-purple);
+  border-color: (var(--brand-purple));
 }
 
 button {
