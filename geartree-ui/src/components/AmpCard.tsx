@@ -15,25 +15,34 @@ function AmpCard({ id, name, summary, photoUrl }: AmpCardProps) {
       to={`/amplifiers/${id}`}
       style={{ textDecoration: "none", color: "inherit" }}
     >
-      <Card
-        shadow="sm"
-        padding="lg"
-        radius="md"
-        withBorder
-        className="flex flex-col h-[50%] min-h-[380px]"
-      >
-        <Card.Section>
-          <Image src={photoUrl} alt={name} height={200} fit="cover" />
-        </Card.Section>
+<Card
+  shadow="sm"
+  padding="lg"
+  radius="md"
+  withBorder
+  className="flex flex-col h-full w-full" // control overall card ratio
+>
+  {/* Lock the image section height */}
+  <Card.Section className="h-[200px] overflow-hidden">
+    <img
+      src={photoUrl}
+      alt={name}
+      className="w-full h-full object-cover" // force-fit inside container
+    />
+  </Card.Section>
 
-        <Text fw={700} size="lg" mt="md">
-          {name}
-        </Text>
+  {/* Text content */}
+  <div className="flex flex-col flex-grow mt-3">
+    <Text fw={700} size="lg">
+      {name}
+    </Text>
 
-        <Text size="sm" c="dimmed" lineClamp={3} className="min-h-60px">
-          {summary}
-        </Text>
-      </Card>
+    <Text size="sm" c="dimmed" lineClamp={4}>
+      {summary}
+    </Text>
+  </div>
+</Card>
+
     </Link>
   );
 }

@@ -9,7 +9,7 @@ function ArtistsContainer() {
   useEffect(() => {
     fetchArtists().then((data) => {
       // Just grab the first 3 for now
-      setArtists(data.slice(0, 3));
+      setArtists(data.slice(2, 5));
     });
   }, []);
 
