@@ -1,8 +1,15 @@
 using Microsoft.EntityFrameworkCore;
 using GearTree.Models;
 using GearTree.Data; // so it knows about GearContext and SeedData
+using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 // Add EF Core + SQLite
 builder.Services.AddDbContext<GearContext>(options =>
@@ -41,11 +48,19 @@ app.MapGet("/amps/{id}", async (int id, GearContext db) =>
     await db.Amplifiers.FindAsync(id) is Amplifier amp ? Results.Ok(amp) : Results.NotFound());
 
 // Get all artists
-app.MapGet("/artists", async (GearContext db) => await db.Artists.ToListAsync());
+app.MapGet("/artists", async (GearContext db) =>
+    await db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .ToListAsync());
 
 // Get artist by Id
 app.MapGet("/artists/{id}", async (int id, GearContext db) =>
-    await db.Artists.FindAsync(id) is Artist artist ? Results.Ok(artist) : Results.NotFound());
+    await db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == id)
+        is Artist artist ? Results.Ok(artist) : Results.NotFound());
 
 // Get all guitars
 app.MapGet("/guitars", async (GearContext db) => await db.Guitars.ToListAsync());
@@ -112,6 +127,10 @@ app.MapDelete("/amps/{id}", async (int id, GearContext db) =>
 // Artists CRUD
 // -------------------------
 
+// -------------------------
+// Artists CRUD
+// -------------------------
+
 // Create (POST)
 app.MapPost("/artists", async (Artist artist, GearContext db) =>
 {
@@ -119,25 +138,88 @@ app.MapPost("/artists", async (Artist artist, GearContext db) =>
     {
         return Results.Conflict($"An artist with the name '{artist.Name}' already exists.");
     }
+
+    // Resolve amplifiers from DB
+    if (artist.Amplifiers != null && artist.Amplifiers.Any())
+    {
+        var ampIds = artist.Amplifiers.Select(a => a.Id).ToList();
+        artist.Amplifiers = await db.Amplifiers
+            .Where(a => ampIds.Contains(a.Id))
+            .ToListAsync();
+    }
+
+    // Resolve guitars from DB
+    if (artist.Guitars != null && artist.Guitars.Any())
+    {
+        var guitarIds = artist.Guitars.Select(g => g.Id).ToList();
+        artist.Guitars = await db.Guitars
+            .Where(g => guitarIds.Contains(g.Id))
+            .ToListAsync();
+    }
+
     db.Artists.Add(artist);
     await db.SaveChangesAsync();
+
     return Results.Created($"/artists/{artist.Id}", artist);
 });
 
-// Update (PUT)
 app.MapPut("/artists/{id}", async (int id, Artist updatedArtist, GearContext db) =>
 {
-    var artist = await db.Artists.FindAsync(id);
+    var artist = await db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == id);
+
     if (artist is null) return Results.NotFound();
 
-    artist.Name = updatedArtist.Name;
-    artist.PhotoUrl = updatedArtist.PhotoUrl;
-    artist.Description = updatedArtist.Description;
-    artist.Bands = updatedArtist.Bands;
+    // Scalars (only overwrite if not null/empty)
+    artist.Name = string.IsNullOrWhiteSpace(updatedArtist.Name) ? artist.Name : updatedArtist.Name;
+    artist.PhotoUrl = string.IsNullOrWhiteSpace(updatedArtist.PhotoUrl) ? artist.PhotoUrl : updatedArtist.PhotoUrl;
+    artist.HeroPhotoUrl = string.IsNullOrWhiteSpace(updatedArtist.HeroPhotoUrl) ? artist.HeroPhotoUrl : updatedArtist.HeroPhotoUrl;
+    artist.Tagline = string.IsNullOrWhiteSpace(updatedArtist.Tagline) ? artist.Tagline : updatedArtist.Tagline;
+    artist.Description = string.IsNullOrWhiteSpace(updatedArtist.Description) ? artist.Description : updatedArtist.Description;
+    artist.Summary = string.IsNullOrWhiteSpace(updatedArtist.Summary) ? artist.Summary : updatedArtist.Summary;
+
+    if (updatedArtist.Bands != null)
+        artist.Bands = updatedArtist.Bands;
+
+    if (updatedArtist.OtherPhotos != null)
+        artist.OtherPhotos = updatedArtist.OtherPhotos;
+
+    // Update amps
+    if (updatedArtist.Amplifiers != null)
+    {
+        artist.Amplifiers.Clear();
+        if (updatedArtist.Amplifiers.Any())
+        {
+            var ampIds = updatedArtist.Amplifiers.Select(a => a.Id).ToList();
+            var amps = await db.Amplifiers.Where(a => ampIds.Contains(a.Id)).ToListAsync();
+
+            foreach (var amp in amps)
+                db.Attach(amp); // ensure tracked
+            artist.Amplifiers = amps;
+        }
+    }
+
+    // Update guitars
+    if (updatedArtist.Guitars != null)
+    {
+        artist.Guitars.Clear();
+        if (updatedArtist.Guitars.Any())
+        {
+            var guitarIds = updatedArtist.Guitars.Select(g => g.Id).ToList();
+            var guitars = await db.Guitars.Where(g => guitarIds.Contains(g.Id)).ToListAsync();
+
+            foreach (var guitar in guitars)
+                db.Attach(guitar);
+            artist.Guitars = guitars;
+        }
+    }
 
     await db.SaveChangesAsync();
     return Results.NoContent();
 });
+
 
 // Delete
 app.MapDelete("/artists/{id}", async (int id, GearContext db) =>

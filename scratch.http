@@ -1,59 +1,17 @@
-### Update Zakk Wylde photo
+### Update Zakk Wylde 
 PUT http://localhost:5262/artists/1
 Content-Type: application/json
 
-{
-  "id": 1,
-  "name": "Zakk Wylde",
-  "photoUrl": "/images/artists/zakk-wylde.jpg"
-}
-
-### Update Eddie Van Halen photo
-PUT http://localhost:5262/artists/2
-Content-Type: application/json
-
-{
-  "id": 2,
-  "name": "Eddie Van Halen",
-  "photoUrl": "/images/artists/eddie-van-halen.jpg"
-}
-
-### Update Stevie Ray Vaughan photo
-PUT http://localhost:5262/artists/3
-Content-Type: application/json
-
-{
-  "id": 3,
-  "name": "Stevie Ray Vaughan",
-  "photoUrl": "/images/artists/stevie-ray.jpg"
-}
-
-### Update David Gilmour photo
-PUT http://localhost:5262/artists/4
-Content-Type: application/json
-
-{
-  "id": 4,
-  "name": "David Gilmour",
-  "photoUrl": "/images/artists/david-gilmour.jpg"
-}
-
-### Update John Mayer photo
-PUT http://localhost:5262/artists/5
-Content-Type: application/json
-
-{
-  "id": 5,
-    "name": "John Mayer",
-  "photoUrl": "/images/artists/john-mayer.jpg"
-}
-
-### Update B.B. King photo
-PUT http://localhost:5262/artists/6
-Content-Type: application/json
-
-{
-  "id": 6,
-    "name": "B.B. King",
-  "photoUrl": "/images/artists/bb-king.jpg"
-}
+ {
+    "id": 1,
+    "name": "Zakk Wylde",
+    "photoUrl": "/images/artists/zakk-wylde.jpg",
+    "heroPhotoUrl": "/images/artists/artistCont/Zakk/zakk-hero.jpg",
+    "otherPhotos": [],
+    "tagline": "Guitarist virtuoso Zakk Wylde is no stranger to fame, he got his start, and earned his name at 19 years old. Here is a breakdown of his classic tone. ",
+    "description": "Zakk Wylde early on with Ozzy Osbourne got his tone from his Gibson Les Paul Customs—most famously the bullseye model—loaded with EMG 81/85 pickups, cranked through Marshall JCM800s and JCM900s. This combo gave him the tight, high-gain crunch and searing sustain that defined his late-80s and 90s sound. \n\nWith Black Label Society, he doubled down on heaviness, sticking with EMG-equipped Les Pauls but pushing his Marshalls even harder for a thicker, more aggressive grind. His crushing rhythm tone and screaming pinch harmonics became trademarks of his massive, sludgy sound. \n\nIn recent years, Zakk has carried that formula into his own Wylde Audio guitars and amps. Built to capture the Les Paul-meets-Marshall recipe with his custom tweaks, they keep his tone consistent: huge, saturated, and instantly recognizable.",
+    "summary": "Started touring with Ozzy Osbourne in 1987 while he was only 19. Currently plays and tours with Pantera.",
+    "bands": ["Black Label Society", "Ozzy Osbourne", "Pride & Glory", "Zakk Sabbath", "Pantera"],
+    "amplifiers": ["Marshall JCM800", "Marshall JCM900", "Wylde Audio Sovereign", "Wylde Audio Dual Rectifier"],
+    "guitars": ["Gibson Les Paul Custom", "Gibson Les Paul Standard", "Wylde Audio Warhammer", "Wylde Audio Ironbird"]
+  }

@@ -57,7 +57,7 @@ A master of dynamics and phrasing, Stevie's influence on blues and rock guitar r
     new Artist
     {
         Name = "David Gilmour",
-        PhotoUrl = "https://picsum.photos/seed/davidgilmour/300/300",
+        PhotoUrl = "/images/artists/david-gilmour.jpg",
         Summary = "Melodic soloist and tone sculptor behind Pink Floyd's sound.",
         Description = @"David Gilmour is celebrated for long, singing guitar lines and an evocative, carefully shaped tone. His restrained phrasing, tasteful bends and use of effects created some of the most memorable guitar moments in progressive rock.
 
@@ -68,7 +68,7 @@ Gilmour's approach emphasizes melody and color over speed, making his solos emot
     new Artist
     {
         Name = "John Mayer",
-        PhotoUrl = "https://picsum.photos/seed/johnmayer/300/300",
+        PhotoUrl = "/images/artists/john-mayer.jpg",
         Summary = "Modern blues-pop guitarist known for touch and tone.",
         Description = @"John Mayer blends blues phrasing with pop sensibility, emphasizing clean touch, dynamics, and warm, mid-forward tones. He often favors Stratocaster-style guitars and highly controlled vibrato to craft melodic lines.
 
