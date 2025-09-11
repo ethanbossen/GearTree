@@ -37,11 +37,16 @@
 
 .subLink {
   font-weight: 400;
+  max-width: 120px;
   font-size: 0.85rem;
   text-decoration: none;
   color: #4b5563;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .subLink:hover {
   color: #111827;
 }
+

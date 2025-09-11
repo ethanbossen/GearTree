@@ -40,7 +40,7 @@ export default function Footer() {
               Eric Clapton
             </Link>
             <Link to="/artists/bb-king" className={classes.subLink}>
-              B.B. King
+              Jimmy Page 
             </Link>
           </Stack>
 
