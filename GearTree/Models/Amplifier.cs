@@ -6,6 +6,7 @@ public class Amplifier
     public string Name { get; set; } = "";
     public string PhotoUrl { get; set; } = "";
     public string Description { get; set; } = "";
+    public string Summary { get; set; } = "";
     public bool IsTube { get; set; }
     public string GainStructure { get; set; } = "";
     public int YearStart { get; set; }

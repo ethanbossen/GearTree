@@ -60,6 +60,10 @@ using (var scope = app.Services.CreateScope())
 // Create (POST)
 app.MapPost("/amps", async (Amplifier amp, GearContext db) =>
 {
+    if (await db.Amplifiers.AnyAsync(a => a.Name == amp.Name))
+    {
+        return Results.Conflict($"An amplifier with the name '{amp.Name}' already exists.");
+    }
     db.Amplifiers.Add(amp);
     await db.SaveChangesAsync();
     return Results.Created($"/amps/{amp.Id}", amp);
@@ -102,6 +106,10 @@ app.MapDelete("/amps/{id}", async (int id, GearContext db) =>
 // Create (POST)
 app.MapPost("/artists", async (Artist artist, GearContext db) =>
 {
+    if (await db.Artists.AnyAsync(a => a.Name == artist.Name))
+    {
+        return Results.Conflict($"An artist with the name '{artist.Name}' already exists.");
+    }
     db.Artists.Add(artist);
     await db.SaveChangesAsync();
     return Results.Created($"/artists/{artist.Id}", artist);
@@ -141,6 +149,10 @@ app.MapDelete("/artists/{id}", async (int id, GearContext db) =>
 // Create (POST)
 app.MapPost("/guitars", async (Guitar guitar, GearContext db) =>
 {
+    if (await db.Guitars.AnyAsync(g => g.Name == guitar.Name))
+    {
+        return Results.Conflict($"A guitar with the name '{guitar.Name}' already exists.");
+    }
     db.Guitars.Add(guitar);
     await db.SaveChangesAsync();
     return Results.Created($"/guitars/{guitar.Id}", guitar);

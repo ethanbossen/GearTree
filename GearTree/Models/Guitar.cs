@@ -6,6 +6,7 @@ public class Guitar
     public string Name { get; set; } = "";
     public string PhotoUrl { get; set; } = "";
     public string Description { get; set; } = "";
+    public string Summary { get; set; } = "";
     public string Type { get; set; } = ""; // "Electric" or "Acoustic"
     public List<string> Genres { get; set; } = new();
     public List<string> Pickups { get; set; } = new(); // Like HSS, SSS, HH, etc.
