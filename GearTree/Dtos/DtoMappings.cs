@@ -46,22 +46,23 @@ namespace GearTree.Dtos
         }
 
         public static GuitarDto ToDto(this Guitar g)
-        {
-            return new GuitarDto
-            {
-                Id = g.Id,
-                Name = g.Name,
-                PhotoUrl = g.PhotoUrl,
-                Description = g.Description,
-                Type = g.Type,
-                Genres = g.Genres ?? new List<string>(),
-                Pickups = g.Pickups ?? new List<string>(),
-                YearStart = g.YearStart,
-                YearEnd = g.YearEnd,
-                Artists = (g.Artists ?? Enumerable.Empty<Artist>())
-                    .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name })
-                    .ToList()
-            };
-        }
+{
+    return new GuitarDto
+    {
+        Id = g.Id,
+        Name = g.Name,
+        PhotoUrl = g.PhotoUrl,
+        Description = g.Description,
+        Type = g.Type,
+        Genres = g.Genres ?? new List<string>(),
+        Pickups = g.Pickups ?? new List<string>(),
+        YearStart = g.YearStart,
+        YearEnd = g.YearEnd,
+        Artists = (g.Artists ?? Enumerable.Empty<Artist>())
+            .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name })
+            .ToList()
+    };
+}
+
     }
 }
