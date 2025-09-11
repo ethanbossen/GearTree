@@ -1,10 +1,22 @@
 // src/components/Footer.tsx
+import { useEffect, useState } from "react";
 import { Container, Group, Text, Stack } from "@mantine/core";
+import { Link } from "react-router-dom";
 import geartreeLogo from "../assets/GearTreeLogo.svg";
 import classes from "./Footer.module.css";
-import { Link } from "react-router-dom";
+import { fetchArtists, fetchGuitars, fetchAmps } from "../api";
 
 export default function Footer() {
+  const [artists, setArtists] = useState<any[]>([]);
+  const [guitars, setGuitars] = useState<any[]>([]);
+  const [amps, setAmps] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchArtists().then(setArtists).catch(console.error);
+    fetchGuitars().then(setGuitars).catch(console.error);
+    fetchAmps().then(setAmps).catch(console.error);
+  }, []);
+
   return (
     <footer className={classes.footer}>
       <Container size="lg" className={classes.inner}>
@@ -29,49 +41,52 @@ export default function Footer() {
 
         {/* Link columns */}
         <Group gap="5rem" className={classes.links}>
+          {/* Artists */}
           <Stack gap="xs">
             <Link to="/artists" className={classes.columnTitle}>
               Artists
             </Link>
-            <Link to="/artists/jimi-hendrix" className={classes.subLink}>
-              Jimi Hendrix
-            </Link>
-            <Link to="/artists/eric-clapton" className={classes.subLink}>
-              Eric Clapton
-            </Link>
-            <Link to="/artists/bb-king" className={classes.subLink}>
-              Jimmy Page 
-            </Link>
+            {artists.slice(0, 3).map((artist) => (
+              <Link
+                key={artist.id}
+                to={`/artists/${artist.id}`}
+                className={classes.subLink}
+              >
+                {artist.name}
+              </Link>
+            ))}
           </Stack>
 
+          {/* Guitars */}
           <Stack gap="xs">
             <Link to="/guitars" className={classes.columnTitle}>
               Guitars
             </Link>
-            <Link to="/guitars/stratocaster" className={classes.subLink}>
-              Stratocaster
-            </Link>
-            <Link to="/guitars/les-paul" className={classes.subLink}>
-              Les Paul
-            </Link>
-            <Link to="/guitars/telecaster" className={classes.subLink}>
-              Telecaster
-            </Link>
+            {guitars.slice(0, 3).map((guitar) => (
+              <Link
+                key={guitar.id}
+                to={`/guitars/${guitar.id}`}
+                className={classes.subLink}
+              >
+                {guitar.name}
+              </Link>
+            ))}
           </Stack>
 
+          {/* Amplifiers */}
           <Stack gap="xs">
             <Link to="/amplifiers" className={classes.columnTitle}>
               Amplifiers
             </Link>
-            <Link to="/amplifiers/marshall" className={classes.subLink}>
-              Marshall
-            </Link>
-            <Link to="/amplifiers/fender" className={classes.subLink}>
-              Fender
-            </Link>
-            <Link to="/amplifiers/vox" className={classes.subLink}>
-              Vox
-            </Link>
+            {amps.slice(0, 3).map((amp) => (
+              <Link
+                key={amp.id}
+                to={`/amplifiers/${amp.id}`}
+                className={classes.subLink}
+              >
+                {amp.name}
+              </Link>
+            ))}
           </Stack>
         </Group>
       </Container>

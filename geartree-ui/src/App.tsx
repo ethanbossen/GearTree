@@ -1,11 +1,13 @@
 // App.tsx
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 import Artists from "./pages/Artists";
 import Guitars from "./pages/Guitars";
 import Amplifiers from "./pages/Amplifiers";
 import Home from "./pages/Home";
-import Footer from "./components/Footer";
+import NotFound from "./pages/NotFound";
+
 
 function App() {
   return (
@@ -17,6 +19,7 @@ function App() {
           <Route path="/guitars" element={<Guitars />} />
           <Route path="/amplifiers" element={<Amplifiers />} />
           <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

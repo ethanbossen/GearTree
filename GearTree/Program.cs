@@ -10,6 +10,15 @@ builder.Services.AddDbContext<GearContext>(options =>
 
 // Add OpenAPI for docs
 builder.Services.AddOpenApi();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -19,7 +28,7 @@ var app = builder.Build();
     }
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 // -------------------------
 // Endpoints (DB-backed)
 // -------------------------
