@@ -1,0 +1,47 @@
+.footer {
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 2rem 0;
+  max-height: 280px;
+}
+
+.inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.left {
+  max-width: 250px;
+}
+
+.logo {
+  height: 40px;
+}
+
+.brand {
+  color: #213547;
+}
+
+.columnTitle {
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  color: #111827;
+}
+
+.columnTitle:hover {
+  color: #7828be;
+}
+
+.subLink {
+  font-weight: 400;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: #4b5563;
+}
+
+.subLink:hover {
+  color: #111827;
+}

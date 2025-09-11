@@ -1,44 +1,41 @@
 import { useState } from "react";
-import { Burger, Container, Group, Button } from "@mantine/core";
+import { Burger, Container, Group } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { Link, useLocation } from "react-router-dom";
 import geartreeLogo from "../assets/GearTreeLogo.svg";
-import classes from "./HeaderSimple.module.css";
+import classes from "./NavBar.module.css";
 
 const links = [
   { link: "/artists", label: "Artists" },
   { link: "/guitars", label: "Guitarists" },
   { link: "/amplifiers", label: "Amplifiers" },
-  { link: "/home", label: "Home" },
+  { link: "/", label: "Home" },
 ];
 
-export function HeaderSimple() {
+export default function NavBar() {
   const [opened, { toggle }] = useDisclosure(false);
-  const [active, setActive] = useState(links[0].link);
+  const location = useLocation();
 
   const items = links.map((link) => (
-    <a
+    <Link
       key={link.label}
-      href={link.link}
+      to={link.link}
       className={classes.link}
-      data-active={active === link.link || undefined}
-      onClick={(e) => {
-        e.preventDefault();
-        setActive(link.link);
-      }}
+      data-active={location.pathname === link.link || undefined}
     >
       {link.label}
-    </a>
+    </Link>
   ));
 
   return (
     <header className={classes.header}>
       <Container size="md" className={classes.inner}>
-        <a href="/home" style={{ textDecoration: 'none' }}>
-        <div className={classes.logoSection}>
-          <img src={geartreeLogo} alt="GearTree" style={{ height: 40,  marginTop: 10}} />
-          <span className={classes.brandText}>GearTree</span>
-        </div>
-        </a>
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <div className={classes.logoSection}>
+            <img src={geartreeLogo} alt="GearTree" style={{ height: 40, marginTop: 10}} />
+            <span className={classes.brandText}>GearTree</span>
+          </div>
+        </Link>
         <Group gap={5} visibleFrom="xs">
           {items}
         </Group>

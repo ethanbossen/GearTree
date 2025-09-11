@@ -13,6 +13,9 @@ a {
 a:hover {
   color: #8F4CD1;
 }
+main {
+  flex: 1;
+}
 
 button {
   border-radius: 0.5rem;
@@ -24,4 +27,19 @@ button {
 }
 button:hover {
   background-color: #8F4CD1;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
 }

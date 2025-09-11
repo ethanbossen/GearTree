@@ -1,10 +1,11 @@
 import shuffleIcon from "../assets/arrows-shuffle.svg";
+import mastodonStudio from "../assets/MastodonStudio2.png";
 
 export function LandingSection() {
   return (
-    <main className="pl-[8%] pr-10 pt-10 pb-20 min-h-screen flex flex-col">
-      <h1 className="text-4xl font-bold mb-4">Classic Rigs, Classic Tone.</h1>
-      <h3 className="text-lg mb-4 max-w-xl">
+    <main className="pl-[8%] pr-10 pt-10 pb-20 min-h-screen flex flex-col gap-4">
+      <h1 className="text-4xl font-bold">Classic Rigs, Classic Tone.</h1>
+      <h3 className="text-lg max-w-xl">
         Welcome to GearTree, a digital exploration of artist rigs and the
         essentials you need to replicate classic tones from exceptional
         guitarists.
@@ -13,6 +14,18 @@ export function LandingSection() {
         Random Rig
         <img src={shuffleIcon} alt="Shuffle icon" className="w-5 h-5 invert brightness-0" />
       </button>
+      <div className="flex justify-center">
+        <div className="w-full rounded-lg overflow-hidden shadow-lg max-w-6xl" style={{ aspectRatio: '16 / 9' }}>
+          <img 
+            src={mastodonStudio} 
+            alt="Mastodon in the studio, b+w image" 
+            className="w-full h-full object-cover blur-xs brightness-50"
+            style={{
+              objectPosition: 'center top'
+            }}
+          />
+        </div>
+      </div>
     </main>
   );
 }
