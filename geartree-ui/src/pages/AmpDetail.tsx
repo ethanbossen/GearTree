@@ -6,6 +6,7 @@ import type { Amplifier } from "../api";
 import { Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
 import AmpCard from "../components/AmpCard";
 import ArtistCard from "../components/ArtistCard"; 
+import CardGridContainer from "../components/CardGridContainer";
 
 function AmpDetail() {
   const { id } = useParams();
@@ -76,13 +77,15 @@ function AmpDetail() {
             </Text>
           )}
 
-          {/* Reverb Button */}
+          {/* Reverb Search */}
           <Button
             component="a"
-            href={reverbSearchUrl}
+            href={`https://reverb.com/marketplace?query=${encodeURIComponent(
+              amp.name
+            )}`}
             target="_blank"
             rel="noopener noreferrer"
-            color="orange"
+            color="dark"
           >
             Search on Reverb
           </Button>
@@ -100,17 +103,17 @@ function AmpDetail() {
           <Title order={2} className="mb-6">
             Related Amps
           </Title>
-          <div className="grid gap-8 md:grid-cols-3">
+          <CardGridContainer>
             {amp.relatedAmps.map((ra) => (
-              <AmpCard 
-              key={ra.id} 
-              id={ra.id}
-              name={ra.name}
-              photoUrl={ra.photoUrl ?? ""}
-              summary={ra.summary ?? ""}
+              <AmpCard
+                key={ra.id}
+                id={ra.id}
+                name={ra.name}
+                photoUrl={ra.photoUrl ?? ""}
+                summary={ra.summary ?? ""}
               />
             ))}
-          </div>
+          </CardGridContainer>
         </section>
       )}
 
@@ -120,11 +123,11 @@ function AmpDetail() {
           <Title order={2} className="mb-6">
             Artists Who Use This Amp
           </Title>
-          <div className="grid gap-8 md:grid-cols-3">
+          <CardGridContainer>
             {amp.artists.map((artist) => (
               <ArtistCard key={artist.id} {...artist} />
             ))}
-          </div>
+          </CardGridContainer>
         </section>
       )}
     </div>

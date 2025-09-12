@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GearTree")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ede8deb8e9a28265ea05b1bc60af98d2227f18fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bf090fa776e54686cb16974e725a1bfe3ab6950a")]
 [assembly: System.Reflection.AssemblyProductAttribute("GearTree")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GearTree")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

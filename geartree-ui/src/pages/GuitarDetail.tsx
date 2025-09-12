@@ -4,7 +4,8 @@ import { useParams } from "react-router-dom";
 import { fetchGuitarById } from "../api";
 import type { Guitar } from "../api";
 import { Button, Loader } from "@mantine/core";
-import GuitarCarousel from "../components/GuitarCarousel";
+import CardGridContainer from "../components/CardGridContainer";
+import GuitarCard from "../components/GuitarCard";
 import ArtistCard from "../components/ArtistCard";
 
 function GuitarDetail() {
@@ -93,25 +94,35 @@ function GuitarDetail() {
         <p>{guitar.description}</p>
       </section>
 
-      {/* Related Guitars */}
-      {guitar.relatedGuitars && guitar.relatedGuitars.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">Related Guitars</h2>
-          <GuitarCarousel guitars={guitar.relatedGuitars} />
-        </section>
-      )}
+  {/* Related Guitars */}
+{guitar.relatedGuitars && guitar.relatedGuitars.length > 0 && (
+  <section className="mb-12">
+    <h2 className="text-2xl font-bold mb-4">Related Guitars</h2>
+<CardGridContainer>
+  {guitar.relatedGuitars.map((rg) => (
+    <GuitarCard
+      key={rg.id}
+      id={rg.id}
+      name={rg.name}
+      photoUrl={rg.photoUrl ?? ""}   
+      summary={rg.summary ?? ""}     
+    />
+  ))}
+</CardGridContainer>
+  </section>
+)}
 
-      {/* Artists */}
-      {guitar.artists && guitar.artists.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">Artists Who Use This Guitar</h2>
-          <div className="grid gap-6 md:grid-cols-3">
-            {guitar.artists.map((artist) => (
-              <ArtistCard key={artist.id} {...artist} />
-            ))}
-          </div>
-        </section>
-      )}
+{/* Artists */}
+{guitar.artists && guitar.artists.length > 0 && (
+  <section className="mb-12">
+    <h2 className="text-2xl font-bold mb-4">Artists Who Use This Guitar</h2>
+    <CardGridContainer>
+      {guitar.artists.map((artist) => (
+        <ArtistCard key={artist.id} {...artist} />
+      ))}
+    </CardGridContainer>
+  </section>
+)}
     </div>
   );
 }
