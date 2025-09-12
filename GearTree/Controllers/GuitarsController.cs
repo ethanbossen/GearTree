@@ -23,6 +23,7 @@ public class GuitarsController : ControllerBase
     {
         var guitars = await _db.Guitars
             .Include(g => g.Artists)
+            .Include(g => g.RelatedGuitars)
             .ToListAsync();
 
         return Ok(guitars.Select(g => g.ToDto()).ToList());
@@ -36,6 +37,7 @@ public class GuitarsController : ControllerBase
     {
         var guitar = await _db.Guitars
             .Include(g => g.Artists)
+            .Include(g => g.RelatedGuitars)
             .FirstOrDefaultAsync(g => g.Id == id);
 
         if (guitar is null) return NotFound();

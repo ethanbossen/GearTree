@@ -36,6 +36,7 @@ public class AmplifiersController : ControllerBase
     {
         var amp = await _db.Amplifiers
             .Include(a => a.Artists)
+            .Include(a => a.RelatedAmplifiers)
             .FirstOrDefaultAsync(a => a.Id == id);
 
         if (amp == null) return NotFound();
@@ -58,6 +59,7 @@ public class AmplifiersController : ControllerBase
 
         var created = await _db.Amplifiers
             .Include(a => a.Artists)
+            .Include(a => a.RelatedAmplifiers)
             .FirstOrDefaultAsync(a => a.Id == amp.Id);
 
         return CreatedAtAction(nameof(GetById), new { id = amp.Id }, created!.ToDto());
