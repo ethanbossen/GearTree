@@ -1,11 +1,11 @@
 // src/components/GuitarCarousel.tsx
 import { useState } from "react";
 import { Link } from "react-router-dom"; // ✅ import Link
-import type { Guitar } from "../api";
+import type { GuitarBrief } from "../api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface GuitarCarouselProps {
-  guitars: Guitar[];
+  guitars: GuitarBrief[];
 }
 
 function GuitarCarousel({ guitars }: GuitarCarouselProps) {

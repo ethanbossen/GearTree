@@ -1,11 +1,11 @@
 // src/components/AmpsContainer.tsx
 import { useEffect, useState } from "react";
 import { fetchAmps } from "../api";
-import type { Amplifier } from "../api";
+import type { AmplifierBrief } from "../api";
 import AmpCard from "./AmpCard";
 
 function AmpsContainer() {
-  const [amps, setAmps] = useState<Amplifier[]>([]);
+  const [amps, setAmps] = useState<AmplifierBrief[]>([]);
 
   useEffect(() => {
     fetchAmps().then((data) => {
@@ -28,8 +28,8 @@ function AmpsContainer() {
             key={amp.id}
             id={amp.id}
             name={amp.name}
-            summary={amp.summary}
-            photoUrl={amp.photoUrl}
+            summary={amp.summary ?? ""}
+            photoUrl={amp.photoUrl ?? ""}
             
           />
         ))}

@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 interface ArtistCardProps {
   id: number;
   name: string;
-  summary: string;
-  photoUrl: string;
+  summary: string | null;
+  photoUrl: string | null;
 }
 
 export default function ArtistCard({ id, name, summary, photoUrl }: ArtistCardProps) {
@@ -16,11 +16,10 @@ export default function ArtistCard({ id, name, summary, photoUrl }: ArtistCardPr
     >
       <Card
         shadow="sm"
-        // padding="lg"
         radius="md"
         withBorder
         style={{
-          height: 400, // fixed card height
+          height: 400, 
           display: "flex",
           flexDirection: "column",
         }}

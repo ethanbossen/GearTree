@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchAmpById } from "../api";
-import type { AmplifierDetail } from "../api";
+import type { Amplifier } from "../api";
 import { Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
-import AmpCardDetailed from "../components/AmpCardDetailed";
-import ArtistCard from "../components/ArtistCard"; // assuming you already have one
+import AmpCard from "../components/AmpCard";
+import ArtistCard from "../components/ArtistCard"; 
 
 function AmpDetail() {
   const { id } = useParams();
-  const [amp, setAmp] = useState<AmplifierDetail | null>(null);
+  const [amp, setAmp] = useState<Amplifier | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -102,7 +102,13 @@ function AmpDetail() {
           </Title>
           <div className="grid gap-8 md:grid-cols-3">
             {amp.relatedAmps.map((ra) => (
-              <AmpCardDetailed key={ra.id} {...ra} />
+              <AmpCard 
+              key={ra.id} 
+              id={ra.id}
+              name={ra.name}
+              photoUrl={ra.photoUrl ?? ""}
+              summary={ra.summary ?? ""}
+              />
             ))}
           </div>
         </section>

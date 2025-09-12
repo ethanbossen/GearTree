@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom"; // ✅ import Link
-import type { Amplifier } from "../api";
+import type { AmplifierBrief } from "../api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface AmplifierCarouselProps {
-  amplifiers: Amplifier[];
+  amplifiers: AmplifierBrief[];
 }
 
 function AmplifierCarousel({ amplifiers }: AmplifierCarouselProps) {
