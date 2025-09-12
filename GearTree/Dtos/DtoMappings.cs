@@ -36,6 +36,12 @@ namespace GearTree.Dtos
                 GainStructure = amp.GainStructure,
                 YearStart = amp.YearStart,
                 YearEnd = amp.YearEnd,
+                PriceStart = amp.priceStart,
+                PriceEnd = amp.priceEnd,
+                Wattage = amp.Wattage,
+                SpeakerConfiguration = amp.SpeakerConfiguration,
+                Manufacturer = amp.Manufacturer,
+                OtherPhotos = amp.OtherPhotos ?? new List<string>(),
                 Artists = (amp.Artists ?? Enumerable.Empty<Artist>())
                     .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name })
                     .ToList()
