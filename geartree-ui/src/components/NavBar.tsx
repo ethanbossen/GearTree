@@ -7,7 +7,7 @@ import classes from "./NavBar.module.css";
 
 const links = [
   { link: "/artists", label: "Artists" },
-  { link: "/guitars", label: "Guitarists" },
+  { link: "/guitars", label: "Guitars" },
   { link: "/amplifiers", label: "Amplifiers" },
   { link: "/", label: "Home" },
 ];

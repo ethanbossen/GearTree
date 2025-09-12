@@ -7,6 +7,7 @@ import Guitars from "./pages/Guitars";
 import Amplifiers from "./pages/Amplifiers";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
+import ArtistPage from "./pages/ArtistPage";
 
 
 function App() {
@@ -15,10 +16,14 @@ function App() {
       <NavBar />
       <main className="page-content">
         <Routes>
+          <Route path="/artists/:id" element={<ArtistPage />} />
+          <Route path="/guitars/:id" element={<div>Guitar Detail Page (to be implemented)</div>} />
+          <Route path="/amplifiers/:id" element={<div>Amplifier Detail Page (to be implemented)</div>} />
           <Route path="/artists" element={<Artists />} />
           <Route path="/guitars" element={<Guitars />} />
           <Route path="/amplifiers" element={<Amplifiers />} />
           <Route path="/" element={<Home />} />
+          <Route path="404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

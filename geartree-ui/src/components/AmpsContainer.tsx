@@ -10,7 +10,7 @@ function AmpsContainer() {
   useEffect(() => {
     fetchAmps().then((data) => {
       // Just grab the first 2
-      setAmps(data.slice(0, 2));
+      setAmps(data.slice(0, 4));
     });
   }, []);
 
@@ -30,6 +30,7 @@ function AmpsContainer() {
             name={amp.name}
             summary={amp.summary}
             photoUrl={amp.photoUrl}
+            
           />
         ))}
       </div>

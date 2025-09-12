@@ -1,5 +1,5 @@
 // src/components/AmpCard.tsx
-import { Card, Text, Image } from "@mantine/core";
+import { Card, Text, Image} from "@mantine/core";
 import { Link } from "react-router-dom";
 
 interface AmpCardProps {
@@ -24,11 +24,12 @@ function AmpCard({ id, name, summary, photoUrl }: AmpCardProps) {
 >
   {/* Lock the image section height */}
   <Card.Section className="h-[200px] overflow-hidden">
-    <img
-      src={photoUrl}
-      alt={name}
-      className="w-full h-full object-cover" // force-fit inside container
-    />
+             <Image
+              src={photoUrl}
+              alt={name}
+              fit="cover"
+              style={{ width: "100%", height: "100%", objectPosition: "top" }}
+            />
   </Card.Section>
 
   {/* Text content */}

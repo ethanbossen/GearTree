@@ -16,6 +16,8 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =
 builder.Services.AddDbContext<GearContext>(options =>
     options.UseSqlite("Data Source=gear.db"));
 
+builder.Services.AddControllers();
+
 // Add OpenAPI for docs
 builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
@@ -37,6 +39,8 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 app.UseCors();
+app.MapControllers();
+
 // -------------------------
 // Endpoints (DB-backed)
 // -------------------------
@@ -48,7 +52,7 @@ app.MapGet("/amps", async (GearContext db) =>
         .Include(a => a.Artists)
         .ToListAsync();
 
-    return Results.Ok(amps.Select(a => a.ToDto()));
+    return Results.Ok(amps.Select(a => a.ToDto()).ToList());
 });
 
 
@@ -70,7 +74,7 @@ app.MapGet("/artists", async (GearContext db) =>
         .Include(a => a.Guitars)
         .ToListAsync();
 
-    return Results.Ok(artists.Select(a => a.ToDto()));
+    return Results.Ok(artists.Select(a => a.ToDto()).ToList());
 });
 
 
@@ -92,7 +96,8 @@ app.MapGet("/guitars", async (GearContext db) =>
         .Include(g => g.Artists)
         .ToListAsync();
 
-    return Results.Ok(guitars.Select(g => g.ToDto()));
+    return Results.Ok(guitars.Select(g => g.ToDto()).ToList());
+
 });
 
 
@@ -152,6 +157,36 @@ app.MapPut("/amps/{id}", async (int id, Amplifier updatedAmp, GearContext db) =>
 
     await db.SaveChangesAsync();
     return Results.NoContent();
+});
+
+// Update (PATCH) - partial update
+app.MapPatch("/amps/{id}", async (int id, Amplifier updatedAmp, GearContext db) =>
+{
+    var amp = await db.Amplifiers.FindAsync(id);
+    if (amp == null) return Results.NotFound();
+
+    // Update only the non-null / non-default fields
+    if (!string.IsNullOrEmpty(updatedAmp.Name))
+        amp.Name = updatedAmp.Name;
+    if (!string.IsNullOrEmpty(updatedAmp.PhotoUrl))
+        amp.PhotoUrl = updatedAmp.PhotoUrl;
+    if (!string.IsNullOrEmpty(updatedAmp.Description))
+        amp.Description = updatedAmp.Description;
+    if (!string.IsNullOrEmpty(updatedAmp.Summary))
+        amp.Summary = updatedAmp.Summary;
+    if (!string.IsNullOrEmpty(updatedAmp.GainStructure))
+        amp.GainStructure = updatedAmp.GainStructure;
+    if (updatedAmp.YearStart != 0)
+        amp.YearStart = updatedAmp.YearStart;
+    if (updatedAmp.YearEnd != 0)
+        amp.YearEnd = updatedAmp.YearEnd;
+
+    // bools are tricky — optional patch would need nullable bool
+    // so let's only update if explicitly included
+    amp.IsTube = updatedAmp.IsTube;
+
+    await db.SaveChangesAsync();
+    return Results.Ok(amp);
 });
 
 // Delete
@@ -264,6 +299,70 @@ app.MapPut("/artists/{id}", async (int id, Artist updatedArtist, GearContext db)
     return Results.Ok(updated!.ToDto());
 });
 
+// Partial Update (PATCH)
+app.MapPatch("/artists/{id}", async (int id, Artist patchData, GearContext db) =>
+{
+    var artist = await db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == id);
+
+    if (artist is null) return Results.NotFound();
+
+    // Scalars: update only if present
+    if (!string.IsNullOrWhiteSpace(patchData.Name))
+        artist.Name = patchData.Name;
+    if (!string.IsNullOrWhiteSpace(patchData.PhotoUrl))
+        artist.PhotoUrl = patchData.PhotoUrl;
+    if (!string.IsNullOrWhiteSpace(patchData.HeroPhotoUrl))
+        artist.HeroPhotoUrl = patchData.HeroPhotoUrl;
+    if (!string.IsNullOrWhiteSpace(patchData.Tagline))
+        artist.Tagline = patchData.Tagline;
+    if (!string.IsNullOrWhiteSpace(patchData.Description))
+        artist.Description = patchData.Description;
+    if (!string.IsNullOrWhiteSpace(patchData.Summary))
+        artist.Summary = patchData.Summary;
+
+    // Collections
+    if (patchData.Bands != null)
+        artist.Bands = patchData.Bands;
+
+    if (patchData.OtherPhotos != null)
+        artist.OtherPhotos = patchData.OtherPhotos;
+
+    // Amps: null = leave unchanged; [] = clear; non-empty = replace
+    if (patchData.Amplifiers != null)
+    {
+        artist.Amplifiers.Clear();
+        if (patchData.Amplifiers.Any())
+        {
+            var ampIds = patchData.Amplifiers.Select(a => a.Id).ToList();
+            var amps = await db.Amplifiers.Where(a => ampIds.Contains(a.Id)).ToListAsync();
+            artist.Amplifiers = amps;
+        }
+    }
+
+    // Guitars: null = leave unchanged; [] = clear; non-empty = replace
+    if (patchData.Guitars != null)
+    {
+        artist.Guitars.Clear();
+        if (patchData.Guitars.Any())
+        {
+            var guitarIds = patchData.Guitars.Select(g => g.Id).ToList();
+            var guitars = await db.Guitars.Where(g => guitarIds.Contains(g.Id)).ToListAsync();
+            artist.Guitars = guitars;
+        }
+    }
+
+    await db.SaveChangesAsync();
+
+    var updated = await db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == id);
+
+    return Results.Ok(updated!.ToDto());
+});
 
 
 // Delete
@@ -319,6 +418,59 @@ app.MapPut("/guitars/{id}", async (int id, Guitar updatedGuitar, GearContext db)
     await db.SaveChangesAsync();
     return Results.NoContent();
 });
+
+// Partial Update (PATCH)
+app.MapPatch("/guitars/{id}", async (int id, Guitar patchData, GearContext db) =>
+{
+    var guitar = await db.Guitars
+        .Include(g => g.Artists)
+        .FirstOrDefaultAsync(g => g.Id == id);
+
+    if (guitar is null) return Results.NotFound();
+
+    // Scalars
+    if (!string.IsNullOrWhiteSpace(patchData.Name))
+        guitar.Name = patchData.Name;
+    if (!string.IsNullOrWhiteSpace(patchData.PhotoUrl))
+        guitar.PhotoUrl = patchData.PhotoUrl;
+    if (!string.IsNullOrWhiteSpace(patchData.Description))
+        guitar.Description = patchData.Description;
+    if (!string.IsNullOrWhiteSpace(patchData.Type))
+        guitar.Type = patchData.Type;
+
+    if (patchData.YearStart != 0) // assume 0 means "not provided"
+        guitar.YearStart = patchData.YearStart;
+    if (patchData.YearEnd != 0)
+        guitar.YearEnd = patchData.YearEnd;
+
+    // Collections
+    if (patchData.Genres != null)
+        guitar.Genres = patchData.Genres;
+
+    if (patchData.Pickups != null)
+        guitar.Pickups = patchData.Pickups;
+
+    // Artists: null = leave unchanged; [] = clear; non-empty = replace
+    if (patchData.Artists != null)
+    {
+        guitar.Artists.Clear();
+        if (patchData.Artists.Any())
+        {
+            var artistIds = patchData.Artists.Select(a => a.Id).ToList();
+            var artists = await db.Artists.Where(a => artistIds.Contains(a.Id)).ToListAsync();
+            guitar.Artists = artists;
+        }
+    }
+
+    await db.SaveChangesAsync();
+
+    var updated = await db.Guitars
+        .Include(g => g.Artists)
+        .FirstOrDefaultAsync(g => g.Id == id);
+
+    return Results.Ok(updated!.ToDto());
+});
+
 
 // Delete
 app.MapDelete("/guitars/{id}", async (int id, GearContext db) =>

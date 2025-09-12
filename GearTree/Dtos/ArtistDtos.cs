@@ -12,8 +12,8 @@ namespace GearTree.Dtos
         public string? Summary { get; set; }
         public List<string>? Bands { get; set; }
 
-        public List<AmplifierBriefDto> Amplifiers { get; set; } = new();
-        public List<GuitarBriefDto> Guitars { get; set; } = new();
+        public List<AmplifierDto> Amplifiers { get; set; } = new();
+        public List<GuitarDto> Guitars { get; set; } = new();
     }
 
     public class AmplifierBriefDto
