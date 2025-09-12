@@ -102,8 +102,8 @@ public class GuitarsController : ControllerBase
         return Ok(guitar.ToDto());
     }
 
-    // -------------------------
-// Add an artist to a guitar
+// -------------------------
+// Add an artist to a guitar (symmetric)
 // -------------------------
 [HttpPost("{guitarId}/artists/{artistId}")]
 public async Task<IActionResult> AddArtistToGuitar(int guitarId, int artistId)
@@ -112,19 +112,109 @@ public async Task<IActionResult> AddArtistToGuitar(int guitarId, int artistId)
         .Include(g => g.Artists)
         .FirstOrDefaultAsync(g => g.Id == guitarId);
 
-    if (guitar is null) return NotFound($"Guitar {guitarId} not found");
+    var artist = await _db.Artists
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == artistId);
 
-    var artist = await _db.Artists.FindAsync(artistId);
+    if (guitar is null) return NotFound($"Guitar {guitarId} not found");
     if (artist is null) return NotFound($"Artist {artistId} not found");
 
-    // prevent duplicates
+    var updated = false;
+
+    // Add artist to guitar if missing
     if (!guitar.Artists.Any(a => a.Id == artistId))
+    {
         guitar.Artists.Add(artist);
+        updated = true;
+    }
+
+    // Add guitar to artist if missing
+    if (!artist.Guitars.Any(g => g.Id == guitarId))
+    {
+        artist.Guitars.Add(guitar);
+        updated = true;
+    }
+
+    if (!updated)
+        return Conflict("Artist is already linked to this guitar.");
 
     await _db.SaveChangesAsync();
 
     return Ok(guitar.ToDto());
 }
+
+
+// -------------------------
+// Add a related guitar (symmetric)
+// -------------------------
+[HttpPost("{guitarId}/related/{relatedId}")]
+public async Task<IActionResult> AddRelatedGuitar(int guitarId, int relatedId)
+{
+    if (guitarId == relatedId)
+        return BadRequest("A guitar cannot be related to itself.");
+
+    var guitar = await _db.Guitars
+        .Include(g => g.RelatedGuitars)
+        .FirstOrDefaultAsync(g => g.Id == guitarId);
+
+    var related = await _db.Guitars
+        .Include(g => g.RelatedGuitars)
+        .FirstOrDefaultAsync(g => g.Id == relatedId);
+
+    if (guitar == null || related == null)
+        return NotFound("Guitar or related guitar not found.");
+
+    // Add both directions if missing
+    if (!guitar.RelatedGuitars.Any(g => g.Id == relatedId))
+        guitar.RelatedGuitars.Add(related);
+
+    if (!related.RelatedGuitars.Any(g => g.Id == guitarId))
+        related.RelatedGuitars.Add(guitar);
+
+    await _db.SaveChangesAsync();
+    return Ok(guitar.ToDto());
+}
+
+// -------------------------
+// Remove a related guitar (symmetric)
+// -------------------------
+[HttpDelete("{guitarId}/related/{relatedId}")]
+public async Task<IActionResult> RemoveRelatedGuitar(int guitarId, int relatedId)
+{
+    var guitar = await _db.Guitars
+        .Include(g => g.RelatedGuitars)
+        .FirstOrDefaultAsync(g => g.Id == guitarId);
+
+    var related = await _db.Guitars
+        .Include(g => g.RelatedGuitars)
+        .FirstOrDefaultAsync(g => g.Id == relatedId);
+
+    if (guitar == null || related == null)
+        return NotFound("Guitar or related guitar not found.");
+
+    var removed = false;
+
+    var relatedFromGuitar = guitar.RelatedGuitars.FirstOrDefault(g => g.Id == relatedId);
+    if (relatedFromGuitar != null)
+    {
+        guitar.RelatedGuitars.Remove(relatedFromGuitar);
+        removed = true;
+    }
+
+    var guitarFromRelated = related.RelatedGuitars.FirstOrDefault(g => g.Id == guitarId);
+    if (guitarFromRelated != null)
+    {
+        related.RelatedGuitars.Remove(guitarFromRelated);
+        removed = true;
+    }
+
+    if (!removed)
+        return NotFound("Relation not found.");
+
+    await _db.SaveChangesAsync();
+    return Ok(guitar.ToDto());
+}
+
 
 
     // -------------------------

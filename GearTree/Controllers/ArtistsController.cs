@@ -212,7 +212,7 @@ public class ArtistsController : ControllerBase
     }
     
 // -------------------------
-// Add an amplifier to an artist
+// Add an amplifier to an artist (symmetric)
 // -------------------------
 [HttpPost("{artistId}/amps/{ampId}")]
 public async Task<IActionResult> AddAmplifier(int artistId, int ampId)
@@ -221,22 +221,40 @@ public async Task<IActionResult> AddAmplifier(int artistId, int ampId)
         .Include(a => a.Amplifiers)
         .FirstOrDefaultAsync(a => a.Id == artistId);
 
-    if (artist is null) return NotFound($"Artist {artistId} not found");
+    var amp = await _db.Amplifiers
+        .Include(a => a.Artists)
+        .FirstOrDefaultAsync(a => a.Id == ampId);
 
-    var amp = await _db.Amplifiers.FindAsync(ampId);
+    if (artist is null) return NotFound($"Artist {artistId} not found");
     if (amp is null) return NotFound($"Amp {ampId} not found");
 
-    // prevent duplicates
+    var updated = false;
+
+    // Add amp to artist
     if (!artist.Amplifiers.Any(a => a.Id == ampId))
+    {
         artist.Amplifiers.Add(amp);
+        updated = true;
+    }
+
+    // Add artist to amp
+    if (!amp.Artists.Any(a => a.Id == artistId))
+    {
+        amp.Artists.Add(artist);
+        updated = true;
+    }
+
+    if (!updated)
+        return Conflict("Artist is already linked to this amplifier.");
 
     await _db.SaveChangesAsync();
-
     return Ok(artist.ToDto());
 }
 
+
+
     // -------------------------
-    // Add a guitar to an artist
+    // Add a guitar to an artist (symmetric)
     // -------------------------
     [HttpPost("{artistId}/guitars/{guitarId}")]
     public async Task<IActionResult> AddGuitar(int artistId, int guitarId)
@@ -245,20 +263,121 @@ public async Task<IActionResult> AddAmplifier(int artistId, int ampId)
             .Include(a => a.Guitars)
             .FirstOrDefaultAsync(a => a.Id == artistId);
 
-        if (artist is null) return NotFound($"Artist {artistId} not found");
+        var guitar = await _db.Guitars
+            .Include(g => g.Artists)
+            .FirstOrDefaultAsync(g => g.Id == guitarId);
 
-        var guitar = await _db.Guitars.FindAsync(guitarId);
+        if (artist is null) return NotFound($"Artist {artistId} not found");
         if (guitar is null) return NotFound($"Guitar {guitarId} not found");
 
+        var updated = false;
+
+        // Add guitar to artist
         if (!artist.Guitars.Any(g => g.Id == guitarId))
+        {
             artist.Guitars.Add(guitar);
+            updated = true;
+        }
+
+        // Add artist to guitar
+        if (!guitar.Artists.Any(a => a.Id == artistId))
+        {
+            guitar.Artists.Add(artist);
+            updated = true;
+        }
+
+        if (!updated)
+            return Conflict("Artist is already linked to this guitar.");
 
         await _db.SaveChangesAsync();
-
         return Ok(artist.ToDto());
     }
 
-[HttpPost("{artistId}/bands")]
+// -------------------------
+// Remove an amplifier from an artist (symmetric)
+// -------------------------
+[HttpDelete("{artistId}/amps/{ampId}")]
+public async Task<IActionResult> RemoveAmplifier(int artistId, int ampId)
+{
+    var artist = await _db.Artists
+        .Include(a => a.Amplifiers)
+        .FirstOrDefaultAsync(a => a.Id == artistId);
+
+    var amp = await _db.Amplifiers
+        .Include(a => a.Artists)
+        .FirstOrDefaultAsync(a => a.Id == ampId);
+
+    if (artist is null) return NotFound($"Artist {artistId} not found");
+    if (amp is null) return NotFound($"Amp {ampId} not found");
+
+    var updated = false;
+
+    // Remove amp from artist
+    if (artist.Amplifiers.Any(a => a.Id == ampId))
+    {
+        artist.Amplifiers.Remove(amp);
+        updated = true;
+    }
+
+    // Remove artist from amp
+    if (amp.Artists.Any(a => a.Id == artistId))
+    {
+        amp.Artists.Remove(artist);
+        updated = true;
+    }
+
+    if (!updated)
+        return NotFound("Relation not found.");
+
+    await _db.SaveChangesAsync();
+    return Ok(artist.ToDto());
+}
+
+
+
+// -------------------------
+// Remove a guitar from an artist (symmetric)
+// -------------------------
+[HttpDelete("{artistId}/guitars/{guitarId}")]
+public async Task<IActionResult> RemoveGuitar(int artistId, int guitarId)
+{
+    var artist = await _db.Artists
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == artistId);
+
+    var guitar = await _db.Guitars
+        .Include(g => g.Artists)
+        .FirstOrDefaultAsync(g => g.Id == guitarId);
+
+    if (artist is null) return NotFound($"Artist {artistId} not found");
+    if (guitar is null) return NotFound($"Guitar {guitarId} not found");
+
+    var updated = false;
+
+    // Remove guitar from artist
+    if (artist.Guitars.Any(g => g.Id == guitarId))
+    {
+        artist.Guitars.Remove(guitar);
+        updated = true;
+    }
+
+    // Remove artist from guitar
+    if (guitar.Artists.Any(a => a.Id == artistId))
+    {
+        guitar.Artists.Remove(artist);
+        updated = true;
+    }
+
+    if (!updated)
+        return NotFound("Relation not found.");
+
+    await _db.SaveChangesAsync();
+    return Ok(artist.ToDto());
+}
+
+
+
+    [HttpPost("{artistId}/bands")]
 public async Task<IActionResult> AddBandsToArtist(int artistId, [FromBody] List<string> newBands)
 {
     var artist = await _db.Artists

@@ -53,6 +53,39 @@ export async function fetchAmpById(id: number) {
   return res.json() as Promise<AmplifierDetail>;
 }
 
+// Guitars
+export async function patchGuitar(id: number, guitar: Partial<Guitar>) {
+  const res = await fetch(`${HOSTNAME}/guitars/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(guitar),
+  });
+  if (!res.ok) throw new Error("Failed to patch guitar");
+  return res.json() as Promise<GuitarDetail>;
+}
+
+// Amps
+export async function patchAmp(id: number, amp: Partial<Amplifier>) {
+  const res = await fetch(`${HOSTNAME}/amps/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(amp),
+  });
+  if (!res.ok) throw new Error("Failed to patch amp");
+  return res.json() as Promise<AmplifierDetail>;
+}
+
+// Artists
+export async function patchArtist(id: number, artist: Partial<Artist>) {
+  const res = await fetch(`${HOSTNAME}/artists/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(artist),
+  });
+  if (!res.ok) throw new Error("Failed to patch artist");
+  return res.json() as Promise<ArtistDetail>;
+}
+
 // -------------------------
 // Interfaces
 // -------------------------

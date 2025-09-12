@@ -87,25 +87,95 @@ public class AmplifiersController : ControllerBase
     }
 
     // -------------------------
-// Add an artist to an amplifier
+    // Add an artist to an amplifier
+    // -------------------------
+    [HttpPost("{ampId}/artists/{artistId}")]
+    public async Task<IActionResult> AddArtistToAmp(int ampId, int artistId)
+    {
+        var amp = await _db.Amplifiers
+            .Include(a => a.Artists)
+            .FirstOrDefaultAsync(a => a.Id == ampId);
+
+        if (amp is null) return NotFound($"Amp {ampId} not found");
+
+        var artist = await _db.Artists.FindAsync(artistId);
+        if (artist is null) return NotFound($"Artist {artistId} not found");
+
+        if (!amp.Artists.Any(a => a.Id == artistId))
+            amp.Artists.Add(artist);
+
+        await _db.SaveChangesAsync();
+
+        return Ok(amp.ToDto());
+    }
+    // -------------------------
+// Add a related amp (symmetric)
 // -------------------------
-[HttpPost("{ampId}/artists/{artistId}")]
-public async Task<IActionResult> AddArtistToAmp(int ampId, int artistId)
+[HttpPost("{ampId}/related/{relatedId}")]
+public async Task<IActionResult> AddRelatedAmp(int ampId, int relatedId)
 {
+    if (ampId == relatedId)
+        return BadRequest("An amp cannot be related to itself.");
+
     var amp = await _db.Amplifiers
-        .Include(a => a.Artists)
+        .Include(a => a.RelatedAmplifiers)
         .FirstOrDefaultAsync(a => a.Id == ampId);
 
-    if (amp is null) return NotFound($"Amp {ampId} not found");
+    var related = await _db.Amplifiers
+        .Include(a => a.RelatedAmplifiers)
+        .FirstOrDefaultAsync(a => a.Id == relatedId);
 
-    var artist = await _db.Artists.FindAsync(artistId);
-    if (artist is null) return NotFound($"Artist {artistId} not found");
+    if (amp == null || related == null)
+        return NotFound("Amp or related amp not found.");
 
-    if (!amp.Artists.Any(a => a.Id == artistId))
-        amp.Artists.Add(artist);
+    // Add both directions if missing
+    if (!amp.RelatedAmplifiers.Any(a => a.Id == relatedId))
+        amp.RelatedAmplifiers.Add(related);
+
+    if (!related.RelatedAmplifiers.Any(a => a.Id == ampId))
+        related.RelatedAmplifiers.Add(amp);
 
     await _db.SaveChangesAsync();
+    return Ok(amp.ToDto());
+}
 
+// -------------------------
+// Remove a related amp (symmetric)
+// -------------------------
+[HttpDelete("{ampId}/related/{relatedId}")]
+public async Task<IActionResult> RemoveRelatedAmp(int ampId, int relatedId)
+{
+    var amp = await _db.Amplifiers
+        .Include(a => a.RelatedAmplifiers)
+        .FirstOrDefaultAsync(a => a.Id == ampId);
+
+    var related = await _db.Amplifiers
+        .Include(a => a.RelatedAmplifiers)
+        .FirstOrDefaultAsync(a => a.Id == relatedId);
+
+    if (amp == null || related == null)
+        return NotFound("Amp or related amp not found.");
+
+    // Remove both directions if they exist
+    var removed = false;
+    var relatedFromAmp = amp.RelatedAmplifiers.FirstOrDefault(a => a.Id == relatedId);
+    if (relatedFromAmp != null)
+    {
+        amp.RelatedAmplifiers.Remove(relatedFromAmp);
+        removed = true;
+    }
+
+    var ampFromRelated = related.RelatedAmplifiers.FirstOrDefault(a => a.Id == ampId);
+    if (ampFromRelated != null)
+    {
+        related.RelatedAmplifiers.Remove(ampFromRelated);
+        removed = true;
+    }
+
+    if (!removed)
+        return NotFound("Relation not found.");
+
+    await _db.SaveChangesAsync();
     return Ok(amp.ToDto());
 }
 

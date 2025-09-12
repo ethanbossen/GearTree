@@ -80,9 +80,7 @@ function AmpDetail() {
           {/* Reverb Search */}
           <Button
             component="a"
-            href={`https://reverb.com/marketplace?query=${encodeURIComponent(
-              amp.name
-            )}`}
+            href={reverbSearchUrl}
             target="_blank"
             rel="noopener noreferrer"
             color="dark"

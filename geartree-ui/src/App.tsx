@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import ArtistPage from "./pages/ArtistPage";
 import AmpDetail from "./pages/AmpDetail";
 import GuitarDetail from "./pages/GuitarDetail";
+import Admin from "./pages/Admin";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/guitars" element={<Guitars />} />
           <Route path="/amplifiers" element={<Amplifiers />} />
           <Route path="/" element={<Home />} />
+          <Route path="/Admin" element={<Admin />} />
           <Route path="404" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
