@@ -39,7 +39,7 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
         <p className="text-sm text-gray-600 italic">
           {guitar.yearStart} - {guitar.yearEnd || "Present"}
         </p>
-        <p className="text-gray-700 text-center">{guitar.summary}</p>
+        <p className="text-gray-700 text-center line-clamp-2 min-h-[3rem]">{guitar.summary}</p>
 
       </div>
 

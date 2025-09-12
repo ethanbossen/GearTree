@@ -38,7 +38,7 @@ function AmplifierCarousel({ amplifiers }: AmplifierCarouselProps) {
         <p className="text-sm text-gray-600 italic">
           {amp.yearStart} - {amp.yearEnd || "Present"}
         </p>
-        <p className="text-gray-700 text-center">{amp.summary}</p>
+        <p className="text-gray-700 text-center line-clamp-2 min-h-[3rem]">{amp.summary}</p>
       </div>
 
       {/* Navigation Arrows */}
