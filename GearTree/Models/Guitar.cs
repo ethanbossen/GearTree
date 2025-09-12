@@ -15,4 +15,6 @@ public class Guitar
 
     // Relationship
     public ICollection<Artist> Artists { get; set; } = new List<Artist>();
+public ICollection<Guitar> RelatedGuitars { get; set; } = new List<Guitar>();
+
 }

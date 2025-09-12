@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom"; // ✅ import Link
 import type { Amplifier } from "../api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -26,7 +27,10 @@ function AmplifierCarousel({ amplifiers }: AmplifierCarouselProps) {
   return (
     <div className="relative w-full p-4 group min-w-0">
       {/* Amp Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4 w-full h-full">
+      <Link
+        to={`/amplifiers/${amp.id}`} // ✅ link to amp detail page
+        className="block bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4 w-full h-full hover:shadow-xl transition-shadow"
+      >
         {amp.photoUrl && (
           <img
             src={amp.photoUrl}
@@ -38,8 +42,10 @@ function AmplifierCarousel({ amplifiers }: AmplifierCarouselProps) {
         <p className="text-sm text-gray-600 italic">
           {amp.yearStart} - {amp.yearEnd || "Present"}
         </p>
-        <p className="text-gray-700 text-center line-clamp-2 min-h-[3rem]">{amp.summary}</p>
-      </div>
+        <p className="text-gray-700 text-center line-clamp-2 min-h-[3rem]">
+          {amp.summary}
+        </p>
+      </Link>
 
       {/* Navigation Arrows */}
       {amplifiers.length > 1 && (

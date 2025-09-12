@@ -1,5 +1,6 @@
 // src/components/GuitarCarousel.tsx
 import { useState } from "react";
+import { Link } from "react-router-dom"; // ✅ import Link
 import type { Guitar } from "../api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -27,7 +28,10 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
   return (
     <div className="relative w-full p-4 group min-w-0">
       {/* Guitar Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4 w-full h-full">
+      <Link
+        to={`/guitars/${guitar.id}`} // ✅ link to guitar detail page
+        className="block bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4 w-full h-full hover:shadow-xl transition-shadow"
+      >
         {guitar.photoUrl && (
           <img
             src={guitar.photoUrl}
@@ -35,13 +39,16 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
             className="w-full h-64 object-cover rounded-lg shadow-md"
           />
         )}
-        <h2 className="text-2xl font-bold truncate text-center w-full overflow-hidden">{guitar.name}</h2>
+        <h2 className="text-2xl font-bold truncate text-center w-full overflow-hidden">
+          {guitar.name}
+        </h2>
         <p className="text-sm text-gray-600 italic">
           {guitar.yearStart} - {guitar.yearEnd || "Present"}
         </p>
-        <p className="text-gray-700 text-center line-clamp-2 min-h-[3rem]">{guitar.summary}</p>
-
-      </div>
+        <p className="text-gray-700 text-center line-clamp-2 min-h-[3rem]">
+          {guitar.summary}
+        </p>
+      </Link>
 
       {/* Navigation Arrows */}
       {guitars.length > 1 && (

@@ -17,9 +17,9 @@ public class Amplifier
     public string SpeakerConfiguration { get; set; } = "";
     public string Manufacturer { get; set; } = "";
     public List<string> OtherPhotos { get; set; } = new();
-    public List<string> RelatedAmps { get; set; } = new();
 
 
     // Relationship
     public ICollection<Artist> Artists { get; set; } = new List<Artist>();
+    public ICollection<Amplifier> RelatedAmplifiers { get; set; } = new List<Amplifier>();
 }

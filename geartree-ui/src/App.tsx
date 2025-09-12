@@ -8,6 +8,7 @@ import Amplifiers from "./pages/Amplifiers";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import ArtistPage from "./pages/ArtistPage";
+import AmpDetail from "./pages/AmpDetail";
 
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
         <Routes>
           <Route path="/artists/:id" element={<ArtistPage />} />
           <Route path="/guitars/:id" element={<div>Guitar Detail Page (to be implemented)</div>} />
-          <Route path="/amplifiers/:id" element={<div>Amplifier Detail Page (to be implemented)</div>} />
+          <Route path="/amplifiers/:id" element={<AmpDetail/>} />
           <Route path="/artists" element={<Artists />} />
           <Route path="/guitars" element={<Guitars />} />
           <Route path="/amplifiers" element={<Amplifiers />} />

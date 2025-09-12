@@ -15,16 +15,12 @@ namespace GearTree.Dtos
         public List<AmplifierDto> Amplifiers { get; set; } = new();
         public List<GuitarDto> Guitars { get; set; } = new();
     }
-
-    public class AmplifierBriefDto
+    public class ArtistBriefDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = "";
+        public string? PhotoUrl { get; set; }
+        public string? Summary { get; set; }
     }
 
-    public class GuitarBriefDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = "";
-    }
 }

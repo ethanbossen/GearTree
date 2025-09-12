@@ -92,7 +92,7 @@ export interface Amplifier {
   speakerConfiguration: string;
   manufacturer: string;
   otherPhotos: string[];
-  relatedAmps: string[];
+  relatedAmps: Amplifier[];
 }
 
 
@@ -107,3 +107,34 @@ export interface ArtistDetail extends Artist {
   guitars: Guitar[];
 }
 
+// Amplifiers
+export async function fetchAmpById(id: number) {
+  const res = await fetch(`${HOSTNAME}/amps/${id}`);
+  if (!res.ok) {
+    if (res.status === 404) throw new Error("404: Amp not found");
+    throw new Error(`Failed to fetch amp: ${res.status}`);
+  }
+  return res.json() as Promise<AmplifierDetail>;
+}
+
+// Guitars
+export async function fetchGuitarById(id: number) {
+  const res = await fetch(`${HOSTNAME}/guitars/${id}`);
+  if (!res.ok) {
+    if (res.status === 404) throw new Error("404: Guitar not found");
+    throw new Error(`Failed to fetch guitar: ${res.status}`);
+  }
+  return res.json() as Promise<GuitarDetail>;
+}
+
+// Amp detail view (enriched)
+export interface AmplifierDetail extends Amplifier {
+  artists: Artist[];       // who uses this amp
+  relatedAmpsDetailed: Amplifier[]; // richer than just string[]
+}
+
+// Guitar detail view (enriched)
+export interface GuitarDetail extends Guitar {
+  artists: Artist[];
+  relatedGuitars: Guitar[];
+}

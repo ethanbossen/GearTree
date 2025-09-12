@@ -14,7 +14,17 @@ namespace GearTree.Dtos
         public int? YearEnd { get; set; }
 
         public List<ArtistBriefDto> Artists { get; set; } = new();
+        public List<GuitarBriefDto> RelatedGuitars { get; set; } = new();
     }
 
-
+    public class GuitarBriefDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string? PhotoUrl { get; set; }
+        public string? Summary { get; set; }
+        public string? Type { get; set; }
+        public int YearStart { get; set; }
+        public int? YearEnd { get; set; }
+    }
 }

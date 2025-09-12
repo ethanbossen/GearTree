@@ -24,29 +24,49 @@ namespace GearTree.Dtos
         }
 
         public static AmplifierDto ToDto(this Amplifier amp)
-        {
-            return new AmplifierDto
+{
+    return new AmplifierDto
+    {
+        Id = amp.Id,
+        Name = amp.Name,
+        PhotoUrl = amp.PhotoUrl,
+        Description = amp.Description,
+        Summary = amp.Summary,
+        IsTube = amp.IsTube,
+        GainStructure = amp.GainStructure,
+        YearStart = amp.YearStart,
+        YearEnd = amp.YearEnd,
+        PriceStart = amp.priceStart,
+        PriceEnd = amp.priceEnd,
+        Wattage = amp.Wattage,
+        SpeakerConfiguration = amp.SpeakerConfiguration,
+        Manufacturer = amp.Manufacturer,
+        OtherPhotos = amp.OtherPhotos ?? new List<string>(),
+
+        Artists = (amp.Artists ?? Enumerable.Empty<Artist>())
+            .Select(ar => new ArtistBriefDto
             {
-                Id = amp.Id,
-                Name = amp.Name,
-                PhotoUrl = amp.PhotoUrl,
-                Description = amp.Description,
-                Summary = amp.Summary,
-                IsTube = amp.IsTube,
-                GainStructure = amp.GainStructure,
-                YearStart = amp.YearStart,
-                YearEnd = amp.YearEnd,
-                PriceStart = amp.priceStart,
-                PriceEnd = amp.priceEnd,
-                Wattage = amp.Wattage,
-                SpeakerConfiguration = amp.SpeakerConfiguration,
-                Manufacturer = amp.Manufacturer,
-                OtherPhotos = amp.OtherPhotos ?? new List<string>(),
-                Artists = (amp.Artists ?? Enumerable.Empty<Artist>())
-                    .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name })
-                    .ToList()
-            };
-        }
+                Id = ar.Id,
+                Name = ar.Name,
+                PhotoUrl = ar.PhotoUrl,
+                Summary = ar.Summary
+            })
+            .ToList(),
+
+        RelatedAmps = (amp.RelatedAmplifiers ?? Enumerable.Empty<Amplifier>())
+            .Select(ra => new AmplifierBriefDto
+            {
+                Id = ra.Id,
+                Name = ra.Name,
+                PhotoUrl = ra.PhotoUrl,
+                Summary = ra.Summary,
+                YearStart = ra.YearStart,
+                YearEnd = ra.YearEnd
+            })
+            .ToList()
+    };
+}
+        
 
         public static GuitarDto ToDto(this Guitar g)
         {
@@ -64,7 +84,19 @@ namespace GearTree.Dtos
                 YearEnd = g.YearEnd,
                 Artists = (g.Artists ?? Enumerable.Empty<Artist>())
                     .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name })
-                    .ToList()
+                    .ToList(),
+                RelatedGuitars = (g.RelatedGuitars ?? Enumerable.Empty<Guitar>())
+                    .Select(r => new GuitarBriefDto
+                    {
+                        Id = r.Id,
+                        Name = r.Name,
+                        PhotoUrl = r.PhotoUrl,
+                        Summary = r.Summary,
+                        Type = r.Type,
+                        YearStart = r.YearStart,
+                        YearEnd = r.YearEnd
+                    })
+                    .ToList(),
             };
         }
     }
