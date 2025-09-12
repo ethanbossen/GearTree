@@ -24,9 +24,9 @@ function AmplifierCarousel({ amplifiers }: AmplifierCarouselProps) {
   };
 
   return (
-    <div className="relative w-full max-w-xl mx-auto p-4">
+    <div className="relative w-full p-4 group min-w-0">
       {/* Amp Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4">
+      <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4 w-full h-full">
         {amp.photoUrl && (
           <img
             src={amp.photoUrl}
@@ -34,7 +34,7 @@ function AmplifierCarousel({ amplifiers }: AmplifierCarouselProps) {
             className="w-full h-64 object-cover rounded-lg shadow-md"
           />
         )}
-        <h2 className="text-2xl font-bold">{amp.name}</h2>
+        <h2 className="text-2xl font-bold w-full overflow-hidden">{amp.name}</h2>
         <p className="text-sm text-gray-600 italic">
           {amp.yearStart} - {amp.yearEnd || "Present"}
         </p>
@@ -46,13 +46,17 @@ function AmplifierCarousel({ amplifiers }: AmplifierCarouselProps) {
         <>
           <button
             onClick={prevAmp}
-            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow hover:bg-gray-700"
+            className="absolute top-1/2 left-2 transform -translate-y-1/2 
+              bg-gray-800 text-white p-2 rounded-full shadow hover:bg-gray-700
+              opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={nextAmp}
-            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow hover:bg-gray-700"
+            className="absolute top-1/2 right-2 transform -translate-y-1/2 
+              bg-gray-800 text-white p-2 rounded-full shadow hover:bg-gray-700
+              opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
           >
             <ChevronRight size={24} />
           </button>

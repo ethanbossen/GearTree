@@ -47,22 +47,23 @@ function ArtistPage() {
       <p className="text-gray-800 leading-relaxed whitespace-pre-line">
         {artist.description}
       </p>
-       {/* Guitars */}
-      {artist.guitars.length > 0 && (
-        <div>
-          <h2 className="text-3xl font-semibold mt-10 mb-4">Guitars</h2>
-          <GuitarCarousel guitars={artist.guitars} />
-        </div>
-      )}
+<div className="flex flex-col md:flex-row md:divide-x md:divide-[var(--brand-purple)]">
+  {/* Guitars */}
+  {artist.guitars.length > 0 && (
+    <div className="basis-1/2 w-full min-w-0 md:pr-6">
+      <h2 className="text-3xl text-black font-semibold mt-10 mb-4">Guitars:</h2>
+      <GuitarCarousel guitars={artist.guitars} />
+    </div>
+  )}
 
-      {/* Amplifiers */}
-      {artist.amplifiers.length > 0 && (
-        <div>
-           <h2 className="text-3xl font-semibold mt-10 mb-4">Amplifiers</h2>
-           <AmplifierCarousel amplifiers={artist.amplifiers} />
-        </div>
-      )}
-      
+  {/* Amplifiers */}
+  {artist.amplifiers.length > 0 && (
+    <div className="basis-1/2 w-full min-w-0 md:pl-6">
+      <h2 className="text-3xl text-black font-semibold mt-10 mb-4">Amplifiers:</h2>
+      <AmplifierCarousel amplifiers={artist.amplifiers} />
+    </div>
+  )}
+</div>
     </div>
   );
 }

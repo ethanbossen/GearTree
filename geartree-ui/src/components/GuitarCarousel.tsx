@@ -25,9 +25,9 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
   };
 
   return (
-    <div className="relative w-full max-w-xl mx-auto p-4">
+    <div className="relative w-full p-4 group min-w-0">
       {/* Guitar Card */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4">
+      <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4 w-full h-full">
         {guitar.photoUrl && (
           <img
             src={guitar.photoUrl}
@@ -35,21 +35,12 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
             className="w-full h-64 object-cover rounded-lg shadow-md"
           />
         )}
-        <h2 className="text-2xl font-bold">{guitar.name}</h2>
+        <h2 className="text-2xl font-bold truncate text-center w-full overflow-hidden">{guitar.name}</h2>
         <p className="text-sm text-gray-600 italic">
           {guitar.yearStart} - {guitar.yearEnd || "Present"}
         </p>
         <p className="text-gray-700 text-center">{guitar.summary}</p>
 
-        {/* Optional details */}
-        {guitar.type && (
-          <p className="text-sm text-gray-500">Type: {guitar.type}</p>
-        )}
-        {guitar.genres && guitar.genres.length > 0 && (
-          <p className="text-sm text-gray-500">
-            Genres: {guitar.genres.join(", ")}
-          </p>
-        )}
       </div>
 
       {/* Navigation Arrows */}
@@ -57,13 +48,17 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
         <>
           <button
             onClick={prevGuitar}
-            className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow hover:bg-gray-700"
+            className="absolute top-1/2 left-2 transform -translate-y-1/2 
+              bg-gray-800 text-white p-2 rounded-full shadow hover:bg-gray-700
+              opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
           >
             <ChevronLeft size={24} />
           </button>
           <button
             onClick={nextGuitar}
-            className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow hover:bg-gray-700"
+            className="absolute top-1/2 right-2 transform -translate-y-1/2 
+              bg-gray-800 text-white p-2 rounded-full shadow hover:bg-gray-700
+              opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
           >
             <ChevronRight size={24} />
           </button>
