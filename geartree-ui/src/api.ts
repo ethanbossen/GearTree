@@ -2,89 +2,103 @@
 const HOSTNAME = "http://localhost:5262";
 
 // -------------------------
-// Fetchers
+// Generic helpers
 // -------------------------
+async function fetchJson<T>(
+  url: string,
+  options?: RequestInit,
+  notFoundMsg?: string
+): Promise<T> {
+  const res = await fetch(url, options);
+  if (!res.ok) {
+    if (res.status === 404 && notFoundMsg) throw new Error(notFoundMsg);
+    throw new Error(`${res.status}: ${res.statusText}`);
+  }
+  return res.json() as Promise<T>;
+}
 
+function jsonOptions(method: string, body?: any): RequestInit {
+  return {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  };
+}
+
+// -------------------------
 // Artists
-export async function fetchArtists() {
-  const res = await fetch(`${HOSTNAME}/artists`);
-  if (!res.ok) throw new Error("Failed to fetch artists");
-  return res.json() as Promise<Artist[]>; // list view
-}
+// -------------------------
+export const Artists = {
+  list: () => fetchJson<Artist[]>(`${HOSTNAME}/artists`),
+  get: (id: number) =>
+    fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${id}`, undefined, "404: Artist not found"),
+  create: (artist: Partial<Artist>) =>
+    fetchJson<ArtistDetail>(`${HOSTNAME}/artists`, jsonOptions("POST", artist)),
+  patch: (id: number, artist: Partial<Artist>) =>
+    fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${id}`, jsonOptions("PATCH", artist)),
+  delete: (id: number) =>
+    fetchJson<void>(`${HOSTNAME}/artists/${id}`, { method: "DELETE" }),
 
-export async function fetchArtistById(id: number) {
-  const res = await fetch(`${HOSTNAME}/artists/${id}`);
-  if (!res.ok) {
-    if (res.status === 404) throw new Error("404: Artist not found");
-    throw new Error(`Failed to fetch artist: ${res.status}`);
-  }
-  return res.json() as Promise<ArtistDetail>;
-}
+  // Relations
+  addGuitar: (artistId: number, guitarId: number) =>
+    fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${artistId}/guitars/${guitarId}`, { method: "POST" }),
+  removeGuitar: (artistId: number, guitarId: number) =>
+    fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${artistId}/guitars/${guitarId}`, { method: "DELETE" }),
 
+  addAmp: (artistId: number, ampId: number) =>
+    fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${artistId}/amps/${ampId}`, { method: "POST" }),
+  removeAmp: (artistId: number, ampId: number) =>
+    fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${artistId}/amps/${ampId}`, { method: "DELETE" }),
+};
+
+// -------------------------
 // Guitars
-export async function fetchGuitars() {
-  const res = await fetch(`${HOSTNAME}/guitars`);
-  if (!res.ok) throw new Error("Failed to fetch guitars");
-  return res.json() as Promise<Guitar[]>; // list view only returns brief
-}
+// -------------------------
+export const Guitars = {
+  list: () => fetchJson<Guitar[]>(`${HOSTNAME}/guitars`),
+  get: (id: number) =>
+    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}`, undefined, "404: Guitar not found"),
+  create: (guitar: Partial<Guitar>) =>
+    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars`, jsonOptions("POST", guitar)),
+  patch: (id: number, guitar: Partial<Guitar>) =>
+    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}`, jsonOptions("PATCH", guitar)),
+  delete: (id: number) =>
+    fetchJson<void>(`${HOSTNAME}/guitars/${id}`, { method: "DELETE" }),
 
-export async function fetchGuitarById(id: number) {
-  const res = await fetch(`${HOSTNAME}/guitars/${id}`);
-  if (!res.ok) {
-    if (res.status === 404) throw new Error("404: Guitar not found");
-    throw new Error(`Failed to fetch guitar: ${res.status}`);
-  }
-  return res.json() as Promise<GuitarDetail>;
-}
+  // Relations
+  addRelated: (id: number, relatedId: number) =>
+    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}/related/${relatedId}`, { method: "POST" }),
+  removeRelated: (id: number, relatedId: number) =>
+    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}/related/${relatedId}`, { method: "DELETE" }),
+};
 
+// -------------------------
 // Amps
-export async function fetchAmps() {
-  const res = await fetch(`${HOSTNAME}/amps`);
-  if (!res.ok) throw new Error("Failed to fetch amps");
-  return res.json() as Promise<Amplifier[]>; // list view only returns brief
-}
+// -------------------------
+export const Amps = {
+  list: () => fetchJson<Amplifier[]>(`${HOSTNAME}/amps`),
+  get: (id: number) =>
+    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}`, undefined, "404: Amp not found"),
+  create: (amp: Partial<Amplifier>) =>
+    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps`, jsonOptions("POST", amp)),
+  patch: (id: number, amp: Partial<Amplifier>) =>
+    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}`, jsonOptions("PATCH", amp)),
+  delete: (id: number) =>
+    fetchJson<void>(`${HOSTNAME}/amps/${id}`, { method: "DELETE" }),
 
-export async function fetchAmpById(id: number) {
-  const res = await fetch(`${HOSTNAME}/amps/${id}`);
-  if (!res.ok) {
-    if (res.status === 404) throw new Error("404: Amp not found");
-    throw new Error(`Failed to fetch amp: ${res.status}`);
-  }
-  return res.json() as Promise<AmplifierDetail>;
-}
+  // Relations
+  addRelated: (id: number, relatedId: number) =>
+    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}/related/${relatedId}`, { method: "POST" }),
+  removeRelated: (id: number, relatedId: number) =>
+    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}/related/${relatedId}`, { method: "DELETE" }),
+};
 
-// Guitars
-export async function patchGuitar(id: number, guitar: Partial<Guitar>) {
-  const res = await fetch(`${HOSTNAME}/guitars/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(guitar),
-  });
-  if (!res.ok) throw new Error("Failed to patch guitar");
-  return res.json() as Promise<GuitarDetail>;
-}
+// -------------------------
+// Interfaces (same as before)
+// -------------------------
+// ... keep your ArtistBrief, GuitarBrief, AmplifierBrief, Artist, Guitar, Amplifier,
+// ArtistDetail, GuitarDetail, AmplifierDetail here unchanged
 
-// Amps
-export async function patchAmp(id: number, amp: Partial<Amplifier>) {
-  const res = await fetch(`${HOSTNAME}/amps/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(amp),
-  });
-  if (!res.ok) throw new Error("Failed to patch amp");
-  return res.json() as Promise<AmplifierDetail>;
-}
-
-// Artists
-export async function patchArtist(id: number, artist: Partial<Artist>) {
-  const res = await fetch(`${HOSTNAME}/artists/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(artist),
-  });
-  if (!res.ok) throw new Error("Failed to patch artist");
-  return res.json() as Promise<ArtistDetail>;
-}
 
 // -------------------------
 // Interfaces

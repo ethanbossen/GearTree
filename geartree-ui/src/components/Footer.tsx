@@ -4,7 +4,7 @@ import { Container, Group, Text, Stack } from "@mantine/core";
 import { Link } from "react-router-dom";
 import geartreeLogo from "../assets/GearTreeLogo.svg";
 import classes from "./Footer.module.css";
-import { fetchArtists, fetchGuitars, fetchAmps } from "../api";
+import { Artists, Guitars, Amps } from "../api";
 
 export default function Footer() {
   const [artists, setArtists] = useState<any[]>([]);
@@ -12,9 +12,9 @@ export default function Footer() {
   const [amps, setAmps] = useState<any[]>([]);
 
   useEffect(() => {
-    fetchArtists().then(setArtists).catch(console.error);
-    fetchGuitars().then(setGuitars).catch(console.error);
-    fetchAmps().then(setAmps).catch(console.error);
+    Artists.list().then(setArtists).catch(console.error);
+    Guitars.list().then(setGuitars).catch(console.error);
+    Amps.list().then(setAmps).catch(console.error);
   }, []);
 
   return (

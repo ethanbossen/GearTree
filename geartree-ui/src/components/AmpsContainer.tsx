@@ -1,6 +1,6 @@
 // src/components/AmpsContainer.tsx
 import { useEffect, useState } from "react";
-import { fetchAmps } from "../api";
+import { Amps } from "../api";
 import type { AmplifierBrief } from "../api";
 import AmpCard from "./AmpCard";
 
@@ -8,7 +8,7 @@ function AmpsContainer() {
   const [amps, setAmps] = useState<AmplifierBrief[]>([]);
 
   useEffect(() => {
-    fetchAmps().then((data) => {
+    Amps.list().then((data) => {
       // Just grab the first 2
       setAmps(data.slice(0, 4));
     });

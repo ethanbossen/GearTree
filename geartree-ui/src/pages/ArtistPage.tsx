@@ -1,7 +1,7 @@
 // src/pages/ArtistPage.tsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchArtistById } from "../api";
+import { Artists } from "../api";
 import type { ArtistDetail } from "../api";
 import AmplifierCarousel from "../components/AmplifierCarousel";
 import GuitarCarousel from "../components/GuitarCarousel";
@@ -15,7 +15,7 @@ function ArtistPage() {
   useEffect(() => {
    async function loadArtist() {
       try {
-        const data = await fetchArtistById(Number(id));
+        const data = await Artists.get(Number(id));
         setArtist(data);
       } catch (err: any) {
         if (err.message.includes("404")) {

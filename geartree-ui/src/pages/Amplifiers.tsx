@@ -1,6 +1,6 @@
 // src/pages/Amplifiers.tsx
 import { useEffect, useState } from "react";
-import { fetchAmps } from "../api";
+import { Amps } from "../api";
 import type { Amplifier } from "../api";
 import AmpCardDetailed from "../components/AmpCardDetailed";
 import { Button, Collapse, Select, MultiSelect, Checkbox } from "@mantine/core";
@@ -19,7 +19,7 @@ function Amplifiers() {
   const [wattageRange, setWattageRange] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchAmps().then(setAmps).catch(console.error);
+    Amps.list().then(setAmps).catch(console.error);
   }, []);
 
   // Unique lists for filter dropdowns

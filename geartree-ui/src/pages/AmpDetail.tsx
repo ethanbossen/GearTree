@@ -1,7 +1,7 @@
 // src/pages/AmpDetail.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchAmpById } from "../api";
+import { Amps} from "../api";
 import type { Amplifier } from "../api";
 import { Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
 import AmpCard from "../components/AmpCard";
@@ -15,7 +15,7 @@ function AmpDetail() {
 
   useEffect(() => {
     if (!id) return;
-    fetchAmpById(Number(id))
+    Amps.get(Number(id))
       .then((data) => setAmp(data))
       .catch(console.error)
       .finally(() => setLoading(false));

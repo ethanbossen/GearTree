@@ -1,22 +1,22 @@
 // src/pages/GuitarDetail.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchGuitarById } from "../api";
-import type { Guitar } from "../api";
+import { Guitars } from "../api";  // ✅ use new namespace
+import type { GuitarDetail } from "../api"; // ✅ use the detail type
 import { Button, Loader } from "@mantine/core";
 import CardGridContainer from "../components/CardGridContainer";
 import GuitarCard from "../components/GuitarCard";
 import ArtistCard from "../components/ArtistCard";
 
-function GuitarDetail() {
+function GuitarDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [guitar, setGuitar] = useState<Guitar | null>(null);
+  const [guitar, setGuitar] = useState<GuitarDetail | null>(null); // ✅ correct type
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
-    fetchGuitarById(Number(id))
+    Guitars.get(Number(id)) // ✅ updated
       .then((data) => {
         setGuitar(data);
         setLoading(false);
@@ -127,4 +127,4 @@ function GuitarDetail() {
   );
 }
 
-export default GuitarDetail;
+export default GuitarDetailPage;

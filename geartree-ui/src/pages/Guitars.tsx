@@ -1,12 +1,12 @@
 // src/pages/Guitars.tsx
 import { useEffect, useState } from "react";
-import { fetchGuitars } from "../api";
+import { Guitars as GuitarsAPI } from "../api";              // ✅ use the new namespace
 import type { Guitar } from "../api";
 import GuitarCard from "../components/GuitarCard";
 import { Button, Collapse, MultiSelect, Select } from "@mantine/core";
 
 function Guitars() {
-  const [guitars, setGuitars] = useState<Guitar[]>([]);
+  const [guitars, setGuitars] = useState<Guitar[]>([]); // ✅ use brief type
   const [search, setSearch] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -21,7 +21,9 @@ function Guitars() {
   const [visibleCount, setVisibleCount] = useState(9);
 
   useEffect(() => {
-    fetchGuitars().then(setGuitars).catch(console.error);
+    GuitarsAPI.list()                // ✅ updated
+      .then(setGuitars)
+      .catch(console.error);
   }, []);
 
   // Collect genres and pickups dynamically
@@ -69,7 +71,7 @@ function Guitars() {
     <div className="px-8 max-w-7xl mx-auto">
       {/* Intro Section */}
       <section className="mb-10">
-        <h1 className="text-4xl font-bold mb-4">Explore Guitars</h1>
+      
         <p className="text-lg text-gray-700 mb-4">
           Guitars are the heart and soul of modern music, capable of shaping
           everything from delicate melodies to walls of sound. More than just an

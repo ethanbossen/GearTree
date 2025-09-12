@@ -1,11 +1,11 @@
 // src/pages/Artists.tsx
 import { useEffect, useState } from "react";
-import { fetchArtists } from "../api";
+import { Artists } from "../api";
 import type { Artist } from "../api";
 import ArtistCard from "../components/ArtistCard";
 import { Button, Collapse, Select } from "@mantine/core";
 
-function Artists() {
+function AllArtistsPage() {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [search, setSearch] = useState("");
   const [bandFilter, setBandFilter] = useState("all");
@@ -15,7 +15,7 @@ function Artists() {
   const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
-    fetchArtists()
+    Artists.list()
       .then((data) => setArtists(data))
       .catch(console.error);
   }, []);
@@ -152,4 +152,4 @@ function Artists() {
   );
 }
 
-export default Artists;
+export default AllArtistsPage;

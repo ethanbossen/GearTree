@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import shuffleIcon from "../assets/arrows-shuffle.svg";
 import mastodonStudio from "../assets/MastodonStudio2.png";
-import { fetchArtists } from "../api";
+import { Artists } from "../api";
 import type { Artist } from "../api";
 
 export function LandingSection() {
@@ -10,7 +10,7 @@ export function LandingSection() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchArtists().then((artists: Artist[]) => {
+    Artists.list().then((artists: Artist[]) => {
       setArtistIds(artists.map((a) => a.id));
     });
   }, []);

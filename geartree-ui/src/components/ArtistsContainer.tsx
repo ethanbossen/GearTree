@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchArtists } from "../api";
+import { Artists } from "../api";
 import type { Artist } from "../api";
 import ArtistCard from "./ArtistCard";
 
@@ -7,7 +7,7 @@ function ArtistsContainer() {
   const [artists, setArtists] = useState<Artist[]>([]);
 
   useEffect(() => {
-    fetchArtists().then((data) => {
+    Artists.list().then((data) => {
       // Just grab the first 3 for now
       setArtists(data.slice(0, 3));
     });

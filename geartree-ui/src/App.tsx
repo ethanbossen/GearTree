@@ -2,15 +2,15 @@
 import { Routes, Route } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
-import Artists from "./pages/Artists";
 import Guitars from "./pages/Guitars";
 import Amplifiers from "./pages/Amplifiers";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import ArtistPage from "./pages/ArtistPage";
 import AmpDetail from "./pages/AmpDetail";
-import GuitarDetail from "./pages/GuitarDetail";
+import GuitarDetailPage from "./pages/GuitarDetailPage";
 import Admin from "./pages/Admin";
+import AllArtistsPage from "./pages/AllArtistsPage";
 
 
 function App() {
@@ -20,9 +20,9 @@ function App() {
       <main className="page-content">
         <Routes>
           <Route path="/artists/:id" element={<ArtistPage />} />
-          <Route path="/guitars/:id" element={<GuitarDetail />} />
+          <Route path="/guitars/:id" element={<GuitarDetailPage />} />
           <Route path="/amplifiers/:id" element={<AmpDetail/>} />
-          <Route path="/artists" element={<Artists />} />
+          <Route path="/artists" element={<AllArtistsPage />} />
           <Route path="/guitars" element={<Guitars />} />
           <Route path="/amplifiers" element={<Amplifiers />} />
           <Route path="/" element={<Home />} />
