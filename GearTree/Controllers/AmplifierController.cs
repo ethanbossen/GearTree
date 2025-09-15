@@ -121,6 +121,12 @@ public async Task<IActionResult> Create([FromBody] UpdateAmplifierDto dto)
         amp.IsTube = dto.IsTube ?? amp.IsTube;
         amp.YearStart = dto.YearStart != 0 ? dto.YearStart : amp.YearStart;
         amp.YearEnd = dto.YearEnd ?? amp.YearEnd;
+        amp.priceStart = dto.PriceStart ?? amp.priceStart;
+        amp.priceEnd = dto.PriceEnd ?? amp.priceEnd;
+        amp.Wattage = dto.Wattage ?? amp.Wattage;
+        amp.SpeakerConfiguration = dto.SpeakerConfiguration ?? amp.SpeakerConfiguration;
+        amp.Manufacturer = dto.Manufacturer ?? amp.Manufacturer;
+        amp.OtherPhotos = dto.OtherPhotos ?? amp.OtherPhotos;
 
         // Update artists
         if (dto.ArtistIds != null)
@@ -172,14 +178,28 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto
         amp.YearEnd = dto.YearEnd ?? amp.YearEnd;
 
     amp.IsTube = dto.IsTube ?? amp.IsTube;
+    
+    if (dto.PriceStart != null)
+        amp.priceStart = dto.PriceStart ?? amp.priceStart;
+    if (dto.PriceEnd != null)
+        amp.priceEnd = dto.PriceEnd ?? amp.priceEnd;
+    if (dto.Wattage != null)
+        amp.Wattage = dto.Wattage ?? amp.Wattage;
+    if (!string.IsNullOrEmpty(dto.SpeakerConfiguration))
+        amp.SpeakerConfiguration = dto.SpeakerConfiguration;
+    if (!string.IsNullOrEmpty(dto.Manufacturer))
+        amp.Manufacturer = dto.Manufacturer;
+    if (dto.OtherPhotos != null)
+        amp.OtherPhotos = dto.OtherPhotos;
+    
 
     // Optionally update relations if provided
-    if (dto.ArtistIds != null)
-    {
-        amp.Artists = await _db.Artists
-            .Where(a => dto.ArtistIds.Contains(a.Id))
-            .ToListAsync();
-    }
+        if (dto.ArtistIds != null)
+        {
+            amp.Artists = await _db.Artists
+                .Where(a => dto.ArtistIds.Contains(a.Id))
+                .ToListAsync();
+        }
 
     if (dto.RelatedIds != null)
     {

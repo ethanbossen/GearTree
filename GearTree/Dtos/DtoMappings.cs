@@ -83,7 +83,7 @@ namespace GearTree.Dtos
                 YearStart = g.YearStart,
                 YearEnd = g.YearEnd,
                 Artists = (g.Artists ?? Enumerable.Empty<Artist>())
-                    .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name })
+                    .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name, PhotoUrl = ar.PhotoUrl, Summary = ar.Summary })
                     .ToList(),
                 RelatedGuitars = (g.RelatedGuitars ?? Enumerable.Empty<Guitar>())
                     .Select(r => new GuitarBriefDto
