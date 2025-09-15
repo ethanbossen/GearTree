@@ -212,7 +212,7 @@ function Admin() {
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2 font-medium rounded-t-lg ${
               activeTab === tab.key
-                ? 'bg-blue-600 text-white'
+                ? 'text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
@@ -221,7 +221,7 @@ function Admin() {
         ))}
       </div>
 
-      {loading && <p className="text-blue-600">Loading...</p>}
+      {loading && <p className="">Loading...</p>}
 
       {/* Guitar Tab */}
       {activeTab === 'guitars' && (
@@ -342,7 +342,7 @@ function Admin() {
               <button
                 onClick={handleSaveGuitar}
                 disabled={saving}
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300"
+                className=" text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300"
               >
                 {saving ? "Saving..." : "Save Guitar"}
               </button>

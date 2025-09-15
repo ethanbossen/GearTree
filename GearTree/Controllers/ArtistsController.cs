@@ -49,26 +49,36 @@ public class ArtistsController : ControllerBase
     // CREATE (POST)
     // -------------------------
     [HttpPost]
-    public async Task<IActionResult> Create(Artist artist)
+    public async Task<IActionResult> Create(UpdateArtistDto dto)
     {
-        if (await _db.Artists.AnyAsync(a => a.Name == artist.Name))
-            return Conflict($"An artist with the name '{artist.Name}' already exists.");
+        if (await _db.Artists.AnyAsync(a => a.Name == dto.Name))
+            return Conflict($"An artist with the name '{dto.Name}' already exists.");
+
+        var artist = new Artist
+        {
+            Name = dto.Name!,
+            PhotoUrl = dto.PhotoUrl ?? "",
+            HeroPhotoUrl = dto.HeroPhotoUrl ?? "",
+            Tagline = dto.Tagline ?? "",
+            Description = dto.Description ?? "",
+            Summary = dto.Summary ?? "",
+            Bands = dto.Bands ?? new List<string>(),
+            OtherPhotos = dto.OtherPhotos ?? new List<string>()
+        };
 
         // Resolve amps
-        if (artist.Amplifiers != null && artist.Amplifiers.Any())
+        if (dto.AmplifierIds != null && dto.AmplifierIds.Any())
         {
-            var ampIds = artist.Amplifiers.Select(a => a.Id).ToList();
             artist.Amplifiers = await _db.Amplifiers
-                .Where(a => ampIds.Contains(a.Id))
+                .Where(a => dto.AmplifierIds.Contains(a.Id))
                 .ToListAsync();
         }
 
         // Resolve guitars
-        if (artist.Guitars != null && artist.Guitars.Any())
+        if (dto.GuitarIds != null && dto.GuitarIds.Any())
         {
-            var guitarIds = artist.Guitars.Select(g => g.Id).ToList();
             artist.Guitars = await _db.Guitars
-                .Where(g => guitarIds.Contains(g.Id))
+                .Where(g => dto.GuitarIds.Contains(g.Id))
                 .ToListAsync();
         }
 
@@ -87,7 +97,7 @@ public class ArtistsController : ControllerBase
     // UPDATE (PUT)
     // -------------------------
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, Artist updatedArtist)
+    public async Task<IActionResult> Update(int id, UpdateArtistDto dto)
     {
         var artist = await _db.Artists
             .Include(a => a.Amplifiers)
@@ -97,39 +107,37 @@ public class ArtistsController : ControllerBase
         if (artist is null) return NotFound();
 
         // Scalars
-        artist.Name = string.IsNullOrWhiteSpace(updatedArtist.Name) ? artist.Name : updatedArtist.Name;
-        artist.PhotoUrl = string.IsNullOrWhiteSpace(updatedArtist.PhotoUrl) ? artist.PhotoUrl : updatedArtist.PhotoUrl;
-        artist.HeroPhotoUrl = string.IsNullOrWhiteSpace(updatedArtist.HeroPhotoUrl) ? artist.HeroPhotoUrl : updatedArtist.HeroPhotoUrl;
-        artist.Tagline = string.IsNullOrWhiteSpace(updatedArtist.Tagline) ? artist.Tagline : updatedArtist.Tagline;
-        artist.Description = string.IsNullOrWhiteSpace(updatedArtist.Description) ? artist.Description : updatedArtist.Description;
-        artist.Summary = string.IsNullOrWhiteSpace(updatedArtist.Summary) ? artist.Summary : updatedArtist.Summary;
+        artist.Name = dto.Name ?? artist.Name;
+        artist.PhotoUrl = dto.PhotoUrl ?? artist.PhotoUrl;
+        artist.HeroPhotoUrl = dto.HeroPhotoUrl ?? artist.HeroPhotoUrl;
+        artist.Tagline = dto.Tagline ?? artist.Tagline;
+        artist.Description = dto.Description ?? artist.Description;
+        artist.Summary = dto.Summary ?? artist.Summary;
+        artist.Bands = dto.Bands ?? artist.Bands;
+        artist.OtherPhotos = dto.OtherPhotos ?? artist.OtherPhotos;
 
-        if (updatedArtist.Bands != null)
-            artist.Bands = updatedArtist.Bands;
-
-        if (updatedArtist.OtherPhotos != null)
-            artist.OtherPhotos = updatedArtist.OtherPhotos;
-
-        // Replace amps
-        if (updatedArtist.Amplifiers != null)
+        // Amplifiers
+        if (dto.AmplifierIds != null)
         {
             artist.Amplifiers.Clear();
-            if (updatedArtist.Amplifiers.Any())
+            if (dto.AmplifierIds.Any())
             {
-                var ampIds = updatedArtist.Amplifiers.Select(a => a.Id).ToList();
-                var amps = await _db.Amplifiers.Where(a => ampIds.Contains(a.Id)).ToListAsync();
+                var amps = await _db.Amplifiers
+                    .Where(a => dto.AmplifierIds.Contains(a.Id))
+                    .ToListAsync();
                 artist.Amplifiers = amps;
             }
         }
 
-        // Replace guitars
-        if (updatedArtist.Guitars != null)
+        // Guitars
+        if (dto.GuitarIds != null)
         {
             artist.Guitars.Clear();
-            if (updatedArtist.Guitars.Any())
+            if (dto.GuitarIds.Any())
             {
-                var guitarIds = updatedArtist.Guitars.Select(g => g.Id).ToList();
-                var guitars = await _db.Guitars.Where(g => guitarIds.Contains(g.Id)).ToListAsync();
+                var guitars = await _db.Guitars
+                    .Where(g => dto.GuitarIds.Contains(g.Id))
+                    .ToListAsync();
                 artist.Guitars = guitars;
             }
         }
@@ -148,7 +156,7 @@ public class ArtistsController : ControllerBase
     // PARTIAL UPDATE (PATCH)
     // -------------------------
     [HttpPatch("{id}")]
-    public async Task<IActionResult> Patch(int id, Artist patchData)
+    public async Task<IActionResult> Patch(int id, UpdateArtistDto dto)
     {
         var artist = await _db.Artists
             .Include(a => a.Amplifiers)
@@ -158,45 +166,37 @@ public class ArtistsController : ControllerBase
         if (artist is null) return NotFound();
 
         // Scalars
-        if (!string.IsNullOrWhiteSpace(patchData.Name))
-            artist.Name = patchData.Name;
-        if (!string.IsNullOrWhiteSpace(patchData.PhotoUrl))
-            artist.PhotoUrl = patchData.PhotoUrl;
-        if (!string.IsNullOrWhiteSpace(patchData.HeroPhotoUrl))
-            artist.HeroPhotoUrl = patchData.HeroPhotoUrl;
-        if (!string.IsNullOrWhiteSpace(patchData.Tagline))
-            artist.Tagline = patchData.Tagline;
-        if (!string.IsNullOrWhiteSpace(patchData.Description))
-            artist.Description = patchData.Description;
-        if (!string.IsNullOrWhiteSpace(patchData.Summary))
-            artist.Summary = patchData.Summary;
+        if (!string.IsNullOrWhiteSpace(dto.Name)) artist.Name = dto.Name;
+        if (!string.IsNullOrWhiteSpace(dto.PhotoUrl)) artist.PhotoUrl = dto.PhotoUrl;
+        if (!string.IsNullOrWhiteSpace(dto.HeroPhotoUrl)) artist.HeroPhotoUrl = dto.HeroPhotoUrl;
+        if (!string.IsNullOrWhiteSpace(dto.Tagline)) artist.Tagline = dto.Tagline;
+        if (!string.IsNullOrWhiteSpace(dto.Description)) artist.Description = dto.Description;
+        if (!string.IsNullOrWhiteSpace(dto.Summary)) artist.Summary = dto.Summary;
+        if (dto.Bands != null) artist.Bands = dto.Bands;
+        if (dto.OtherPhotos != null) artist.OtherPhotos = dto.OtherPhotos;
 
-        if (patchData.Bands != null)
-            artist.Bands = patchData.Bands;
-
-        if (patchData.OtherPhotos != null)
-            artist.OtherPhotos = patchData.OtherPhotos;
-
-        // Amps
-        if (patchData.Amplifiers != null)
+        // Amplifiers
+        if (dto.AmplifierIds != null)
         {
             artist.Amplifiers.Clear();
-            if (patchData.Amplifiers.Any())
+            if (dto.AmplifierIds.Any())
             {
-                var ampIds = patchData.Amplifiers.Select(a => a.Id).ToList();
-                var amps = await _db.Amplifiers.Where(a => ampIds.Contains(a.Id)).ToListAsync();
+                var amps = await _db.Amplifiers
+                    .Where(a => dto.AmplifierIds.Contains(a.Id))
+                    .ToListAsync();
                 artist.Amplifiers = amps;
             }
         }
 
         // Guitars
-        if (patchData.Guitars != null)
+        if (dto.GuitarIds != null)
         {
             artist.Guitars.Clear();
-            if (patchData.Guitars.Any())
+            if (dto.GuitarIds.Any())
             {
-                var guitarIds = patchData.Guitars.Select(g => g.Id).ToList();
-                var guitars = await _db.Guitars.Where(g => guitarIds.Contains(g.Id)).ToListAsync();
+                var guitars = await _db.Guitars
+                    .Where(g => dto.GuitarIds.Contains(g.Id))
+                    .ToListAsync();
                 artist.Guitars = guitars;
             }
         }
@@ -410,8 +410,6 @@ public async Task<IActionResult> AddBandsToArtist(int artistId, [FromBody] List<
 
     return Ok(artist.ToDto());
 }
-
-
 
     // -------------------------
     // DELETE
