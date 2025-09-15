@@ -1,14 +1,31 @@
 // src/pages/Admin.tsx
 import { useEffect, useState } from "react";
 import {
+  Container,
+  Title,
+  Tabs,
+  Select,
+  TextInput,
+  Textarea,
+  NumberInput,
+  Checkbox,
+  MultiSelect,
+  Button,
+  Group,
+  Stack,
+  Grid,
+  LoadingOverlay,
+} from "@mantine/core";
+import { notifications } from '@mantine/notifications';
+
+import { useForm,  } from "@mantine/form";
+import {
   Guitars,
   Artists,
   Amps,
-  type Guitar,
-  type Artist,
-  type Amplifier,
   type ArtistBrief,
   type AmplifierBrief,
+  type GuitarBrief,
 } from "../api";
 
 type TabType = 'guitars' | 'artists' | 'amplifiers';
@@ -17,721 +34,881 @@ function Admin() {
   const [activeTab, setActiveTab] = useState<TabType>('guitars');
   
   // Data lists
-  const [guitars, setGuitars] = useState<Guitar[]>([]);
+  const [guitars, setGuitars] = useState<GuitarBrief[]>([]);
   const [artists, setArtists] = useState<ArtistBrief[]>([]);
   const [amps, setAmps] = useState<AmplifierBrief[]>([]);
   
   // Selected items
-  const [selectedGuitarId, setSelectedGuitarId] = useState<number | null>(null);
-  const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
-  const [selectedAmpId, setSelectedAmpId] = useState<number | null>(null);
-  
-  // Current editing items
-  const [currentGuitar, setCurrentGuitar] = useState<Guitar | null>(null);
-  const [currentArtist, setCurrentArtist] = useState<Artist | null>(null);
-  const [currentAmp, setCurrentAmp] = useState<Amplifier | null>(null);
+  const [selectedGuitarId, setSelectedGuitarId] = useState<string | null>(null);
+  const [selectedArtistId, setSelectedArtistId] = useState<string | null>(null);
+  const [selectedAmpId, setSelectedAmpId] = useState<string | null>(null);
   
   // Loading states
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Mantine forms
+  const guitarForm = useForm({
+    initialValues: {
+      name: '',
+      type: '',
+      photoUrl: '',
+      summary: '',
+      description: '',
+      yearStart: 0,
+      yearEnd: null as number | null,
+      pickups: [] as string[],
+      genres: [] as string[],
+      artists: [] as string[],
+      relatedGuitars: [] as string[],
+    },
+  });
+
+  const artistForm = useForm({
+    initialValues: {
+      name: '',
+      photoUrl: '',
+      heroPhotoUrl: '',
+      tagline: '',
+      description: '',
+      summary: '',
+      bands: [] as string[],
+      otherPhotos: [] as string[],
+      guitars: [] as string[],
+      amplifiers: [] as string[],
+    },
+  });
+
+  const ampForm = useForm({
+    initialValues: {
+      name: '',
+      photoUrl: '',
+      description: '',
+      summary: '',
+      isTube: false,
+      gainStructure: '',
+      yearStart: 0,
+      yearEnd: 0,
+      priceStart: 0,
+      priceEnd: 0,
+      wattage: 0,
+      speakerConfiguration: '',
+      manufacturer: '',
+      otherPhotos: [] as string[],
+      artists: [] as string[],
+      relatedAmps: [] as string[],
+    },
+  });
 
   // Load all data on mount
   useEffect(() => {
     loadAllData();
   }, []);
 
-  const loadAllData = () => {
-    Guitars.list().then(setGuitars).catch(console.error);
-    Artists.list().then(setArtists).catch(console.error);
-    Amps.list().then(setAmps).catch(console.error);
+  const loadAllData = async () => {
+    try {
+      const [guitarData, artistData, ampData] = await Promise.all([
+        Guitars.list(),
+        Artists.list(),
+        Amps.list(),
+      ]);
+      setGuitars(guitarData);
+      setArtists(artistData);
+      setAmps(ampData);
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load data',
+        color: 'red',
+      });
+    }
   };
 
   // Load selected guitar details
   useEffect(() => {
     if (!selectedGuitarId) {
-      setCurrentGuitar(null);
+      guitarForm.reset();
       return;
     }
-    setLoading(true);
-    Guitars.get(selectedGuitarId)
-      .then(setCurrentGuitar)
-      .finally(() => setLoading(false));
+    loadGuitar(Number(selectedGuitarId));
   }, [selectedGuitarId]);
+
+  const loadGuitar = async (id: number) => {
+    setLoading(true);
+    try {
+      const guitar = await Guitars.get(id);
+      guitarForm.setValues({
+        name: guitar.name || '',
+        type: guitar.type || '',
+        photoUrl: guitar.photoUrl || '',
+        summary: guitar.summary || '',
+        description: guitar.description || '',
+        yearStart: guitar.yearStart || 0,
+        yearEnd: guitar.yearEnd,
+        pickups: guitar.pickups || [],
+        genres: guitar.genres || [],
+        artists: guitar.artists?.map(a => String(a.id)) || [],
+        relatedGuitars: guitar.relatedGuitars?.map(g => String(g.id)) || [],
+      });
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load guitar',
+        color: 'red',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Load selected artist details
   useEffect(() => {
     if (!selectedArtistId) {
-      setCurrentArtist(null);
+      artistForm.reset();
       return;
     }
-    setLoading(true);
-    Artists.get(selectedArtistId)
-      .then(setCurrentArtist)
-      .finally(() => setLoading(false));
+    loadArtist(Number(selectedArtistId));
   }, [selectedArtistId]);
+
+  const loadArtist = async (id: number) => {
+    setLoading(true);
+    try {
+      const artist = await Artists.get(id);
+      artistForm.setValues({
+        name: artist.name || '',
+        photoUrl: artist.photoUrl || '',
+        heroPhotoUrl: artist.heroPhotoUrl || '',
+        tagline: artist.tagline || '',
+        description: artist.description || '',
+        summary: artist.summary || '',
+        bands: artist.bands || [],
+        otherPhotos: artist.otherPhotos || [],
+        guitars: artist.guitars?.map(g => String(g.id)) || [],
+        amplifiers: artist.amplifiers?.map(a => String(a.id)) || [],
+      });
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load artist',
+        color: 'red',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Load selected amplifier details
   useEffect(() => {
     if (!selectedAmpId) {
-      setCurrentAmp(null);
+      ampForm.reset();
       return;
     }
-    setLoading(true);
-    Amps.get(selectedAmpId)
-      .then(setCurrentAmp)
-      .finally(() => setLoading(false));
+    loadAmp(Number(selectedAmpId));
   }, [selectedAmpId]);
 
-  // Generic handlers
-  const handleGuitarChange = (field: keyof Guitar, value: any) => {
-    if (!currentGuitar) return;
-    setCurrentGuitar(prev => prev ? { ...prev, [field]: value } : prev);
+  const loadAmp = async (id: number) => {
+    setLoading(true);
+    try {
+      const amp = await Amps.get(id);
+      ampForm.setValues({
+        name: amp.name || '',
+        photoUrl: amp.photoUrl || '',
+        description: amp.description || '',
+        summary: amp.summary || '',
+        isTube: amp.isTube || false,
+        gainStructure: amp.gainStructure || '',
+        yearStart: amp.yearStart || 0,
+        yearEnd: amp.yearEnd || 0,
+        priceStart: amp.priceStart || 0,
+        priceEnd: amp.priceEnd || 0,
+        wattage: amp.wattage || 0,
+        speakerConfiguration: amp.speakerConfiguration || '',
+        manufacturer: amp.manufacturer || '',
+        otherPhotos: amp.otherPhotos || [],
+        artists: amp.artists?.map(a => String(a.id)) || [],
+        relatedAmps: amp.relatedAmps?.map(a => String(a.id)) || [],
+      });
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load amplifier',
+        color: 'red',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleArtistChange = (field: keyof Artist, value: any) => {
-    if (!currentArtist) return;
-    setCurrentArtist(prev => prev ? { ...prev, [field]: value } : prev);
-  };
-
-  const handleAmpChange = (field: keyof Amplifier, value: any) => {
-    if (!currentAmp) return;
-    setCurrentAmp(prev => prev ? { ...prev, [field]: value } : prev);
-  };
-
-  // Save handlers
- const handleSaveGuitar = async () => {
-  if (!currentGuitar) return;
-  setSaving(true);
-  try {
-    const payload = {
-      name: currentGuitar.name,
-      summary: currentGuitar.summary,
-      type: currentGuitar.type,
-      yearStart: currentGuitar.yearStart,
-      yearEnd: currentGuitar.yearEnd === 0 ? null : currentGuitar.yearEnd,
-      artistIds: currentGuitar.artists?.map((a) => a.id) ?? [],
-      relatedIds: currentGuitar.relatedGuitars?.map((g) => g.id) ?? [], // Fixed: changed 'relateds' to 'relatedIds'
-    };
-
-    await Guitars.patch(currentGuitar.id, payload);
-    alert("Guitar saved successfully!");
-    loadAllData(); // Refresh lists
-  } catch (err) {
-    console.error(err);
-    alert("Save failed");
-  } finally {
-    setSaving(false);
-  }
-};
-
-  const handleSaveArtist = async () => {
-    if (!currentArtist) return;
+  // Save handlers using dedicated endpoints
+  const handleSaveGuitar = async (values: typeof guitarForm.values) => {
+    if (!selectedGuitarId) return;
+    
     setSaving(true);
     try {
+      const guitarId = Number(selectedGuitarId);
+      const currentGuitar = await Guitars.get(guitarId);
+      
+      // Update basic guitar info
       const payload = {
-        name: currentArtist.name,
-        photoUrl: currentArtist.photoUrl,
-        heroPhotoUrl: currentArtist.heroPhotoUrl,
-        tagline: currentArtist.tagline,
-        description: currentArtist.description,
-        summary: currentArtist.summary,
-        bands: currentArtist.bands || [],
-        otherPhotos: currentArtist.otherPhotos || [],
-        guitarIds: currentArtist.guitars?.map((g) => g.id) ?? [],
-        amplifierIds: currentArtist.amplifiers?.map((a) => a.id) ?? [],
+        name: values.name,
+        type: values.type,
+        photoUrl: values.photoUrl,
+        summary: values.summary,
+        description: values.description,
+        yearStart: values.yearStart,
+        yearEnd: values.yearEnd === 0 ? null : values.yearEnd,
+        pickups: values.pickups,
+        genres: values.genres,
       };
 
-      await Artists.patch(currentArtist.id, payload);
-      alert("Artist saved successfully!");
-      loadAllData();
-    } catch (err) {
-      console.error(err);
-      alert("Save failed");
+      await Guitars.patch(guitarId, payload);
+
+      // Handle artist relationships
+      const currentArtistIds = currentGuitar.artists?.map(a => a.id) || [];
+      const newArtistIds = values.artists.map(id => Number(id));
+      
+      // Remove artists that are no longer selected
+      for (const artistId of currentArtistIds) {
+        if (!newArtistIds.includes(artistId)) {
+          await Guitars.removeArtist(guitarId, artistId);
+        }
+      }
+      
+      // Add newly selected artists
+      for (const artistId of newArtistIds) {
+        if (!currentArtistIds.includes(artistId)) {
+          await Guitars.addArtist(guitarId, artistId);
+        }
+      }
+
+      // Handle related guitar relationships
+      const currentRelatedIds = currentGuitar.relatedGuitars?.map(g => g.id) || [];
+      const newRelatedIds = values.relatedGuitars.map(id => Number(id));
+      
+      // Remove related guitars that are no longer selected
+      for (const relatedId of currentRelatedIds) {
+        if (!newRelatedIds.includes(relatedId)) {
+          await Guitars.removeRelated(guitarId, relatedId);
+        }
+      }
+      
+      // Add newly selected related guitars
+      for (const relatedId of newRelatedIds) {
+        if (!currentRelatedIds.includes(relatedId)) {
+          await Guitars.addRelated(guitarId, relatedId);
+        }
+      }
+
+      notifications.show({
+        title: 'Success',
+        message: 'Guitar saved successfully!',
+        color: 'green',
+      });
+      
+      await loadAllData();
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to save guitar',
+        color: 'red',
+      });
     } finally {
       setSaving(false);
     }
   };
 
-  const handleSaveAmp = async () => {
-    if (!currentAmp) return;
+  const handleSaveArtist = async (values: typeof artistForm.values) => {
+    if (!selectedArtistId) return;
+    
     setSaving(true);
     try {
+      const artistId = Number(selectedArtistId);
+      const currentArtist = await Artists.get(artistId);
+      
+      // Update basic artist info
       const payload = {
-        name: currentAmp.name,
-        photoUrl: currentAmp.photoUrl,
-        description: currentAmp.description,
-        summary: currentAmp.summary,
-        isTube: currentAmp.isTube,
-        gainStructure: currentAmp.gainStructure,
-        yearStart: currentAmp.yearStart,
-        yearEnd: currentAmp.yearEnd,
-        priceStart: currentAmp.priceStart,
-        priceEnd: currentAmp.priceEnd,
-        wattage: currentAmp.wattage,
-        speakerConfiguration: currentAmp.speakerConfiguration,
-        manufacturer: currentAmp.manufacturer,
-        otherPhotos: currentAmp.otherPhotos || [],
-        artistIds: currentAmp.artists?.map((a) => a.id) ?? [],
-        relatedIds: currentAmp.relatedAmps?.map((a) => a.id) ?? [],
+        name: values.name,
+        photoUrl: values.photoUrl,
+        heroPhotoUrl: values.heroPhotoUrl,
+        tagline: values.tagline,
+        description: values.description,
+        summary: values.summary,
+        bands: values.bands,
+        otherPhotos: values.otherPhotos,
       };
 
-      await Amps.patch(currentAmp.id, payload);
-      alert("Amplifier saved successfully!");
-      loadAllData();
-    } catch (err) {
-      console.error(err);
-      alert("Save failed");
+      await Artists.patch(artistId, payload);
+
+      // Handle guitar relationships
+      const currentGuitarIds = currentArtist.guitars?.map(g => g.id) || [];
+      const newGuitarIds = values.guitars.map(id => Number(id));
+      
+      for (const guitarId of currentGuitarIds) {
+        if (!newGuitarIds.includes(guitarId)) {
+          await Artists.removeGuitar(artistId, guitarId);
+        }
+      }
+      
+      for (const guitarId of newGuitarIds) {
+        if (!currentGuitarIds.includes(guitarId)) {
+          await Artists.addGuitar(artistId, guitarId);
+        }
+      }
+
+      // Handle amplifier relationships
+      const currentAmpIds = currentArtist.amplifiers?.map(a => a.id) || [];
+      const newAmpIds = values.amplifiers.map(id => Number(id));
+      
+      for (const ampId of currentAmpIds) {
+        if (!newAmpIds.includes(ampId)) {
+          await Artists.removeAmp(artistId, ampId);
+        }
+      }
+      
+      for (const ampId of newAmpIds) {
+        if (!currentAmpIds.includes(ampId)) {
+          await Artists.addAmp(artistId, ampId);
+        }
+      }
+
+      notifications.show({
+        title: 'Success',
+        message: 'Artist saved successfully!',
+        color: 'green',
+      });
+      
+      await loadAllData();
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to save artist',
+        color: 'red',
+      });
     } finally {
       setSaving(false);
     }
   };
 
-  // Helper function to handle string arrays
-  const handleStringArrayChange = (
-    currentArray: string[] | undefined,
-    newValue: string,
-    setter: (value: string[]) => void
-  ) => {
-    const items = newValue.split(',').map(item => item.trim()).filter(item => item);
-    setter(items);
+  const handleSaveAmp = async (values: typeof ampForm.values) => {
+    if (!selectedAmpId) return;
+    
+    setSaving(true);
+    try {
+      const ampId = Number(selectedAmpId);
+      const currentAmp = await Amps.get(ampId);
+      
+      // Update basic amp info
+      const payload = {
+        name: values.name,
+        photoUrl: values.photoUrl,
+        description: values.description,
+        summary: values.summary,
+        isTube: values.isTube,
+        gainStructure: values.gainStructure,
+        yearStart: values.yearStart,
+        yearEnd: values.yearEnd,
+        priceStart: values.priceStart,
+        priceEnd: values.priceEnd,
+        wattage: values.wattage,
+        speakerConfiguration: values.speakerConfiguration,
+        manufacturer: values.manufacturer,
+        otherPhotos: values.otherPhotos,
+      };
+
+      await Amps.patch(ampId, payload);
+
+      // Handle artist relationships
+      const currentArtistIds = currentAmp.artists?.map(a => a.id) || [];
+      const newArtistIds = values.artists.map(id => Number(id));
+      
+      for (const artistId of currentArtistIds) {
+        if (!newArtistIds.includes(artistId)) {
+          await Amps.removeArtist(ampId, artistId);
+        }
+      }
+      
+      for (const artistId of newArtistIds) {
+        if (!currentArtistIds.includes(artistId)) {
+          await Amps.addArtist(ampId, artistId);
+        }
+      }
+
+      // Handle related amp relationships
+      const currentRelatedIds = currentAmp.relatedAmps?.map(a => a.id) || [];
+      const newRelatedIds = values.relatedAmps.map(id => Number(id));
+      
+      for (const relatedId of currentRelatedIds) {
+        if (!newRelatedIds.includes(relatedId)) {
+          await Amps.removeRelated(ampId, relatedId);
+        }
+      }
+      
+      for (const relatedId of newRelatedIds) {
+        if (!currentRelatedIds.includes(relatedId)) {
+          await Amps.addRelated(ampId, relatedId);
+        }
+      }
+
+      notifications.show({
+        title: 'Success',
+        message: 'Amplifier saved successfully!',
+        color: 'green',
+      });
+      
+      await loadAllData();
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to save amplifier',
+        color: 'red',
+      });
+    } finally {
+      setSaving(false);
+    }
   };
+
+  // Helper function to convert array to MultiSelect format
+  const arrayToSelectData = (items: { id: number; name: string }[]) =>
+    items.map(item => ({ value: String(item.id), label: item.name }));
 
   return (
-    <div className="p-6 space-y-6 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+    <Container size="xl" py="xl">
+      <Title order={1} mb="xl">Admin Dashboard</Title>
 
-      {/* Tab Navigation */}
-      <div className="flex space-x-1 border-b">
-        {[
-          { key: 'guitars' as TabType, label: 'Guitars' },
-          { key: 'artists' as TabType, label: 'Artists' },
-          { key: 'amplifiers' as TabType, label: 'Amplifiers' }
-        ].map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 font-medium rounded-t-lg ${
-              activeTab === tab.key
-                ? 'text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={activeTab} onChange={(value) => setActiveTab(value as TabType)}>
+        <Tabs.List>
+          <Tabs.Tab value="guitars">Guitars</Tabs.Tab>
+          <Tabs.Tab value="artists">Artists</Tabs.Tab>
+          <Tabs.Tab value="amplifiers">Amplifiers</Tabs.Tab>
+        </Tabs.List>
 
-      {loading && <p className="">Loading...</p>}
+        {/* Guitar Tab */}
+        <Tabs.Panel value="guitars" pt="md">
+          <Stack>
+            <Select
+              label="Select Guitar"
+              placeholder="Choose a guitar to edit"
+              value={selectedGuitarId}
+              onChange={setSelectedGuitarId}
+              data={arrayToSelectData(guitars)}
+              searchable
+            />
 
-      {/* Guitar Tab */}
-      {activeTab === 'guitars' && (
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">Select Guitar</label>
-            <select
-              value={selectedGuitarId ?? ""}
-              onChange={(e) => setSelectedGuitarId(Number(e.target.value))}
-              className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">-- Choose a guitar --</option>
-              {guitars.map((g) => (
-                <option key={g.id} value={g.id}>{g.name}</option>
-              ))}
-            </select>
-          </div>
+            {selectedGuitarId && (
+              <div style={{ position: 'relative' }}>
+                <LoadingOverlay visible={loading} />
+                
+                <form onSubmit={guitarForm.onSubmit(handleSaveGuitar)}>
+                  <Stack>
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Name"
+                          required
+                          {...guitarForm.getInputProps('name')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Type"
+                          {...guitarForm.getInputProps('type')}
+                        />
+                      </Grid.Col>
+                    </Grid>
 
-          {currentGuitar && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
-                  <input
-                    value={currentGuitar.name || ""}
-                    onChange={(e) => handleGuitarChange("name", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Type</label>
-                  <input
-                    value={currentGuitar.type || ""}
-                    onChange={(e) => handleGuitarChange("type", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Summary</label>
-                <textarea
-                  value={currentGuitar.summary || ""}
-                  onChange={(e) => handleGuitarChange("summary", e.target.value)}
-                  className="border rounded px-3 py-2 w-full h-24 focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Year Start</label>
-                  <input
-                    type="number"
-                    value={currentGuitar.yearStart ?? ""}
-                    onChange={(e) => handleGuitarChange("yearStart", Number(e.target.value))}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Year End</label>
-                  <input
-                    type="number"
-                    value={currentGuitar.yearEnd ?? ""}
-                    onChange={(e) => handleGuitarChange("yearEnd", Number(e.target.value))}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Artists</label>
-                  <select
-                    multiple
-                    value={currentGuitar.artists?.map((a) => String(a.id)) ?? []}
-                    onChange={(e) =>
-                      handleGuitarChange(
-                        "artists",
-                        Array.from(e.target.selectedOptions).map((opt) => ({
-                          id: Number(opt.value),
-                          name: opt.label,
-                        }))
-                      )
-                    }
-                    className="border rounded px-3 py-2 w-full h-32 focus:ring-2 focus:ring-blue-500"
-                  >
-                    {artists.map((a) => (
-                      <option key={a.id} value={a.id}>{a.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Related Guitars</label>
-                  <select
-                    multiple
-                    value={currentGuitar.relatedGuitars?.map((g) => String(g.id)) ?? []}
-                    onChange={(e) =>
-                      handleGuitarChange(
-                        "relatedGuitars",
-                        Array.from(e.target.selectedOptions).map((opt) => ({
-                          id: Number(opt.value),
-                          name: opt.label,
-                        }))
-                      )
-                    }
-                    className="border rounded px-3 py-2 w-full h-32 focus:ring-2 focus:ring-blue-500"
-                  >
-                    {guitars
-                      .filter((g) => g.id !== currentGuitar.id)
-                      .map((g) => (
-                        <option key={g.id} value={g.id}>{g.name}</option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-
-              <button
-                onClick={handleSaveGuitar}
-                disabled={saving}
-                className=" text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300"
-              >
-                {saving ? "Saving..." : "Save Guitar"}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Artist Tab */}
-      {activeTab === 'artists' && (
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">Select Artist</label>
-            <select
-              value={selectedArtistId ?? ""}
-              onChange={(e) => setSelectedArtistId(Number(e.target.value))}
-              className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">-- Choose an artist --</option>
-              {artists.map((a) => (
-                <option key={a.id} value={a.id}>{a.name}</option>
-              ))}
-            </select>
-          </div>
-
-          {currentArtist && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
-                  <input
-                    value={currentArtist.name || ""}
-                    onChange={(e) => handleArtistChange("name", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Tagline</label>
-                  <input
-                    value={currentArtist.tagline || ""}
-                    onChange={(e) => handleArtistChange("tagline", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Photo URL</label>
-                  <input
-                    value={currentArtist.photoUrl || ""}
-                    onChange={(e) => handleArtistChange("photoUrl", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Hero Photo URL</label>
-                  <input
-                    value={currentArtist.heroPhotoUrl || ""}
-                    onChange={(e) => handleArtistChange("heroPhotoUrl", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Summary</label>
-                <textarea
-                  value={currentArtist.summary || ""}
-                  onChange={(e) => handleArtistChange("summary", e.target.value)}
-                  className="border rounded px-3 py-2 w-full h-24 focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <textarea
-                  value={currentArtist.description || ""}
-                  onChange={(e) => handleArtistChange("description", e.target.value)}
-                  className="border rounded px-3 py-2 w-full h-32 focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Bands (comma-separated)</label>
-                <input
-                  value={currentArtist.bands?.join(', ') || ""}
-                  onChange={(e) => handleStringArrayChange(
-                    currentArtist.bands,
-                    e.target.value,
-                    (bands) => handleArtistChange("bands", bands)
-                  )}
-                  className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  placeholder="Band 1, Band 2, Band 3"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Other Photos (comma-separated URLs)</label>
-                <input
-                  value={currentArtist.otherPhotos?.join(', ') || ""}
-                  onChange={(e) => handleStringArrayChange(
-                    currentArtist.otherPhotos,
-                    e.target.value,
-                    (photos) => handleArtistChange("otherPhotos", photos)
-                  )}
-                  className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  placeholder="url1, url2, url3"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Guitars</label>
-                  <select
-                    multiple
-                    value={currentArtist.guitars?.map((g) => String(g.id)) ?? []}
-                    onChange={(e) =>
-                      handleArtistChange(
-                        "guitars",
-                        Array.from(e.target.selectedOptions).map((opt) => ({
-                          id: Number(opt.value),
-                          name: opt.label,
-                        }))
-                      )
-                    }
-                    className="border rounded px-3 py-2 w-full h-32 focus:ring-2 focus:ring-blue-500"
-                  >
-                    {guitars.map((g) => (
-                      <option key={g.id} value={g.id}>{g.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Amplifiers</label>
-                  <select
-                    multiple
-                    value={currentArtist.amplifiers?.map((a) => String(a.id)) ?? []}
-                    onChange={(e) =>
-                      handleArtistChange(
-                        "amplifiers",
-                        Array.from(e.target.selectedOptions).map((opt) => ({
-                          id: Number(opt.value),
-                          name: opt.label,
-                        }))
-                      )
-                    }
-                    className="border rounded px-3 py-2 w-full h-32 focus:ring-2 focus:ring-blue-500"
-                  >
-                    {amps.map((a) => (
-                      <option key={a.id} value={a.id}>{a.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <button
-                onClick={handleSaveArtist}
-                disabled={saving}
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300"
-              >
-                {saving ? "Saving..." : "Save Artist"}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Amplifier Tab */}
-      {activeTab === 'amplifiers' && (
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium mb-2">Select Amplifier</label>
-            <select
-              value={selectedAmpId ?? ""}
-              onChange={(e) => setSelectedAmpId(Number(e.target.value))}
-              className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">-- Choose an amplifier --</option>
-              {amps.map((a) => (
-                <option key={a.id} value={a.id}>{a.name}</option>
-              ))}
-            </select>
-          </div>
-
-          {currentAmp && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Name</label>
-                  <input
-                    value={currentAmp.name || ""}
-                    onChange={(e) => handleAmpChange("name", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Manufacturer</label>
-                  <input
-                    value={currentAmp.manufacturer || ""}
-                    onChange={(e) => handleAmpChange("manufacturer", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Photo URL</label>
-                <input
-                  value={currentAmp.photoUrl || ""}
-                  onChange={(e) => handleAmpChange("photoUrl", e.target.value)}
-                  className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Summary</label>
-                <textarea
-                  value={currentAmp.summary || ""}
-                  onChange={(e) => handleAmpChange("summary", e.target.value)}
-                  className="border rounded px-3 py-2 w-full h-24 focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
-                <textarea
-                  value={currentAmp.description || ""}
-                  onChange={(e) => handleAmpChange("description", e.target.value)}
-                  className="border rounded px-3 py-2 w-full h-32 focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Wattage</label>
-                  <input
-                    type="number"
-                    value={currentAmp.wattage ?? ""}
-                    onChange={(e) => handleAmpChange("wattage", Number(e.target.value))}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="flex items-end">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={currentAmp.isTube || false}
-                      onChange={(e) => handleAmpChange("isTube", e.target.checked)}
-                      className="mr-2"
+                    <TextInput
+                      label="Photo URL"
+                      {...guitarForm.getInputProps('photoUrl')}
                     />
-                    Is Tube Amp
-                  </label>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Year Start</label>
-                  <input
-                    type="number"
-                    value={currentAmp.yearStart ?? ""}
-                    onChange={(e) => handleAmpChange("yearStart", Number(e.target.value))}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Year End</label>
-                  <input
-                    type="number"
-                    value={currentAmp.yearEnd ?? ""}
-                    onChange={(e) => handleAmpChange("yearEnd", Number(e.target.value))}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+
+                    <Textarea
+                      label="Summary"
+                      rows={3}
+                      {...guitarForm.getInputProps('summary')}
+                    />
+
+                    <Textarea
+                      label="Description"
+                      rows={4}
+                      {...guitarForm.getInputProps('description')}
+                    />
+
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <NumberInput
+                          label="Year Start"
+                          {...guitarForm.getInputProps('yearStart')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <NumberInput
+                          label="Year End"
+                          {...guitarForm.getInputProps('yearEnd')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+           <Grid>
+  <Grid.Col span={6}>
+    <MultiSelect
+      label="Pickups"
+      placeholder="Add pickup configurations"
+      searchable
+      data={guitarForm.values.pickups.map((p) => ({ value: p, label: p }))}
+      value={guitarForm.values.pickups}
+      onChange={(value) => guitarForm.setFieldValue("pickups", value)}
+      onSearchChange={(query) => {
+        if (
+          query &&
+          !guitarForm.values.pickups.includes(query)
+        ) {
+          guitarForm.setFieldValue("pickups", [
+            ...guitarForm.values.pickups,
+            query,
+          ]);
+        }
+      }}
+    />
+  </Grid.Col>
+
+  <Grid.Col span={6}>
+    <MultiSelect
+      label="Genres"
+      placeholder="Add genres"
+      searchable
+      data={guitarForm.values.genres.map((g) => ({ value: g, label: g }))}
+      value={guitarForm.values.genres}
+      onChange={(value) => guitarForm.setFieldValue("genres", value)}
+      onSearchChange={(query) => {
+        if (
+          query &&
+          !guitarForm.values.genres.includes(query)
+        ) {
+          guitarForm.setFieldValue("genres", [
+            ...guitarForm.values.genres,
+            query,
+          ]);
+        }
+      }}
+    />
+  </Grid.Col>
+</Grid>
+
+
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <MultiSelect
+                          label="Artists"
+                          data={arrayToSelectData(artists)}
+                          searchable
+                          {...guitarForm.getInputProps('artists')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <MultiSelect
+                          label="Related Guitars"
+                          data={arrayToSelectData(guitars.filter(g => g.id !== Number(selectedGuitarId)))}
+                          searchable
+                          {...guitarForm.getInputProps('relatedGuitars')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <Group justify="flex-end">
+                      <Button type="submit" loading={saving}>
+                        Save Guitar
+                      </Button>
+                    </Group>
+                  </Stack>
+                </form>
               </div>
+            )}
+          </Stack>
+        </Tabs.Panel>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Price Start ($)</label>
-                  <input
-                    type="number"
-                    value={currentAmp.priceStart ?? ""}
-                    onChange={(e) => handleAmpChange("priceStart", Number(e.target.value))}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Price End ($)</label>
-                  <input
-                    type="number"
-                    value={currentAmp.priceEnd ?? ""}
-                    onChange={(e) => handleAmpChange("priceEnd", Number(e.target.value))}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+        {/* Artist Tab */}
+        <Tabs.Panel value="artists" pt="md">
+          <Stack>
+            <Select
+              label="Select Artist"
+              placeholder="Choose an artist to edit"
+              value={selectedArtistId}
+              onChange={setSelectedArtistId}
+              data={arrayToSelectData(artists)}
+              searchable
+            />
+
+            {selectedArtistId && (
+              <div style={{ position: 'relative' }}>
+                <LoadingOverlay visible={loading} />
+                
+                <form onSubmit={artistForm.onSubmit(handleSaveArtist)}>
+                  <Stack>
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Name"
+                          required
+                          {...artistForm.getInputProps('name')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Tagline"
+                          {...artistForm.getInputProps('tagline')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Photo URL"
+                          {...artistForm.getInputProps('photoUrl')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Hero Photo URL"
+                          {...artistForm.getInputProps('heroPhotoUrl')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <Textarea
+                      label="Summary"
+                      rows={3}
+                      {...artistForm.getInputProps('summary')}
+                    />
+
+                    <Textarea
+                      label="Description"
+                      rows={4}
+                      {...artistForm.getInputProps('description')}
+                    />
+
+                 <MultiSelect
+  label="Bands"
+  placeholder="Add bands"
+  searchable
+  data={artistForm.values.bands.map((b) => ({ value: b, label: b }))}
+  value={artistForm.values.bands}
+  onChange={(value) => artistForm.setFieldValue("bands", value)}
+  onSearchChange={(query) => {
+    if (query && !artistForm.values.bands.includes(query)) {
+      artistForm.setFieldValue("bands", [...artistForm.values.bands, query]);
+    }
+  }}
+/>
+
+
+                    <MultiSelect
+  label="Other Photos"
+  placeholder="Add photo URLs"
+  searchable
+  data={artistForm.values.otherPhotos.map((p) => ({ value: p, label: p }))}
+  value={artistForm.values.otherPhotos}
+  onChange={(value) => artistForm.setFieldValue("otherPhotos", value)}
+  onSearchChange={(query) => {
+    if (query && !artistForm.values.otherPhotos.includes(query)) {
+      artistForm.setFieldValue("otherPhotos", [
+        ...artistForm.values.otherPhotos,
+        query,
+      ]);
+    }
+  }}
+/>
+
+
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <MultiSelect
+                          label="Guitars"
+                          data={arrayToSelectData(guitars)}
+                          searchable
+                          {...artistForm.getInputProps('guitars')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <MultiSelect
+                          label="Amplifiers"
+                          data={arrayToSelectData(amps)}
+                          searchable
+                          {...artistForm.getInputProps('amplifiers')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <Group justify="flex-end">
+                      <Button type="submit" loading={saving}>
+                        Save Artist
+                      </Button>
+                    </Group>
+                  </Stack>
+                </form>
               </div>
+            )}
+          </Stack>
+        </Tabs.Panel>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Gain Structure</label>
-                  <input
-                    value={currentAmp.gainStructure || ""}
-                    onChange={(e) => handleAmpChange("gainStructure", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Speaker Configuration</label>
-                  <input
-                    value={currentAmp.speakerConfiguration || ""}
-                    onChange={(e) => handleAmpChange("speakerConfiguration", e.target.value)}
-                    className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+        {/* Amplifier Tab */}
+        <Tabs.Panel value="amplifiers" pt="md">
+          <Stack>
+            <Select
+              label="Select Amplifier"
+              placeholder="Choose an amplifier to edit"
+              value={selectedAmpId}
+              onChange={setSelectedAmpId}
+              data={arrayToSelectData(amps)}
+              searchable
+            />
+
+            {selectedAmpId && (
+              <div style={{ position: 'relative' }}>
+                <LoadingOverlay visible={loading} />
+                
+                <form onSubmit={ampForm.onSubmit(handleSaveAmp)}>
+                  <Stack>
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Name"
+                          required
+                          {...ampForm.getInputProps('name')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Manufacturer"
+                          {...ampForm.getInputProps('manufacturer')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <TextInput
+                      label="Photo URL"
+                      {...ampForm.getInputProps('photoUrl')}
+                    />
+
+                    <Textarea
+                      label="Summary"
+                      rows={3}
+                      {...ampForm.getInputProps('summary')}
+                    />
+
+                    <Textarea
+                      label="Description"
+                      rows={4}
+                      {...ampForm.getInputProps('description')}
+                    />
+
+                    <Grid>
+                      <Grid.Col span={3}>
+                        <NumberInput
+                          label="Wattage"
+                          {...ampForm.getInputProps('wattage')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={3}>
+                        <Checkbox
+                          label="Is Tube Amp"
+                          mt="xl"
+                          {...ampForm.getInputProps('isTube', { type: 'checkbox' })}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={3}>
+                        <NumberInput
+                          label="Year Start"
+                          {...ampForm.getInputProps('yearStart')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={3}>
+                        <NumberInput
+                          label="Year End"
+                          {...ampForm.getInputProps('yearEnd')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <NumberInput
+                          label="Price Start ($)"
+                          {...ampForm.getInputProps('priceStart')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <NumberInput
+                          label="Price End ($)"
+                          {...ampForm.getInputProps('priceEnd')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Gain Structure"
+                          {...ampForm.getInputProps('gainStructure')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Speaker Configuration"
+                          {...ampForm.getInputProps('speakerConfiguration')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+<MultiSelect
+  label="Other Photos"
+  placeholder="Add photo URLs"
+  searchable
+  data={ampForm.values.otherPhotos.map((p) => ({ value: p, label: p }))}
+  value={ampForm.values.otherPhotos}
+  onChange={(value) => ampForm.setFieldValue("otherPhotos", value)}
+  onSearchChange={(query) => {
+    if (query && !ampForm.values.otherPhotos.includes(query)) {
+      ampForm.setFieldValue("otherPhotos", [
+        ...ampForm.values.otherPhotos,
+        query,
+      ]);
+    }
+  }}
+/>
+
+
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <MultiSelect
+                          label="Artists"
+                          data={arrayToSelectData(artists)}
+                          searchable
+                          {...ampForm.getInputProps('artists')}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <MultiSelect
+                          label="Related Amplifiers"
+                          data={arrayToSelectData(amps.filter(a => a.id !== Number(selectedAmpId)))}
+                          searchable
+                          {...ampForm.getInputProps('relatedAmps')}
+                        />
+                      </Grid.Col>
+                    </Grid>
+
+                    <Group justify="flex-end">
+                      <Button type="submit" loading={saving}>
+                        Save Amplifier
+                      </Button>
+                    </Group>
+                  </Stack>
+                </form>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1">Other Photos (comma-separated URLs)</label>
-                <input
-                  value={currentAmp.otherPhotos?.join(', ') || ""}
-                  onChange={(e) => handleStringArrayChange(
-                    currentAmp.otherPhotos,
-                    e.target.value,
-                    (photos) => handleAmpChange("otherPhotos", photos)
-                  )}
-                  className="border rounded px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-                  placeholder="url1, url2, url3"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Artists</label>
-                  <select
-                    multiple
-                    value={currentAmp.artists?.map((a) => String(a.id)) ?? []}
-                    onChange={(e) =>
-                      handleAmpChange(
-                        "artists",
-                        Array.from(e.target.selectedOptions).map((opt) => ({
-                          id: Number(opt.value),
-                          name: opt.label,
-                        }))
-                      )
-                    }
-                    className="border rounded px-3 py-2 w-full h-32 focus:ring-2 focus:ring-blue-500"
-                  >
-                    {artists.map((a) => (
-                      <option key={a.id} value={a.id}>{a.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">Related Amplifiers</label>
-                  <select
-                    multiple
-                    value={currentAmp.relatedAmps?.map((a) => String(a.id)) ?? []}
-                    onChange={(e) =>
-                      handleAmpChange(
-                        "relatedAmps",
-                        Array.from(e.target.selectedOptions).map((opt) => ({
-                          id: Number(opt.value),
-                          name: opt.label,
-                        }))
-                      )
-                    }
-                    className="border rounded px-3 py-2 w-full h-32 focus:ring-2 focus:ring-blue-500"
-                  >
-                    {amps
-                      .filter((a) => a.id !== currentAmp.id)
-                      .map((a) => (
-                        <option key={a.id} value={a.id}>{a.name}</option>
-                      ))}
-                  </select>
-                </div>
-              </div>
-
-              <button
-                onClick={handleSaveAmp}
-                disabled={saving}
-                className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:bg-blue-300"
-              >
-                {saving ? "Saving..." : "Save Amplifier"}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+            )}
+          </Stack>
+        </Tabs.Panel>
+      </Tabs>
+    </Container>
   );
 }
 
