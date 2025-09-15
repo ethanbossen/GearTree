@@ -70,6 +70,10 @@ export const Guitars = {
     fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}/related/${relatedId}`, { method: "POST" }),
   removeRelated: (id: number, relatedId: number) =>
     fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}/related/${relatedId}`, { method: "DELETE" }),
+  addArtist: (guitarId: number, artistId: number) =>
+    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${guitarId}/artists/${artistId}`, { method: "POST" }),
+  removeArtist: (guitarId: number, artistId: number) =>
+    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${guitarId}/artists/${artistId}`, { method: "DELETE" }),
 };
 
 // -------------------------
@@ -91,13 +95,11 @@ export const Amps = {
     fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}/related/${relatedId}`, { method: "POST" }),
   removeRelated: (id: number, relatedId: number) =>
     fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}/related/${relatedId}`, { method: "DELETE" }),
+  addArtist: (ampId: number, artistId: number) =>
+    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${ampId}/artists/${artistId}`, { method: "POST" }),
+  removeArtist: (ampId: number, artistId: number) =>
+    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${ampId}/artists/${artistId}`, { method: "DELETE" }),
 };
-
-// -------------------------
-// Interfaces (same as before)
-// -------------------------
-// ... keep your ArtistBrief, GuitarBrief, AmplifierBrief, Artist, Guitar, Amplifier,
-// ArtistDetail, GuitarDetail, AmplifierDetail here unchanged
 
 
 // -------------------------

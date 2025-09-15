@@ -18,6 +18,9 @@
 
 
 
-PATCH http://localhost:5262/amps/7
+### Add Zakk Wylde (artistId = 7) to the JCM800 (ampId = 7 or whatever its ID is)
+# POST http://localhost:5262/amps/7/artists/7
+# Content-Type: application/json
 
+POST http://localhost:5262/guitars/6/artists/6
 

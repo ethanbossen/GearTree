@@ -1,5 +1,21 @@
 namespace GearTree.Dtos
 {
+    public class UpdateGuitarDto
+    {
+        public string? Name { get; set; }
+        public string? PhotoUrl { get; set; }
+        public string? Description { get; set; }
+        public string? Summary { get; set; }
+        public string? Type { get; set; }
+        public List<string>? Genres { get; set; }
+        public List<string>? Pickups { get; set; }
+        public int YearStart { get; set; }
+        public int? YearEnd { get; set; }
+
+        // Relations as IDs only
+        public List<int>? ArtistIds { get; set; }
+        public List<int>? RelatedIds { get; set; }
+    }
     public class GuitarDto
     {
         public int Id { get; set; }

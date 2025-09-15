@@ -1,6 +1,5 @@
 // src/components/GuitarCard.tsx
 import { Link } from "react-router-dom";
-import type { Guitar } from "../api";
 
 interface GuitarCardProps {
   id: number;
