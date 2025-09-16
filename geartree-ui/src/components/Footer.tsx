@@ -1,4 +1,3 @@
-// src/components/Footer.tsx
 import { useEffect, useState } from "react";
 import { Container, Group, Text, Stack } from "@mantine/core";
 import { Link } from "react-router-dom";
@@ -20,7 +19,7 @@ export default function Footer() {
   return (
     <footer className={classes.footer}>
       <Container size="lg" className={classes.inner}>
-        {/* Left side with logo and rights */}
+        {/* Logo + Rights */}
         <Stack gap="xs" className={classes.left}>
           <Group>
             <img
@@ -39,8 +38,8 @@ export default function Footer() {
           </Text>
         </Stack>
 
-        {/* Link columns */}
-        <Group gap="5rem" className={classes.links}>
+        {/* Desktop Links */}
+        <Group gap="5rem" className={`${classes.links} hidden md:flex`}>
           {/* Artists */}
           <Stack gap="xs">
             <Link to="/artists" className={classes.columnTitle}>
@@ -89,6 +88,19 @@ export default function Footer() {
             ))}
           </Stack>
         </Group>
+
+        {/* Mobile Links */}
+        <Stack gap="xs" className="flex md:hidden mt-4">
+          <Link to="/artists" className={classes.columnTitle}>
+            Artists
+          </Link>
+          <Link to="/guitars" className={classes.columnTitle}>
+            Guitars
+          </Link>
+          <Link to="/amplifiers" className={classes.columnTitle}>
+            Amplifiers
+          </Link>
+        </Stack>
       </Container>
     </footer>
   );

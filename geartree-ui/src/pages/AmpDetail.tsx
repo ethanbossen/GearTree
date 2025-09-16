@@ -29,7 +29,7 @@ function AmpDetail() {
   )}`;
 
   return (
-    <div className="px-8 max-w-7xl mx-auto">
+    <div className="px-8 pt-5 max-w-7xl mx-auto">
       {/* Top split: image + info */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         {/* Image */}
@@ -70,12 +70,13 @@ function AmpDetail() {
           </Group>
 
           {/* Price */}
-          {amp.priceStart > 0 && (
-            <Text size="md" fw={500}>
-              ~${amp.priceStart}
-              {amp.priceEnd > amp.priceStart ? ` – $${amp.priceEnd}` : ""}
-            </Text>
-          )}
+          {amp.priceStart != null && amp.priceStart > 0 && (
+  <Text size="md" fw={500}>
+    ~${amp.priceStart}
+    {amp.priceEnd != null && amp.priceEnd > amp.priceStart ? ` – $${amp.priceEnd}` : ""}
+  </Text>
+)}
+
 
             {/* Description */}
       <section className="prose max-w-none">

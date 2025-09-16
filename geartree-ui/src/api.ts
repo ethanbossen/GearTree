@@ -68,12 +68,8 @@ export const Guitars = {
   // Relations
   addRelated: (id: number, relatedId: number) =>
     fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}/related/${relatedId}`, { method: "POST" }),
-  removeRelated: (id: number, relatedId: number) =>
-    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}/related/${relatedId}`, { method: "DELETE" }),
   addArtist: (guitarId: number, artistId: number) =>
     fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${guitarId}/artists/${artistId}`, { method: "POST" }),
-  removeArtist: (guitarId: number, artistId: number) =>
-    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${guitarId}/artists/${artistId}`, { method: "DELETE" }),
 };
 
 // -------------------------
@@ -93,12 +89,6 @@ export const Amps = {
   // Relations
   addRelated: (id: number, relatedId: number) =>
     fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}/related/${relatedId}`, { method: "POST" }),
-  removeRelated: (id: number, relatedId: number) =>
-    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}/related/${relatedId}`, { method: "DELETE" }),
-  addArtist: (ampId: number, artistId: number) =>
-    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${ampId}/artists/${artistId}`, { method: "POST" }),
-  removeArtist: (ampId: number, artistId: number) =>
-    fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${ampId}/artists/${artistId}`, { method: "DELETE" }),
 };
 
 
@@ -172,9 +162,9 @@ export interface Amplifier {
   isTube: boolean;
   gainStructure: string;
   yearStart: number;
-  yearEnd: number;
-  priceStart: number;
-  priceEnd: number;
+  yearEnd: number | null;
+  priceStart: number | null;
+  priceEnd: number | null;
   wattage: number;
   speakerConfiguration: string;
   manufacturer: string;

@@ -11,6 +11,7 @@ import AmpDetail from "./pages/AmpDetail";
 import GuitarDetailPage from "./pages/GuitarDetailPage";
 import Admin from "./pages/Admin";
 import AllArtistsPage from "./pages/AllArtistsPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     <div className="app-layout" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <NavBar />
       <main className="page-content">
+        <ScrollToTop />
         <Routes>
           <Route path="/artists/:id" element={<ArtistPage />} />
           <Route path="/guitars/:id" element={<GuitarDetailPage />} />

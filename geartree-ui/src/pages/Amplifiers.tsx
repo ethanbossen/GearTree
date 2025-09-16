@@ -75,7 +75,7 @@ function Amplifiers() {
   });
 
   return (
-    <div className="px-8 max-w-7xl mx-auto">
+    <div className="px-8 pt-5 max-w-7xl mx-auto">
       {/* Intro body section */}
       <section className="prose max-w-none mb-10">
         <h1 className="text-4xl font-bold mb-4">Explore Amplifiers</h1>

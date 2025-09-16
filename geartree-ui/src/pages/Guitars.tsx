@@ -68,7 +68,7 @@ function Guitars() {
   });
 
   return (
-    <div className="px-8 max-w-7xl mx-auto">
+    <div className="px-8 pt-5 max-w-7xl mx-auto">
       {/* Intro Section */}
       <section className="prose max-w-none mb-10">
       <h1 className="text-4xl font-bold mb-4">Explore Guitars</h1>
@@ -126,7 +126,6 @@ function Guitars() {
             data={[
               { value: "Electric", label: "Electric" },
               { value: "Acoustic", label: "Acoustic" },
-              { value: "Bass", label: "Bass" },
             ]}
             value={type}
             onChange={setType}
@@ -173,7 +172,7 @@ function Guitars() {
       </Collapse>
 
       {/* Card Grid */}
-      <div className="grid gap-8 md:grid-cols-3 pb-16">
+      <div className="grid gap-8 md:grid-cols-3 pb-8">
         {sortedGuitars.slice(0, visibleCount).map((guitar) => (
           <GuitarCard
             key={guitar.id}
@@ -189,10 +188,10 @@ function Guitars() {
 
       {/* Load More */}
      {visibleCount < sortedGuitars.length && (
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center mb-5">
           <button 
           onClick={() => setVisibleCount((c) => c + 9)}
-          className="px-6 mb-8 bg-brand-purple text-white font-semibold rounded-lg shadow hover:bg-brand-purple/90">
+          className="px-6 bg-brand-purple text-white font-semibold rounded-lg shadow hover:bg-brand-purple/90">
             Load More
           </button>
         </div>

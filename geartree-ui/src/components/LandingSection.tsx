@@ -23,7 +23,7 @@ export function LandingSection() {
   };
 
   return (
-    <main className="pl-[8%] pr-10 pt-10 pb-10 min-h-screen flex flex-col gap-4">
+    <main className="pl-[8%] pr-10 pt-10 pb-10 flex flex-col gap-4">
       <h1 className="text-4xl font-bold">Classic Rigs, Classic Tone.</h1>
       <h3 className="text-lg max-w-xl">
         Welcome to GearTree, a digital exploration of artist rigs and the

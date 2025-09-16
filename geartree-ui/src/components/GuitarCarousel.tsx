@@ -1,8 +1,8 @@
-// src/components/GuitarCarousel.tsx
 import { useState } from "react";
-import { Link } from "react-router-dom"; // ✅ import Link
+import { Link } from "react-router-dom";
 import type { GuitarBrief } from "../api";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface GuitarCarouselProps {
   guitars: GuitarBrief[];
@@ -15,8 +15,6 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
     return <p className="text-gray-500">No guitars found for this artist.</p>;
   }
 
-  const guitar = guitars[currentIndex];
-
   const prevGuitar = () => {
     setCurrentIndex((prev) => (prev === 0 ? guitars.length - 1 : prev - 1));
   };
@@ -26,29 +24,40 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
   };
 
   return (
-    <div className="relative w-full p-4 group min-w-0">
-      {/* Guitar Card */}
-      <Link
-        to={`/guitars/${guitar.id}`} // ✅ link to guitar detail page
-        className="block bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4 w-full h-full hover:shadow-xl transition-shadow"
-      >
-        {guitar.photoUrl && (
-          <img
-            src={guitar.photoUrl}
-            alt={guitar.name}
-            className="w-full h-64 object-cover rounded-lg shadow-md"
-          />
-        )}
-        <h2 className="text-2xl font-bold truncate text-center w-full overflow-hidden">
-          {guitar.name}
-        </h2>
-        <p className="text-sm text-gray-600 italic">
-          {guitar.yearStart} - {guitar.yearEnd || "Present"}
-        </p>
-        <p className="text-gray-700 text-center line-clamp-2 min-h-[3rem]">
-          {guitar.summary}
-        </p>
-      </Link>
+    <div className="relative w-full p-4 group min-w-0 overflow-hidden">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={guitars[currentIndex].id}
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -50 }}
+          transition={{ duration: 0.25 }}
+        >
+          {/* Guitar Card */}
+          <Link
+            to={`/guitars/${guitars[currentIndex].id}`}
+            className="block bg-white rounded-2xl shadow-lg p-6 flex flex-col items-center space-y-4 w-full h-full hover:shadow-xl transition-shadow"
+          >
+            {guitars[currentIndex].photoUrl && (
+              <img
+                src={guitars[currentIndex].photoUrl}
+                alt={guitars[currentIndex].name}
+                className="w-full h-64 object-cover object-top rounded-lg shadow-md"
+              />
+            )}
+            <h2 className="text-2xl font-bold truncate text-center w-full overflow-hidden">
+              {guitars[currentIndex].name}
+            </h2>
+            <p className="text-sm text-gray-600 italic">
+              {guitars[currentIndex].yearStart} -{" "}
+              {guitars[currentIndex].yearEnd || "Present"}
+            </p>
+            <p className="text-gray-700 text-center line-clamp-2 min-h-[3rem]">
+              {guitars[currentIndex].summary}
+            </p>
+          </Link>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Navigation Arrows */}
       {guitars.length > 1 && (
