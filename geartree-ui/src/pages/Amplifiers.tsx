@@ -188,10 +188,12 @@ function Amplifiers() {
 
       {/* Load More Button */}
       {visibleCount < sortedAmps.length && (
-        <div className="flex justify-center mb-12">
-          <Button onClick={() => setVisibleCount((c) => c + 9)}>
+        <div className="flex justify-center">
+          <button 
+          onClick={() => setVisibleCount((c) => c + 9)}
+          className="px-6 mb-8 bg-brand-purple text-white font-semibold rounded-lg shadow hover:bg-brand-purple/90">
             Load More
-          </Button>
+          </button>
         </div>
       )}
     </div>

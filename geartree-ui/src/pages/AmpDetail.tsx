@@ -77,6 +77,12 @@ function AmpDetail() {
             </Text>
           )}
 
+            {/* Description */}
+      <section className="prose max-w-none">
+        <p>{amp.description}</p>
+      </section>
+
+
           {/* Reverb Search */}
           <Button
             component="a"
@@ -90,11 +96,7 @@ function AmpDetail() {
         </Stack>
       </div>
 
-      {/* Description */}
-      <section className="mb-16 prose max-w-none">
-        <p>{amp.description}</p>
-      </section>
-
+    
       {/* Related Amps */}
       {amp.relatedAmps && amp.relatedAmps.length > 0 && (
         <section className="mb-16">

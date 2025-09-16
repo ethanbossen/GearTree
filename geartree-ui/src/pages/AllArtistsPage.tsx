@@ -142,7 +142,7 @@ function AllArtistsPage() {
         <div className="flex justify-center mt-8">
           <button
             onClick={() => setVisibleCount((prev) => prev + 9)}
-            className="px-6 py-2 bg-brand-purple text-white font-semibold rounded-lg shadow hover:bg-brand-purple/90"
+            className="px-6 mb-8 bg-brand-purple text-white font-semibold rounded-lg shadow hover:bg-brand-purple/90"
           >
             Load More
           </button>

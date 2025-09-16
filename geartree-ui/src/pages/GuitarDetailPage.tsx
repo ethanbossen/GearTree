@@ -1,8 +1,8 @@
 // src/pages/GuitarDetail.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Guitars } from "../api";  // ✅ use new namespace
-import type { GuitarDetail } from "../api"; // ✅ use the detail type
+import { Guitars } from "../api";  
+import type { GuitarDetail } from "../api"; 
 import { Button, Loader } from "@mantine/core";
 import CardGridContainer from "../components/CardGridContainer";
 import GuitarCard from "../components/GuitarCard";
@@ -10,13 +10,13 @@ import ArtistCard from "../components/ArtistCard";
 
 function GuitarDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const [guitar, setGuitar] = useState<GuitarDetail | null>(null); // ✅ correct type
+  const [guitar, setGuitar] = useState<GuitarDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
-    Guitars.get(Number(id)) // ✅ updated
+    Guitars.get(Number(id))
       .then((data) => {
         setGuitar(data);
         setLoading(false);
@@ -40,41 +40,48 @@ function GuitarDetailPage() {
           <img
             src={guitar.photoUrl}
             alt={guitar.name}
-            className="w-full h-[400px] object-cover object-top rounded-xl shadow-lg"
+            className="w-full h-[400px] object-cover object-center rounded-xl shadow-lg"
           />
         </div>
 
         {/* Right: Details */}
         <div className="flex flex-col space-y-4">
-          <h1 className="text-4xl font-bold">{guitar.name}</h1>
-          <p className="text-gray-600 italic">
-            {guitar.yearStart} – {guitar.yearEnd || "Present"}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {guitar.type && (
-              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                {guitar.type}
-              </span>
-            )}
-            {guitar.pickups?.map((p, idx) => (
-              <span
-                key={idx}
-                className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-              >
-                {p}
-              </span>
-            ))}
-            {guitar.genres?.map((g, idx) => (
-              <span
-                key={idx}
-                className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
-              >
-                {g}
-              </span>
-            ))}
+          <div>
+            <h1 className="text-4xl font-bold">{guitar.name}</h1>
+            <p className="text-gray-600 italic">
+              {guitar.yearStart} – {guitar.yearEnd || "Present"}
+            </p>
+
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2 my-3">
+              {guitar.type && (
+                <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
+                  {guitar.type}
+                </span>
+              )}
+              {guitar.pickups?.map((p, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                >
+                  {p}
+                </span>
+              ))}
+              {guitar.genres?.map((g, idx) => (
+                <span
+                  key={idx}
+                  className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                >
+                  {g}
+                </span>
+              ))}
+            </div>
+
+            {/* Description */}
+            <p className="text-gray-700 mt-2">{guitar.description}</p>
           </div>
 
-          {/* Reverb Search */}
+          {/* Button full width under text */}
           <Button
             component="a"
             href={`https://reverb.com/marketplace?query=${encodeURIComponent(
@@ -83,46 +90,42 @@ function GuitarDetailPage() {
             target="_blank"
             rel="noopener noreferrer"
             color="dark"
+            className="w-full"
           >
             Search on Reverb
           </Button>
         </div>
       </div>
 
-      {/* Description */}
-      <section className="prose max-w-none mb-12">
-        <p>{guitar.description}</p>
-      </section>
+      {/* Related Guitars */}
+      {guitar.relatedGuitars && guitar.relatedGuitars.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-4">Related Guitars</h2>
+          <CardGridContainer>
+            {guitar.relatedGuitars.map((rg) => (
+              <GuitarCard
+                key={rg.id}
+                id={rg.id}
+                name={rg.name}
+                photoUrl={rg.photoUrl ?? ""}   
+                summary={rg.summary ?? ""}     
+              />
+            ))}
+          </CardGridContainer>
+        </section>
+      )}
 
-  {/* Related Guitars */}
-{guitar.relatedGuitars && guitar.relatedGuitars.length > 0 && (
-  <section className="mb-12">
-    <h2 className="text-2xl font-bold mb-4">Related Guitars</h2>
-<CardGridContainer>
-  {guitar.relatedGuitars.map((rg) => (
-    <GuitarCard
-      key={rg.id}
-      id={rg.id}
-      name={rg.name}
-      photoUrl={rg.photoUrl ?? ""}   
-      summary={rg.summary ?? ""}     
-    />
-  ))}
-</CardGridContainer>
-  </section>
-)}
-
-{/* Artists */}
-{guitar.artists && guitar.artists.length > 0 && (
-  <section className="mb-12">
-    <h2 className="text-2xl font-bold mb-4">Artists Who Use This Guitar</h2>
-    <CardGridContainer>
-      {guitar.artists.map((artist) => (
-        <ArtistCard key={artist.id} {...artist} />
-      ))}
-    </CardGridContainer>
-  </section>
-)}
+      {/* Artists */}
+      {guitar.artists && guitar.artists.length > 0 && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-4">Artists Who Use This Guitar</h2>
+          <CardGridContainer>
+            {guitar.artists.map((artist) => (
+              <ArtistCard key={artist.id} {...artist} />
+            ))}
+          </CardGridContainer>
+        </section>
+      )}
     </div>
   );
 }

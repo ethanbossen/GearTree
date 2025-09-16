@@ -70,8 +70,8 @@ function Guitars() {
   return (
     <div className="px-8 max-w-7xl mx-auto">
       {/* Intro Section */}
-      <section className="mb-10">
-      
+      <section className="prose max-w-none mb-10">
+      <h1 className="text-4xl font-bold mb-4">Explore Guitars</h1>
         <p className="text-lg text-gray-700 mb-4">
           Guitars are the heart and soul of modern music, capable of shaping
           everything from delicate melodies to walls of sound. More than just an
@@ -188,11 +188,13 @@ function Guitars() {
       </div>
 
       {/* Load More */}
-      {sortedGuitars.length > visibleCount && (
-        <div className="flex justify-center mt-8">
-          <Button onClick={() => setVisibleCount((c) => c + 9)}>
+     {visibleCount < sortedGuitars.length && (
+        <div className="flex justify-center mb-12">
+          <button 
+          onClick={() => setVisibleCount((c) => c + 9)}
+          className="px-6 mb-8 bg-brand-purple text-white font-semibold rounded-lg shadow hover:bg-brand-purple/90">
             Load More
-          </Button>
+          </button>
         </div>
       )}
     </div>
