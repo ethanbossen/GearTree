@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GearTree.Migrations
 {
     [DbContext(typeof(GearContext))]
-    [Migration("20250911150241_AddSummaryFields")]
-    partial class AddSummaryFields
+    [Migration("20250916151020_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,6 +31,21 @@ namespace GearTree.Migrations
                     b.HasIndex("ArtistsId");
 
                     b.ToTable("AmplifierArtist");
+                });
+
+            modelBuilder.Entity("AmplifierRelation", b =>
+                {
+                    b.Property<int>("AmplifierId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelatedAmplifierId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("AmplifierId", "RelatedAmplifierId");
+
+                    b.HasIndex("RelatedAmplifierId");
+
+                    b.ToTable("AmplifierRelation");
                 });
 
             modelBuilder.Entity("ArtistGuitar", b =>
@@ -65,7 +80,15 @@ namespace GearTree.Migrations
                     b.Property<bool>("IsTube")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Manufacturer")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.PrimitiveCollection<string>("OtherPhotos")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -73,14 +96,27 @@ namespace GearTree.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("SpeakerConfiguration")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Summary")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("YearEnd")
+                    b.Property<int>("Wattage")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("YearEnd")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("YearStart")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("priceEnd")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("priceStart")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -102,7 +138,15 @@ namespace GearTree.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("HeroPhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.PrimitiveCollection<string>("OtherPhotos")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -111,6 +155,10 @@ namespace GearTree.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Tagline")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -145,6 +193,10 @@ namespace GearTree.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -158,6 +210,21 @@ namespace GearTree.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Guitars");
+                });
+
+            modelBuilder.Entity("GuitarRelation", b =>
+                {
+                    b.Property<int>("GuitarId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("RelatedGuitarId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("GuitarId", "RelatedGuitarId");
+
+                    b.HasIndex("RelatedGuitarId");
+
+                    b.ToTable("GuitarRelation");
                 });
 
             modelBuilder.Entity("AmplifierArtist", b =>
@@ -175,6 +242,21 @@ namespace GearTree.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("AmplifierRelation", b =>
+                {
+                    b.HasOne("GearTree.Models.Amplifier", null)
+                        .WithMany()
+                        .HasForeignKey("AmplifierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GearTree.Models.Amplifier", null)
+                        .WithMany()
+                        .HasForeignKey("RelatedAmplifierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ArtistGuitar", b =>
                 {
                     b.HasOne("GearTree.Models.Artist", null)
@@ -187,6 +269,21 @@ namespace GearTree.Migrations
                         .WithMany()
                         .HasForeignKey("GuitarsId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GuitarRelation", b =>
+                {
+                    b.HasOne("GearTree.Models.Guitar", null)
+                        .WithMany()
+                        .HasForeignKey("GuitarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GearTree.Models.Guitar", null)
+                        .WithMany()
+                        .HasForeignKey("RelatedGuitarId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

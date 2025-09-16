@@ -71,14 +71,7 @@ modelBuilder.Entity<Guitar>()
         j => j.HasOne<Guitar>()
               .WithMany()
               .HasForeignKey("GuitarId")
-              .OnDelete(DeleteBehavior.Cascade),
-        j =>
-        {
-            j.HasData(
-                new { GuitarId = 2, RelatedGuitarId = 4 },
-                new { GuitarId = 4, RelatedGuitarId = 2 }
-            );
-        }
+              .OnDelete(DeleteBehavior.Cascade)
     );
 
 }

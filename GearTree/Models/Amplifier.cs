@@ -10,7 +10,7 @@ public class Amplifier
     public bool IsTube { get; set; }
     public string GainStructure { get; set; } = "";
     public int YearStart { get; set; }
-    public int YearEnd { get; set; }
+    public int? YearEnd { get; set; }
     public int priceStart { get; set; }
     public int priceEnd { get; set; }
     public int Wattage { get; set; }
@@ -22,4 +22,5 @@ public class Amplifier
     // Relationship
     public ICollection<Artist> Artists { get; set; } = new List<Artist>();
     public ICollection<Amplifier> RelatedAmplifiers { get; set; } = new List<Amplifier>();
+
 }

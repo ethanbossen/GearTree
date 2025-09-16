@@ -104,7 +104,7 @@ namespace GearTree.Migrations
                     b.Property<int>("Wattage")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("YearEnd")
+                    b.Property<int?>("YearEnd")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("YearStart")
@@ -222,18 +222,6 @@ namespace GearTree.Migrations
                     b.HasIndex("RelatedGuitarId");
 
                     b.ToTable("GuitarRelation");
-
-                    b.HasData(
-                        new
-                        {
-                            GuitarId = 2,
-                            RelatedGuitarId = 4
-                        },
-                        new
-                        {
-                            GuitarId = 4,
-                            RelatedGuitarId = 2
-                        });
                 });
 
             modelBuilder.Entity("AmplifierArtist", b =>

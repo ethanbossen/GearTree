@@ -4,7 +4,22 @@ using GearTree.Data;
 using GearTree.Models;
 using GearTree.Dtos;
 
-var builder = WebApplication.CreateBuilder(args);
+// Parse command line arguments manually
+var reseed = false;
+var argsList = Environment.GetCommandLineArgs().ToList();
+
+if (argsList.Contains("--reseed") || argsList.Contains("-r"))
+{
+    reseed = true;
+    // Remove the reseed argument to avoid conflicts with WebApplication.CreateBuilder
+    argsList.Remove("--reseed");
+    argsList.Remove("-r");
+}
+
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = argsList.ToArray()
+});
 
 // -------------------------
 // Services
@@ -58,8 +73,41 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    
     var context = services.GetRequiredService<GearContext>();
-    SeedData.Initialize(context);
+    
+    // Ensure database is created
+    context.Database.EnsureCreated();
+    
+    if (reseed)
+    {
+        Console.WriteLine("Reseeding database...");
+        try
+        {
+            await SeedData.Initialize(context);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Seeding Failed:" + ex.Message);
+        }
+        Console.WriteLine("Database reseeding completed.");
+    }
+    else if (!context.Guitars.Any() && !context.Amplifiers.Any() && !context.Artists.Any())
+    {
+        Console.WriteLine("Seeding empty database...");
+
+        try {
+            await SeedData.Initialize(context);
+        } catch (Exception ex) {
+            Console.WriteLine("Seeding failed: " + ex.Message);
+        }
+
+        Console.WriteLine("Database seeding completed.");
+    }
+    else
+    {
+        Console.WriteLine("Database already contains data. Use --reseed flag to reset.");
+    }
 }
 
-app.Run();
+await app.RunAsync();
