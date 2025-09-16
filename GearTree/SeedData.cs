@@ -432,7 +432,7 @@ new Amplifier {
             new Artist {
                 Name = "Zakk Wylde",
                 PhotoUrl = "/images/artists/zakk-wylde.jpg",
-                HeroPhotoUrl = "/images/artists/zakk-wylde-hero.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/Zakk/zakk-hero.jpg",
                 Tagline = "Renowned guitarist for Ozzy Osbourne and founder of Black Label Society.",
                 Description = "Zakk Wylde early on with Ozzy Osbourne got his tone from his Gibson Les Paul Customs—most famously the bullseye model—loaded with EMG 81/85 pickups, cranked through Marshall JCM800s and JCM900s. This combo gave him the tight, high-gain crunch and searing sustain that defined his late-80s and 90s sound.\n\nWith Black Label Society, he doubled down on heaviness, sticking with EMG-equipped Les Pauls but pushing his Marshalls even harder for a thicker, more aggressive grind. His crushing rhythm tone and screaming pinch harmonics became trademarks of his massive, sludgy sound.\n\nIn recent years, Zakk has carried that formula into his own Wylde Audio guitars and amps. Built to capture the Les Paul-meets-Marshall recipe with his custom tweaks, they keep his tone consistent: huge, saturated, and instantly recognizable.",
                 Summary = "Started with Ozzy, now leads Black Label Society with his signature heavy tone.",
@@ -441,7 +441,7 @@ new Amplifier {
             new Artist {
                 Name = "Eddie Van Halen",
                 PhotoUrl = "/images/artists/eddie-van-halen.jpg",
-                HeroPhotoUrl = "/images/artists/eddie-van-halen.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/EVH/evh-hero.jpg",
                 Tagline = "Legendary Guitarist for Van Halen, popularized tapping.",
                 Description = "Eddie Van Halen revolutionized electric guitar technique and tone in the late 1970s and 80s. He is best known for two-handed tapping, harmonics, and his high-gain, mid-forward sound built around modified amps and Frankenstrat guitars.\n\nHis playing inspired generations of rock and metal players and helped define the sound of modern rock guitar.",
                 Summary = "Innovative rock guitarist famous for two-handed tapping and tone.",
@@ -450,7 +450,7 @@ new Amplifier {
             new Artist {
                 Name = "Stevie Ray Vaughan",
                 PhotoUrl = "/images/artists/stevie-ray.jpg",
-                HeroPhotoUrl = "/images/artists/stevie-ray-hero.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/SRV/stevie-ray-hero.jpg",
                 Tagline = "Blues guitar legend known for fiery playing and soulful tone.",
                 Description = "Stevie Ray Vaughan's tone was built around his Fender Stratocaster, often played through Fender and Marshall amplifiers. His use of single-coil pickups gave him a bright, cutting sound that was perfect for blues.\n\nVaughan's playing style was characterized by aggressive string bending, heavy vibrato, and a powerful attack. He often used overdrive and distortion pedals to push his amps into a gritty, saturated tone that became his signature sound. His soulful phrasing and impeccable timing made him one of the most influential blues guitarists of all time.",
                 Summary = "Fiery blues guitarist with a soulful, cutting tone.",
@@ -460,7 +460,7 @@ new Amplifier {
             new Artist {
                 Name = "David Gilmour",
                 PhotoUrl = "/images/artists/david-gilmour.jpg",
-                HeroPhotoUrl = "/images/artists/david-gilmour-hero.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/DG/gilmour-hero.jpg",
                 Tagline = "Legendary guitarist for Pink Floyd, known for melodic solos and tone.",
                 Description = "David Gilmour's iconic tone is built around his Fender Stratocaster and Telecaster guitars, often played through Hiwatt and Fender amplifiers. His use of single-coil pickups gives him a bright, articulate sound that cuts through the mix.\n\nGilmour is renowned for his expressive playing style, utilizing techniques like string bending, vibrato, and tasteful use of effects such as delay and reverb to create his signature soaring solos. His melodic approach and impeccable phrasing have made him one of the most influential guitarists in rock history.",
                 Summary = "Pink Floyd's lead guitarist known for melodic solos and pristine tone.",
@@ -470,7 +470,7 @@ new Amplifier {
             new Artist {
                 Name = "John Mayer",
                 PhotoUrl = "/images/artists/john-mayer.jpg",
-                HeroPhotoUrl = "/images/artists/john-mayer-hero.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/JM/mayer-hero.jpg",
                 Tagline = "Grammy-winning singer-songwriter and guitarist known for bluesy pop-rock.",
                 Description = "John Mayer's tone is characterized by his use of Fender Stratocaster guitars, often played through Two-Rock and Dumble amplifiers. His preference for single-coil pickups gives him a bright, clear sound that is perfect for his bluesy pop-rock style.\n\nMayer's playing style incorporates elements of blues, rock, and pop, with a focus on melodic phrasing and tasteful use of dynamics. He often employs techniques such as fingerpicking, hybrid picking, and subtle vibrato to add expression to his playing. His tone is further enhanced by his use of effects like delay and reverb, creating a spacious and atmospheric sound.",
                 Summary = "Bluesy pop-rock guitarist and singer-songwriter with a smooth tone.",
@@ -479,7 +479,7 @@ new Amplifier {
             new Artist {
                 Name = "B.B. King",
                 PhotoUrl = "/images/artists/bb-king.jpg",
-                HeroPhotoUrl = "/images/artists/bb-king-hero.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/BB/bb-hero.jpg",
                 Tagline = "The King of Blues, known for his expressive vibrato and soulful playing.",
                 Description = "B.B. King's tone was built around his Gibson ES-355 guitar, affectionately named 'Lucille,' often played through Fender and Ampeg amplifiers. His use of humbucking pickups gave him a warm, rich sound that was perfect for blues.\n\nKing's playing style was characterized by his expressive vibrato, precise string bending, and economical note choice. He often used a clean tone with a touch of overdrive to create a smooth, singing quality in his solos. His soulful phrasing and impeccable timing made him one of the most influential blues guitarists of all time.",
                 Summary = "Blues legend known for his soulful tone and expressive vibrato.",
@@ -488,7 +488,7 @@ new Amplifier {
             new Artist {
                 Name = "Slash",
                 PhotoUrl = "/images/artists/slash.jpg",
-                HeroPhotoUrl = "/images/artists/slash-hero.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/Slash/slash-hero.jpg",
                 Tagline = "Iconic guitarist for Guns N' Roses, known for his bluesy rock solos.",
                 Description = "Slash's tone is built around his Gibson Les Paul guitars, often played through Marshall amplifiers. His use of humbucking pickups gives him a thick, powerful sound that is perfect for hard rock.\n\nSlash's playing style incorporates elements of blues and rock, with a focus on melodic phrasing and expressive bends. He often uses techniques such as vibrato, slides, and double stops to add emotion to his solos. His tone is further enhanced by his use of effects like wah and delay, creating a dynamic and powerful sound.",
                 Summary = "Guns N' Roses guitarist known for bluesy rock solos and iconic tone.",
@@ -496,8 +496,8 @@ new Amplifier {
             },
             new Artist {
                 Name = "Carlos Santana",
-                PhotoUrl = "/images/artists/carlos-santana.jpg",
-                HeroPhotoUrl = "/images/artists/carlos-santana-hero.jpg",
+                PhotoUrl = "/images/artists/santana.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/Santana/santana-hero.jpg",
                 Tagline = "Latin rock legend known for his melodic playing and spiritual tone.",
                 Description = "Carlos Santana's tone is built around his PRS guitars, often played through Mesa/Boogie and Fender amplifiers. His use of humbucking pickups gives him a warm, rich sound that is perfect for his Latin rock style.\n\nSantana's playing style incorporates elements of rock, blues, and Latin music, with a focus on melodic phrasing and expressive bends. He often uses techniques such as vibrato, slides, and legato to add emotion to his solos. His tone is further enhanced by his use of effects like delay and reverb, creating a spacious and atmospheric sound.",
                 Summary = "Latin rock guitarist known for melodic solos and spiritual tone.",
@@ -505,8 +505,8 @@ new Amplifier {
             },
             new Artist {
                 Name = "Jimi Hendrix",
-                PhotoUrl = "images/artists/jimi-hendrix.jpg",
-                HeroPhotoUrl = "images/artists/jimi-hendrix-hero.jpg",
+                PhotoUrl = "/images/artists/jimi-hendrix.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/Jimi/hendrix-hero.jpg",
                 Tagline = "Guitar revolutionary who changed music forever.",
                 Description = "Jimi Hendrix revolutionized electric guitar playing with his innovative techniques and psychedelic approach to rock music",
                 Summary = "Guitar legend, with 3 years of music he made a lifelong impact.",
@@ -515,8 +515,8 @@ new Amplifier {
 
             new Artist {
                 Name = "Eric Clapton",
-                PhotoUrl = "/images/artists/eric-clapton.jpg",
-                HeroPhotoUrl = "/images/artists/eric-clapton-hero.jpg",
+                PhotoUrl = "/images/artists/clapton.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/EC/clapton-hero.jpg",
                 Tagline = "Guitar legend known as Slowhand",
                 Description = "Eric Clapton is one of the most influential guitarists in rock history, known for his work with Cream, Derek and the Dominos, and as a solo artist.",
                 Summary = "Blues-rock guitar icon with a career spanning decades.",
@@ -525,7 +525,7 @@ new Amplifier {
             new Artist {
                 Name = "Jimmy Page",
                 PhotoUrl = "/images/artists/jimmy-page.jpg",
-                HeroPhotoUrl = "/images/artists/jimmy-page-hero.jpg",
+                HeroPhotoUrl = "/images/artists/artistCont/JP/page-hero.jpg",
                 Tagline = "Led Zeppelin's guitar wizard and producer",
                 Description = "Jimmy Page crafted some of the most iconic guitar riffs in rock history with Led Zeppelin",
                 Summary = "Led Zeppelin's iconic guitar legend and producer",
@@ -761,58 +761,84 @@ new Amplifier {
         var jazzmaster = findGuitar("Fender Jazzmaster");
 
         // // Strat to Super Strat evolution
-        if (strat != null && superStrat != null)
+        if (strat != null && superStrat != null && tele != null && mustang != null && jazzmaster != null)
         {
             strat.RelatedGuitars.Add(superStrat);
+            strat.RelatedGuitars.Add(tele);
+
+            tele.RelatedGuitars.Add(strat);
+            tele.RelatedGuitars.Add(superStrat);
+            tele.RelatedGuitars.Add(jazzmaster);
+            tele.RelatedGuitars.Add(mustang);
+
+            superStrat.RelatedGuitars.Add(strat);
+
+            mustang.RelatedGuitars.Add(jazzmaster);
+
+            jazzmaster.RelatedGuitars.Add(mustang);
+            jazzmaster.RelatedGuitars.Add(tele);
         }
 
-        // // Fender offset guitars (Mustang, Jazzmaster)
-        if (mustang != null && jazzmaster != null)
-        {
-            mustang.RelatedGuitars.Add(jazzmaster);
-        }
 
         // // Gibson solid body family
         var sg = findGuitar("Gibson SG Standard");
         var explorer = findGuitar("Gibson Explorer");
 
-        if (lesPaul != null && sg != null)
+        if (lesPaul != null && sg != null && es335 != null)
         {
             lesPaul.RelatedGuitars.Add(sg);
+            lesPaul.RelatedGuitars.Add(es335);
+
+            sg.RelatedGuitars.Add(lesPaul);
+            sg.RelatedGuitars.Add(es335);
+
+            es335.RelatedGuitars.Add(lesPaul);
+            es335.RelatedGuitars.Add(sg);
+
         }
 
         // // Gibson radical shapes (Explorer, Flying V)
         if (explorer != null && flyingV != null)
         {
             explorer.RelatedGuitars.Add(flyingV);
+            flyingV.RelatedGuitars.Add(explorer);
         }
 
         // // === AMPLIFIER-AMPLIFIER RELATIONSHIPS (Evolution/Family) ===
 
         // // Marshall evolution: Plexi -> JCM800 -> JCM900
         var jcm900 = findAmp("Marshall JCM900");
-        if (plexi != null && jcm800 != null)
+        if (plexi != null && jcm800 != null && jcm900 != null)
         {
             plexi.RelatedAmplifiers.Add(jcm800);
-        }
-        if (jcm800 != null && jcm900 != null)
-        {
+            plexi.RelatedAmplifiers.Add(jcm900);
+            jcm800.RelatedAmplifiers.Add(plexi);
             jcm800.RelatedAmplifiers.Add(jcm900);
+            jcm900.RelatedAmplifiers.Add(jcm800);
+            jcm900.RelatedAmplifiers.Add(plexi);
         }
 
+
         // // Fender clean amp family
-        if (twinReverb != null && deluxeReverb != null)
+        if (twinReverb != null && deluxeReverb != null && bluesJunior != null && princetonReverb != null)
         {
             twinReverb.RelatedAmplifiers.Add(deluxeReverb);
-        }
-        if (deluxeReverb != null && princetonReverb != null)
-        {
+            twinReverb.RelatedAmplifiers.Add(bluesJunior);
+            twinReverb.RelatedAmplifiers.Add(princetonReverb);
+
+            deluxeReverb.RelatedAmplifiers.Add(twinReverb);
+            deluxeReverb.RelatedAmplifiers.Add(bluesJunior);
             deluxeReverb.RelatedAmplifiers.Add(princetonReverb);
-        }
-        if (bluesJunior != null && princetonReverb != null)
-        {
+
             bluesJunior.RelatedAmplifiers.Add(princetonReverb);
+            bluesJunior.RelatedAmplifiers.Add(deluxeReverb);
+            bluesJunior.RelatedAmplifiers.Add(twinReverb);
+
+            princetonReverb.RelatedAmplifiers.Add(twinReverb);
+            princetonReverb.RelatedAmplifiers.Add(deluxeReverb);
+            princetonReverb.RelatedAmplifiers.Add(bluesJunior);
         }
+      
 
         // // Vox family
         var ac30 = findAmp("Vox AC30");
@@ -820,6 +846,7 @@ new Amplifier {
         if (ac30 != null && ac15 != null)
         {
             ac30.RelatedAmplifiers.Add(ac15);
+            ac15.RelatedAmplifiers.Add(ac30);
         }
 
         // // Orange family
@@ -828,6 +855,7 @@ new Amplifier {
         if (rockerverb != null && ad30 != null)
         {
             rockerverb.RelatedAmplifiers.Add(ad30);
+            ad30.RelatedAmplifiers.Add(rockerverb);
         }
 
         await context.SaveChangesAsync();
