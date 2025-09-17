@@ -1,10 +1,11 @@
 // src/components/admin/ArtistsTab.tsx
 import { useEffect, useState } from "react";
-import { Text, Stack, Group, Button, Card } from "@mantine/core";
-import { Artists } from "../../api";
-import type { Artist } from "../../api";
+import { Text, Stack, Group, Card } from "@mantine/core";
+import { Artists, Guitars, Amps } from "../../api";
+import type { Artist, Guitar, Amplifier } from "../../api";
 import CreateArtistButton from "./CreateArtistButton";
 import { EditScalarsButton } from "./EditScalarsButton";
+import { EditArtistRelationsButton } from "./EditArtistRelationsButton";
 
 const patchArtistScalars = async (updatedArtist: Artist): Promise<void> => {
   const { id, ...scalars } = updatedArtist;
@@ -15,9 +16,13 @@ const patchArtistScalars = async (updatedArtist: Artist): Promise<void> => {
 function EditArtistButtons({
   artist,
   onSaved,
+  allGuitars,
+  allAmps,
 }: {
   artist: Artist;
   onSaved: () => void;
+  allGuitars: Guitar[];
+  allAmps: Amplifier[];
 }) {
   return (
     <div className="flex gap-2">
@@ -27,14 +32,25 @@ function EditArtistButtons({
         scalarFields={["name", "tagline", "description", "summary", "bands"]}
         onSaved={onSaved} 
       />
-      <Button size="xs">Edit Relations</Button>
+      <EditArtistRelationsButton
+        artistId={artist.id}
+        currentGuitars={artist.guitars.map(g => ({ id: g.id, name: g.name }))}
+        currentAmps={artist.amplifiers.map(a => ({ id: a.id, name: a.name }))}
+        allGuitars={allGuitars.map(g => ({ id: g.id, name: g.name }))}
+        allAmps={allAmps.map(a => ({ id: a.id, name: a.name }))}
+        onAddGuitar={Artists.addGuitar}
+        onAddAmp={Artists.addAmp}
+        onSaved={onSaved}
+        title="Edit Artist Relations"
+      />
     </div>
   );
 }
 
-
 function ArtistsTab() {
   const [artists, setArtists] = useState<Artist[]>([]);
+  const [allGuitars, setAllGuitars] = useState<Guitar[]>([]);
+  const [allAmps, setAllAmps] = useState<Amplifier[]>([]);
 
   const loadArtists = async () => {
     try {
@@ -45,8 +61,28 @@ function ArtistsTab() {
     }
   };
 
+  const loadAllGuitars = async () => {
+    try {
+      const data = await Guitars.list();
+      setAllGuitars(data);
+    } catch (err) {
+      console.error("Failed to load guitars", err);
+    }
+  };
+
+  const loadAllAmps = async () => {
+    try {
+      const data = await Amps.list();
+      setAllAmps(data);
+    } catch (err) {
+      console.error("Failed to load amps", err);
+    }
+  };
+
   useEffect(() => {
     loadArtists();
+    loadAllGuitars();
+    loadAllAmps();
   }, []);
 
   return (
@@ -63,11 +99,14 @@ function ArtistsTab() {
             <Group justify="space-between">
               <div>
                 <Text fw={500}>{artist.name}</Text>
-                <Text size="sm" c="dimmed">
-                  {artist.bands.join(", ")}
-                </Text>
+                <Text size="sm" c="dimmed">{artist.bands.join(", ")}</Text>
               </div>
-              <EditArtistButtons artist={artist} onSaved={loadArtists} />
+              <EditArtistButtons
+                artist={artist}
+                onSaved={loadArtists}
+                allGuitars={allGuitars}
+                allAmps={allAmps}
+              />
             </Group>
           </Card>
         ))}

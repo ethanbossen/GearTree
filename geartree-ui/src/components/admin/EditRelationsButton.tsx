@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button, Modal, MultiSelect, Stack, Text, Group, Badge } from "@mantine/core";
 
-interface Relation {
+export interface Relation {
   id: number;
   name: string;
 }
