@@ -6,9 +6,9 @@ import type { Amplifier } from "../api";
 import { Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
 import AmpCard from "../components/AmpCard";
 import ArtistCard from "../components/ArtistCard"; 
-import CardGridContainer from "../components/CardGridContainer";
+import CardGridCarousel from "../components/CardGridCarousel";
 
-function AmpDetail() {
+function AmpDetailPage() {
   const { id } = useParams();
   const [amp, setAmp] = useState<Amplifier | null>(null);
   const [loading, setLoading] = useState(true);
@@ -102,7 +102,7 @@ function AmpDetail() {
           <Title order={2} className="mb-6 text-black">
             Related Amps:
           </Title>
-          <CardGridContainer>
+          <CardGridCarousel>
             {amp.relatedAmps.map((ra) => (
               <AmpCard
                 key={ra.id}
@@ -112,7 +112,7 @@ function AmpDetail() {
                 summary={ra.summary ?? ""}
               />
             ))}
-          </CardGridContainer>
+          </CardGridCarousel>
         </section>
       )}
 
@@ -122,15 +122,15 @@ function AmpDetail() {
           <Title order={2} className="mb-6 text-black">
             Artists Who Use This Amp:
           </Title>
-          <CardGridContainer>
+          <CardGridCarousel>
             {amp.artists.map((artist) => (
               <ArtistCard key={artist.id} {...artist} />
             ))}
-          </CardGridContainer>
+          </CardGridCarousel>
         </section>
       )}
     </div>
   );
 }
 
-export default AmpDetail;
+export default AmpDetailPage;

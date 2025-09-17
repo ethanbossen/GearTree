@@ -7,6 +7,7 @@ import { Button, Loader, Title } from "@mantine/core";
 import CardGridContainer from "../components/CardGridContainer";
 import GuitarCard from "../components/GuitarCard";
 import ArtistCard from "../components/ArtistCard";
+import CardGridCarousel from "../components/CardGridCarousel";
 
 function GuitarDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -103,7 +104,7 @@ function GuitarDetailPage() {
            <Title order={2} className="mb-6 text-black">
             Related Guitars:
           </Title>
-          <CardGridContainer>
+          <CardGridCarousel>
             {guitar.relatedGuitars.map((rg) => (
               <GuitarCard
                 key={rg.id}
@@ -113,7 +114,7 @@ function GuitarDetailPage() {
                 summary={rg.summary ?? ""}     
               />
             ))}
-          </CardGridContainer>
+          </CardGridCarousel>
         </section>
       )}
 
@@ -123,11 +124,11 @@ function GuitarDetailPage() {
  <Title order={2} className="mb-6 text-black">
             Artists Who Use This Guitar:
           </Title>
-          <CardGridContainer>
+          <CardGridCarousel>
             {guitar.artists.map((artist) => (
               <ArtistCard key={artist.id} {...artist} />
             ))}
-          </CardGridContainer>
+          </CardGridCarousel>
         </section>
       )}
     </div>

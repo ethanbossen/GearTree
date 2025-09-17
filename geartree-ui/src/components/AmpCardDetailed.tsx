@@ -67,10 +67,10 @@ function AmpCardDetailed({
               {wattage}W
             </Badge>
           )}
-          {priceStart > 0 && (
+          {priceStart != null && priceStart> 0 && (
             <Badge color="yellow" variant="light">
               ~${priceStart}
-              {priceEnd > priceStart ? ` - $${priceEnd}` : ""}
+              {priceEnd != null && priceEnd > priceStart ? ` - $${priceEnd}` : ""}
             </Badge>
           )}
         </Group>

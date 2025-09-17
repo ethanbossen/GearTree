@@ -182,7 +182,9 @@ function Guitars() {
             photoUrl={guitar.photoUrl}
             type={guitar.type}
             genres={guitar.genres}
-          />
+            yearStart={guitar.yearStart}
+            yearEnd={guitar.yearEnd}
+            />
         ))}
       </div>
 

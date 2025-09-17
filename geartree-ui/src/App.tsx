@@ -7,7 +7,7 @@ import Amplifiers from "./pages/Amplifiers";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import ArtistPage from "./pages/ArtistPage";
-import AmpDetail from "./pages/AmpDetail";
+import AmpDetailPage from "./pages/AmpDetailPage";
 import GuitarDetailPage from "./pages/GuitarDetailPage";
 import Admin from "./pages/Admin";
 import AllArtistsPage from "./pages/AllArtistsPage";
@@ -23,7 +23,7 @@ function App() {
         <Routes>
           <Route path="/artists/:id" element={<ArtistPage />} />
           <Route path="/guitars/:id" element={<GuitarDetailPage />} />
-          <Route path="/amplifiers/:id" element={<AmpDetail/>} />
+          <Route path="/amplifiers/:id" element={<AmpDetailPage/>} />
           <Route path="/artists" element={<AllArtistsPage />} />
           <Route path="/guitars" element={<Guitars />} />
           <Route path="/amplifiers" element={<Amplifiers />} />
