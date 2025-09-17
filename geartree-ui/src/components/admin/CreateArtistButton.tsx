@@ -7,6 +7,7 @@ import {
   TextInput,
   Textarea,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { Artists } from "../../api";
 
 const emptyForm = {
@@ -42,16 +43,17 @@ function CreateArtistButton({ onCreated }: CreateArtistButtonProps) {
       delete (payload as any).photoName;
       delete (payload as any).heroPhotoName;
 
-      console.log("Sending payload:", payload);
-
       await Artists.create(payload);
-      alert("Artist created!");
       setOpened(false);
       setForm({ ...emptyForm });
 
       if (onCreated) onCreated();
     } catch (err) {
-      alert("Failed to create artist: " + (err as Error).message);
+      notifications.show({
+      title: "Error",
+      message: `Failed to create artist: ${(err as Error).message}`,
+      color: "red",
+    });
     }
   };
 

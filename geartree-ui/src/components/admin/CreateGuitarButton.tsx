@@ -8,6 +8,7 @@ import {
   NumberInput,
   Textarea,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { Guitars } from "../../api";
 
 const emptyForm = {
@@ -44,13 +45,16 @@ function CreateGuitarButton({ onCreated }: CreateGuitarButtonProps) {
       delete (payload as any).photoName;
 
       await Guitars.create(payload);
-      alert("Guitar created!");
       setOpened(false);
       setForm({ ...emptyForm });
 
       if (onCreated) onCreated();
     } catch (err) {
-      alert("Failed to create guitar: " + (err as Error).message);
+      notifications.show({
+      title: "Error",
+      message: `Failed to create guitar: ${(err as Error).message}`,
+      color: "red",
+    });
     }
   };
 
