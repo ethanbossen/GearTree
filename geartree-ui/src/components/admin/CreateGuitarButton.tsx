@@ -40,7 +40,7 @@ function CreateGuitarButton({ onCreated }: CreateGuitarButtonProps) {
     try {
       const payload = {
         ...form,
-        photoUrl: `/images/guitars/${form.photoName}.jpg`,
+        photoUrl: `/images/guitars/${form.photoName}`,
       };
       delete (payload as any).photoName;
 
@@ -75,7 +75,7 @@ function CreateGuitarButton({ onCreated }: CreateGuitarButtonProps) {
           />
           <TextInput
             label="Photo filename"
-            placeholder="e.g. stratocaster (no path, no extension)"
+            placeholder="e.g. stratocaster.jpg etc."
             value={form.photoName}
             onChange={(e) => handleChange("photoName", e.currentTarget.value)}
           />
