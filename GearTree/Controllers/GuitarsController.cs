@@ -190,13 +190,26 @@ public async Task<IActionResult> Update(int id, [FromBody] UpdateGuitarDto updat
         if (updateDto.YearEnd.HasValue)
             guitar.YearEnd = updateDto.YearEnd.Value == 0 ? null : updateDto.YearEnd;
 
-        if (updateDto.Genres != null && updateDto.Genres.Any())
-            guitar.Genres ??= new List<string>();
+ if (updateDto.Genres != null && updateDto.Genres.Any())
+    {
+        if (guitar.Genres == null || !guitar.Genres.Any()) {
+            guitar.Genres = updateDto.Genres.ToList();
+        } else {
             guitar.Genres.AddRange(updateDto.Genres.Where(g => !guitar.Genres.Contains(g)));
+        }
+    }
 
-        if (updateDto.Pickups != null && updateDto.Pickups.Any())
-            guitar.Pickups ??= new List<string>();
+   if (updateDto.Pickups != null && updateDto.Pickups.Any())
+    {
+        if (guitar.Pickups == null || !guitar.Pickups.Any())
+        {
+            guitar.Pickups = updateDto.Pickups.ToList();
+        }
+        else
+        {
             guitar.Pickups.AddRange(updateDto.Pickups.Where(p => !guitar.Pickups.Contains(p)));
+        }
+    }
 
         await _db.SaveChangesAsync();
 

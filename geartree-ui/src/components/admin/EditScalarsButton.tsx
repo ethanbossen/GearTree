@@ -45,7 +45,7 @@ export function EditScalarsButton<T extends Record<string, any>>({
         Edit Scalars
       </Button>
 
-      <Modal opened={opened} onClose={() => setOpened(false)} title={<h2 className="text-2xl font-bold">Edit Scalars</h2>}>
+      <Modal opened={opened} onClose={() => setOpened(false)} title={<span className="text-2xl font-bold">Edit Scalars</span>}>
         <Stack>
             {scalarFields.map((field) => {
             const value = values[field];
