@@ -52,7 +52,7 @@ public static class SeedData
             // Your existing guitars
             new Guitar {
                 Name = "Gibson Les Paul Standard",
-                PhotoUrl = "https://picsum.photos/seed/lespaul/300/300",
+                PhotoUrl = "/images/guitars/lp-standard.jpg",
                 Description = "The Gibson Les Paul Standard is celebrated for its thick, sustaining tone and powerful midrange. With humbucking pickups and a mahogany body, it's a favorite for high-gain rock, blues and classic tones.\r\n\r\nPlayers prize the Les Paul for its note-to-note sustain and harmonically rich response.",
                 Summary = "Humbucker-equipped rock staple known for sustain and thickness.",
                 Type = "Electric",
@@ -63,7 +63,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Fender Stratocaster",
-                PhotoUrl = "https://picsum.photos/seed/strat/300/300",
+                PhotoUrl = "/images/guitars/strat.jpg",
                 Description = "The Fender Stratocaster is one of the most versatile electric guitars, known for its articulate single-coil voice and comfortable ergonomics. It covers everything from glassy cleans to snappy overdriven tones.\r\n\r\nIts five-position switching and varied pickup combinations make it a go-to for many players.",
                 Summary = "Versatile single-coil classic used across genres.",
                 Type = "Electric",
@@ -74,7 +74,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Fender Telecaster",
-                PhotoUrl = "https://picsum.photos/seed/tele/300/300",
+                PhotoUrl = "/images/guitars/tele.jpg",
                 Description = "The Fender Telecaster is known for its bright, cutting tone and simple yet effective design. With two single-coil pickups, it delivers twangy cleans and biting overdrive, making it a favorite in country, rock, and blues.\r\n\r\nIts straightforward controls and rugged build have made it a reliable choice for decades.",
                 Summary = "Bright, twangy classic favored in country and rock.",
                 Type = "Electric",
@@ -85,7 +85,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Fender Mustang",
-                PhotoUrl = "https://picsum.photos/seed/mustang/300/300",
+                PhotoUrl = "/images/guitars/fender-mustang.jpg",
                 Description = "The Fender Mustang is a short-scale electric guitar known for its unique offset body and distinctive tone. It features single-coil pickups and a dynamic switching system, making it popular among alternative and indie rock players.\r\n\r\nIts comfortable playability and quirky sound have made it a cult favorite.",
                 Summary = "Short-scale offset with a distinctive, quirky tone.",
                 Type = "Electric",
@@ -96,7 +96,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Fender (Super) Stratocaster",
-                PhotoUrl = "https://picsum.photos/seed/superstrat/300/300",
+                PhotoUrl = "/images/guitars/super-strat.jpg",
                 Description = "The Super Strat is a modified version of the classic Stratocaster, designed for higher performance and versatility. It often features humbucking pickups, a flatter fingerboard radius, and a double-locking tremolo system, making it ideal for shredders and modern rock players.\r\n\r\nIts enhanced playability and aggressive tone options set it apart from traditional Strats.",
                 Summary = "High-performance Strat variant with humbuckers and advanced features.",
                 Type = "Electric",
@@ -107,7 +107,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Gibson SG Standard",
-                PhotoUrl = "https://picsum.photos/seed/sg/300/300",
+                PhotoUrl = "/images/guitars/sg.jpg",
                 Description = "The Gibson SG Standard is known for its sharp, aggressive tone and lightweight, double-cutaway design. With humbucking pickups and a fast neck, it's favored by rock and metal players for its sustain and playability.\r\n\r\nIts iconic look and powerful sound have made it a staple in the guitar world.",
                 Summary = "Lightweight rock classic with sharp tone and fast neck.",
                 Type = "Electric",
@@ -118,7 +118,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Martin D-28",
-                PhotoUrl = "https://picsum.photos/seed/d28/300/300",
+                PhotoUrl = "/images/guitars/d28.jpg",
                 Description = "The Martin D-28 is a legendary acoustic guitar known for its rich, balanced tone and powerful projection. With a solid spruce top and rosewood back and sides, it delivers clarity and warmth, making it a favorite among folk, country, and bluegrass players.\r\n\r\nIts iconic design and exceptional craftsmanship have made it a benchmark in acoustic guitars.",
                 Summary = "Iconic dreadnought acoustic with rich, balanced tone.",
                 Type = "Acoustic",
@@ -129,7 +129,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Gibson Explorer",
-                PhotoUrl = "https://picsum.photos/seed/explorer/300/300",
+                PhotoUrl = "/images/guitars/gibson-explorer.jpg",
                 Description = "The Gibson Explorer is known for its radical, futuristic design and powerful humbucking pickups. It delivers a thick, aggressive tone with plenty of sustain, making it a favorite among hard rock and metal players.\r\n\r\nIts bold aesthetics and commanding sound have made it an enduring icon in the guitar world.",
                 Summary = "Futuristic design with thick, aggressive tone.",
                 Type = "Electric",
@@ -140,7 +140,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Gibson Flying V",
-                PhotoUrl = "https://picsum.photos/seed/flyingv/300/300",
+                PhotoUrl = "/images/guitars/flying-v.jpg",
                 Description = "The Gibson Flying V is renowned for its distinctive V-shaped body and powerful humbucking pickups. It offers a sharp, cutting tone with excellent sustain, making it a favorite among rock and metal guitarists.\r\n\r\nIts bold design and aggressive sound have cemented its status as a rock icon.",
                 Summary = "Iconic V-shaped guitar with sharp, cutting tone.",
                 Type = "Electric",
@@ -151,7 +151,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Gibson ES-335",
-                PhotoUrl = "https://picsum.photos/seed/es335/300/300",
+                PhotoUrl = "/images/guitars/es335.jpg",
                 Description = "Semi-hollow body guitar that blends the warmth of hollow bodies with the sustain of solid bodies.",
                 Summary = "Versatile semi-hollow classic used in jazz, blues, and rock.",
                 Type = "Electric",
@@ -162,7 +162,7 @@ public static class SeedData
             },
             new Guitar {
                 Name = "Fender Jazzmaster",
-                PhotoUrl = "https://picsum.photos/seed/jazzmaster/300/300",
+                PhotoUrl = "/images/guitars/fender-jazzmaster.jpg",
                 Description = "Offset body guitar popular with alternative and surf rock players.",
                 Summary = "Offset classic with bright, clear tones.",
                 Type = "Electric",
@@ -420,8 +420,7 @@ new Amplifier {
     Wattage = 100,
     SpeakerConfiguration = "4x12",
     Manufacturer = "Marshall"
-},
-
+}
         };
     }
 

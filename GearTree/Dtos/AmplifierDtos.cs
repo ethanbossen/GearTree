@@ -8,7 +8,7 @@ public class UpdateAmplifierDto
         public string? Summary { get; set; }
         public bool? IsTube { get; set; }
         public string? GainStructure { get; set; }
-        public int YearStart { get; set; }
+        public int? YearStart { get; set; }
         public int? YearEnd { get; set; }
         public int? PriceStart { get; set; }
         public int? PriceEnd { get; set; }
@@ -41,7 +41,7 @@ public class UpdateAmplifierDto
         public string? Summary { get; set; }
         public bool IsTube { get; set; }
         public string? GainStructure { get; set; }
-        public int YearStart { get; set; }
+        public int? YearStart { get; set; }
         public int? YearEnd { get; set; }
         public int PriceStart { get; set; }
         public int PriceEnd { get; set; }

@@ -65,265 +65,62 @@ public class GuitarsController : ControllerBase
     }
 
     // -------------------------
-// UPDATE (PUT) - FIXED VERSION
+// UPDATE (PUT) - Scalars only, ignore empty strings
 // -------------------------
 [HttpPut("{id}")]
 public async Task<IActionResult> Update(int id, [FromBody] UpdateGuitarDto updateDto)
 {
-    var guitar = await _db.Guitars
-        .Include(g => g.Artists)
-        .Include(g => g.RelatedGuitars)
-        .FirstOrDefaultAsync(g => g.Id == id);
+    var guitar = await _db.Guitars.FirstOrDefaultAsync(g => g.Id == id);
 
-    if (guitar is null) return NotFound();
+    if (guitar is null) 
+        return NotFound();
 
-    // Update all properties (not just if provided, since this is a PUT)
-    guitar.Name = updateDto.Name;
-    guitar.PhotoUrl = updateDto.PhotoUrl;
-    guitar.Description = updateDto.Description;
-    guitar.Summary = updateDto.Summary;
-    guitar.Type = updateDto.Type;
-    guitar.YearStart = updateDto.YearStart;
-    guitar.YearEnd = updateDto.YearEnd == 0 ? null : updateDto.YearEnd;
-    guitar.Genres = updateDto.Genres ?? new List<string>();
-    guitar.Pickups = updateDto.Pickups ?? new List<string>();
-
-    // Update artists
-    guitar.Artists.Clear();
-    if (updateDto.ArtistIds != null && updateDto.ArtistIds.Any())
-    {
-        var artists = await _db.Artists
-            .Where(a => updateDto.ArtistIds.Contains(a.Id))
-            .ToListAsync();
-        guitar.Artists = artists;
-    }
-
-    // Update related guitars (similar to PATCH method above)
-    if (updateDto.RelatedIds != null)
-    {
-        // Remove all existing relations
-        foreach (var relatedGuitar in guitar.RelatedGuitars.ToList())
-        {
-            await _db.Entry(relatedGuitar).Collection(rg => rg.RelatedGuitars).LoadAsync();
-            relatedGuitar.RelatedGuitars.Remove(guitar);
-        }
-        guitar.RelatedGuitars.Clear();
-
-        // Add new relations if any
-        if (updateDto.RelatedIds.Any())
-        {
-            var relatedGuitars = await _db.Guitars
-                .Where(g => updateDto.RelatedIds.Contains(g.Id))
-                .ToListAsync();
-
-            foreach (var relatedGuitar in relatedGuitars)
-            {
-                guitar.RelatedGuitars.Add(relatedGuitar);
-                await _db.Entry(relatedGuitar).Collection(rg => rg.RelatedGuitars).LoadAsync();
-                
-                if (!relatedGuitar.RelatedGuitars.Any(g => g.Id == guitar.Id))
-                {
-                    relatedGuitar.RelatedGuitars.Add(guitar);
-                }
-            }
-        }
-    }
-
-    await _db.SaveChangesAsync();
-
-    var updated = await _db.Guitars
-        .Include(g => g.Artists)
-        .Include(g => g.RelatedGuitars)
-        .FirstOrDefaultAsync(g => g.Id == id);
-
-    return Ok(updated!.ToDto());
-}
-
-    // -------------------------
-    // Add an artist to a guitar
-    // -------------------------
-    [HttpPost("{guitarId}/artists/{artistId}")]
-    public async Task<IActionResult> AddArtistToGuitar(int guitarId, int artistId)
-    {
-        var guitar = await _db.Guitars
-            .Include(g => g.Artists)
-            .FirstOrDefaultAsync(g => g.Id == guitarId);
-
-        if (guitar is null) return NotFound($"Guitar {guitarId} not found");
-
-        var artist = await _db.Artists.FindAsync(artistId);
-        if (artist is null) return NotFound($"Artist {artistId} not found");
-
-        // prevent duplicates
-        if (!guitar.Artists.Any(a => a.Id == artistId))
-            guitar.Artists.Add(artist);
-
-        await _db.SaveChangesAsync();
-
-        return Ok(guitar.ToDto());
-    }
-
-// -------------------------
-// Add a related guitar (symmetric)
-// -------------------------
-[HttpPost("{guitarId}/related/{relatedId}")]
-public async Task<IActionResult> AddRelatedGuitar(int guitarId, int relatedId)
-{
-    if (guitarId == relatedId)
-        return BadRequest("A guitar cannot be related to itself.");
-
-    var guitar = await _db.Guitars
-        .Include(g => g.RelatedGuitars)
-        .FirstOrDefaultAsync(g => g.Id == guitarId);
-
-    var related = await _db.Guitars
-        .Include(g => g.RelatedGuitars)
-        .FirstOrDefaultAsync(g => g.Id == relatedId);
-
-    if (guitar == null || related == null)
-        return NotFound("Guitar or related guitar not found.");
-
-    // Add both directions if missing
-    if (!guitar.RelatedGuitars.Any(g => g.Id == relatedId))
-        guitar.RelatedGuitars.Add(related);
-
-    if (!related.RelatedGuitars.Any(g => g.Id == guitarId))
-        related.RelatedGuitars.Add(guitar);
-
-    await _db.SaveChangesAsync();
-    return Ok(guitar.ToDto());
-}
-
-// -------------------------
-// Remove a related guitar (symmetric)
-// -------------------------
-[HttpDelete("{guitarId}/related/{relatedId}")]
-public async Task<IActionResult> RemoveRelatedGuitar(int guitarId, int relatedId)
-{
-    var guitar = await _db.Guitars
-        .Include(g => g.RelatedGuitars)
-        .FirstOrDefaultAsync(g => g.Id == guitarId);
-
-    var related = await _db.Guitars
-        .Include(g => g.RelatedGuitars)
-        .FirstOrDefaultAsync(g => g.Id == relatedId);
-
-    if (guitar == null || related == null)
-        return NotFound("Guitar or related guitar not found.");
-
-    var removed = false;
-
-    var relatedFromGuitar = guitar.RelatedGuitars.FirstOrDefault(g => g.Id == relatedId);
-    if (relatedFromGuitar != null)
-    {
-        guitar.RelatedGuitars.Remove(relatedFromGuitar);
-        removed = true;
-    }
-
-    var guitarFromRelated = related.RelatedGuitars.FirstOrDefault(g => g.Id == guitarId);
-    if (guitarFromRelated != null)
-    {
-        related.RelatedGuitars.Remove(guitarFromRelated);
-        removed = true;
-    }
-
-    if (!removed)
-        return NotFound("Relation not found.");
-
-    await _db.SaveChangesAsync();
-    return Ok(guitar.ToDto());
-}
-
-// -------------------------
-// PARTIAL UPDATE (PATCH) - FIXED VERSION
-// -------------------------
-[HttpPatch("{id}")]
-public async Task<IActionResult> Patch(int id, [FromBody] UpdateGuitarDto updateDto)
-{
-    var guitar = await _db.Guitars
-        .Include(g => g.Artists)
-        .Include(g => g.RelatedGuitars)
-        .FirstOrDefaultAsync(g => g.Id == id);
-
-    if (guitar is null) return NotFound();
-
-    // Update scalar properties if provided
+    // Update scalar properties only if they have meaningful values
     if (!string.IsNullOrWhiteSpace(updateDto.Name))
         guitar.Name = updateDto.Name;
+
     if (!string.IsNullOrWhiteSpace(updateDto.PhotoUrl))
         guitar.PhotoUrl = updateDto.PhotoUrl;
+
     if (!string.IsNullOrWhiteSpace(updateDto.Description))
         guitar.Description = updateDto.Description;
+
     if (!string.IsNullOrWhiteSpace(updateDto.Summary))
         guitar.Summary = updateDto.Summary;
+
     if (!string.IsNullOrWhiteSpace(updateDto.Type))
         guitar.Type = updateDto.Type;
 
     if (updateDto.YearStart != 0)
         guitar.YearStart = updateDto.YearStart;
-    
-    // Handle YearEnd - convert 0 to null
+
     if (updateDto.YearEnd.HasValue)
         guitar.YearEnd = updateDto.YearEnd.Value == 0 ? null : updateDto.YearEnd;
 
-    if (updateDto.Genres != null)
-        guitar.Genres = updateDto.Genres;
-
-    if (updateDto.Pickups != null)
-        guitar.Pickups = updateDto.Pickups;
-
-    // Update artists if ArtistIds is provided
-    if (updateDto.ArtistIds != null)
+    // Collections: only overwrite if non-null and merge.
+    if (updateDto.Genres != null && updateDto.Genres.Any())
+{
+    foreach (var genre in updateDto.Genres)
     {
-        guitar.Artists.Clear();
-        if (updateDto.ArtistIds.Any())
-        {
-            var artists = await _db.Artists
-                .Where(a => updateDto.ArtistIds.Contains(a.Id))
-                .ToListAsync();
-            guitar.Artists = artists;
-        }
+        if (!guitar.Genres.Contains(genre))
+            guitar.Genres.Add(genre);
     }
+}
 
-    // Update related guitars if RelatedIds is provided
-    if (updateDto.RelatedIds != null)
+    if (updateDto.Pickups != null && updateDto.Pickups.Any())
+{
+    foreach (var pickup in updateDto.Pickups)
     {
-        // First, remove all existing relations
-        foreach (var relatedGuitar in guitar.RelatedGuitars.ToList())
-        {
-            // Load the related guitar's relationships
-            await _db.Entry(relatedGuitar).Collection(rg => rg.RelatedGuitars).LoadAsync();
-            relatedGuitar.RelatedGuitars.Remove(guitar);
-        }
-        guitar.RelatedGuitars.Clear();
-
-        // Add new relations if any
-        if (updateDto.RelatedIds.Any())
-        {
-            var relatedGuitars = await _db.Guitars
-                .Where(g => updateDto.RelatedIds.Contains(g.Id))
-                .ToListAsync();
-
-            foreach (var relatedGuitar in relatedGuitars)
-            {
-                // Add symmetric relationship
-                guitar.RelatedGuitars.Add(relatedGuitar);
-                
-                // Load the related guitar's relationships
-                await _db.Entry(relatedGuitar).Collection(rg => rg.RelatedGuitars).LoadAsync();
-                
-                // Add the reverse relationship if it doesn't exist
-                if (!relatedGuitar.RelatedGuitars.Any(g => g.Id == guitar.Id))
-                {
-                    relatedGuitar.RelatedGuitars.Add(guitar);
-                }
-            }
-        }
+        if (!guitar.Pickups.Contains(pickup))
+            guitar.Pickups.Add(pickup);
     }
+}
+
+    // Relationships are untouched: Artists and RelatedGuitars remain as they are
 
     await _db.SaveChangesAsync();
 
-    // Return the updated guitar with all relationships
+    // Reload with relationships for return payload
     var updated = await _db.Guitars
         .Include(g => g.Artists)
         .Include(g => g.RelatedGuitars)
@@ -331,6 +128,86 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateGuitarDto update
 
     return Ok(updated!.ToDto());
 }
+
+    // -------------------------
+    // Add a related guitar (symmetric)
+    // -------------------------
+    [HttpPost("{guitarId}/related/{relatedId}")]
+    public async Task<IActionResult> AddRelatedGuitar(int guitarId, int relatedId)
+    {
+        if (guitarId == relatedId)
+            return BadRequest("A guitar cannot be related to itself.");
+
+        var guitar = await _db.Guitars
+            .Include(g => g.RelatedGuitars)
+            .FirstOrDefaultAsync(g => g.Id == guitarId);
+
+        var related = await _db.Guitars
+            .Include(g => g.RelatedGuitars)
+            .FirstOrDefaultAsync(g => g.Id == relatedId);
+
+        if (guitar == null || related == null)
+            return NotFound("Guitar or related guitar not found.");
+
+        // Add both directions if missing
+        if (!guitar.RelatedGuitars.Any(g => g.Id == relatedId))
+            guitar.RelatedGuitars.Add(related);
+
+        if (!related.RelatedGuitars.Any(g => g.Id == guitarId))
+            related.RelatedGuitars.Add(guitar);
+
+        await _db.SaveChangesAsync();
+        return Ok(guitar.ToDto());
+    }
+
+
+    // -------------------------
+    // PARTIAL UPDATE (PATCH) - Scalars Only
+    // -------------------------
+    [HttpPatch("{id}")]
+
+    public async Task<IActionResult> PatchScalars(int id, [FromBody] UpdateGuitarDto updateDto)
+    {
+        var guitar = await _db.Guitars.FirstOrDefaultAsync(g => g.Id == id);
+
+        if (guitar is null) return NotFound();
+
+        // Update scalar properties only if provided
+        if (!string.IsNullOrWhiteSpace(updateDto.Name))
+            guitar.Name = updateDto.Name;
+        if (!string.IsNullOrWhiteSpace(updateDto.PhotoUrl))
+            guitar.PhotoUrl = updateDto.PhotoUrl;
+        if (!string.IsNullOrWhiteSpace(updateDto.Description))
+            guitar.Description = updateDto.Description;
+        if (!string.IsNullOrWhiteSpace(updateDto.Summary))
+            guitar.Summary = updateDto.Summary;
+        if (!string.IsNullOrWhiteSpace(updateDto.Type))
+            guitar.Type = updateDto.Type;
+
+        if (updateDto.YearStart != 0)
+            guitar.YearStart = updateDto.YearStart;
+
+        if (updateDto.YearEnd.HasValue)
+            guitar.YearEnd = updateDto.YearEnd.Value == 0 ? null : updateDto.YearEnd;
+
+        if (updateDto.Genres != null && updateDto.Genres.Any())
+            guitar.Genres ??= new List<string>();
+            guitar.Genres.AddRange(updateDto.Genres.Where(g => !guitar.Genres.Contains(g)));
+
+        if (updateDto.Pickups != null && updateDto.Pickups.Any())
+            guitar.Pickups ??= new List<string>();
+            guitar.Pickups.AddRange(updateDto.Pickups.Where(p => !guitar.Pickups.Contains(p)));
+
+        await _db.SaveChangesAsync();
+
+        // Return the guitar with relationships for consistency in the response
+        var updated = await _db.Guitars
+            .Include(g => g.Artists)
+            .Include(g => g.RelatedGuitars)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        return Ok(updated!.ToDto());
+    }
     // -------------------------
     // DELETE
     // -------------------------
