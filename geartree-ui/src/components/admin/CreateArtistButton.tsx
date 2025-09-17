@@ -37,8 +37,8 @@ function CreateArtistButton({ onCreated }: CreateArtistButtonProps) {
     try {
       const payload = {
         ...form,
-        photoUrl: `/images/artists/${form.photoName}.jpg`,
-        heroPhotoUrl: `/images/artists/artistCont/${form.heroPhotoName}.jpg`,
+        photoUrl: `/images/artists/${form.photoName}`,
+        heroPhotoUrl: `/images/artists/artistCont/${form.heroPhotoName}`,
       };
       delete (payload as any).photoName;
       delete (payload as any).heroPhotoName;
