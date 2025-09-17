@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Tabs } from "@mantine/core";
 
-// Your tab components
 import ArtistsTab from "../components/admin/ArtistsTab";
 import GuitarsTab from "../components/admin/GuitarsTab";
 import AmpsTab from "../components/admin/AmpsTab";
