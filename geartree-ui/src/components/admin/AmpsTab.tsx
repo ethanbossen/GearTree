@@ -70,7 +70,7 @@ function AmpsTab() {
 
   return (
     <Stack gap="md">
-      <Text size="xl" fw={700}>
+      <Text className="pt-2" size="xl" fw={700}>
         Amplifiers Admin
       </Text>
 

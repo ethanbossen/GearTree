@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { Guitars as GuitarsAPI } from "../api";              // ✅ use the new namespace
 import type { Guitar } from "../api";
 import GuitarCard from "../components/GuitarCard";
-import { Button, Collapse, MultiSelect, Select } from "@mantine/core";
+import { Button, Collapse, Input, MultiSelect, Select } from "@mantine/core";
 
 function Guitars() {
-  const [guitars, setGuitars] = useState<Guitar[]>([]); // ✅ use brief type
+  const [guitars, setGuitars] = useState<Guitar[]>([]);
   const [search, setSearch] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -21,7 +21,7 @@ function Guitars() {
   const [visibleCount, setVisibleCount] = useState(9);
 
   useEffect(() => {
-    GuitarsAPI.list()                // ✅ updated
+    GuitarsAPI.list()
       .then(setGuitars)
       .catch(console.error);
   }, []);
@@ -98,12 +98,12 @@ function Guitars() {
 
       {/* Search + Filter Row */}
       <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6">
-        <input
+        <Input
           type="text"
           placeholder="Search guitars..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 w-full flex-[2] min-w-[250px] focus:outline-none focus:ring-2 focus:ring-brand-purple"
+          className="rounded-lg w-full flex-[2] min-w-[250px]"
         />
 
         <Button

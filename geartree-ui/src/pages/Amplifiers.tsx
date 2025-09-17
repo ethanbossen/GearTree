@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Amps } from "../api";
 import type { Amplifier } from "../api";
 import AmpCardDetailed from "../components/AmpCardDetailed";
-import { Button, Collapse, Select, MultiSelect, Checkbox } from "@mantine/core";
+import { Button, Collapse, Input, Select, MultiSelect, Checkbox } from "@mantine/core";
 
 function Amplifiers() {
   const [amps, setAmps] = useState<Amplifier[]>([]);
@@ -99,23 +99,24 @@ function Amplifiers() {
       </section>
 
       {/* Search + Filter Toggle */}
-      <div className="flex flex-col md:flex-row md:items-center gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Search amplifiers..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 flex-1 min-w-[250px] focus:outline-none focus:ring-2 focus:ring-brand-purple"
-        />
-        <Button
-          variant="outline"
-          color="dark"
-          onClick={() => setFiltersOpen((o) => !o)}
-          className="mt-3 md:mt-0"
-        >
-          {filtersOpen ? "Hide Filters & Sort" : "Show Filters & Sort"}
-        </Button>
-      </div>
+      <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6">
+              <Input
+                type="text"
+                placeholder="Search amplifiers..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="rounded-lg w-full flex-[2] min-w-[250px]"
+              />
+      
+              <Button
+                variant="outline"
+                color="dark"
+                onClick={() => setFiltersOpen((o) => !o)}
+                className="mt-3 md:mt-0"
+              >
+                {filtersOpen ? "Hide Filters & Sort" : "Show Filters & Sort"}
+              </Button>
+            </div>
 
       {/* Filters + Sort */}
       <Collapse in={filtersOpen}>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Artists } from "../api";
 import type { Artist } from "../api";
 import ArtistCard from "../components/ArtistCard";
-import { Button, Collapse, Select } from "@mantine/core";
+import { Button, Collapse, Input, Select } from "@mantine/core";
 
 function AllArtistsPage() {
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -54,28 +54,25 @@ function AllArtistsPage() {
         Artists
       </h1>
 
-      {/* Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-6">
-      <div className="">
-        <input
+      {/* Search + Filter Row */}
+    <div className="flex flex-col w-full md:flex-row md:items-center md:space-x-4 mb-6">
+          <Input
           type="text"
           placeholder="Search artists..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 min-w-[25rem] w-full flex-1 focus:outline-none focus:ring-2 focus:ring-[var(--brand-purple)]"
+          className="rounded-lg w-full flex-[2] min-w-[250px]"
         />
-      </div>
 
-      {/* Filter/Sort Toggle */}
       <Button
         variant="outline"
         color="dark"
         onClick={() => setFiltersOpen((o) => !o)}
-        className=""
+        className="mt-3 md:mt-0"
       >
         {filtersOpen ? "Hide Filters & Sort" : "Show Filters & Sort"}
       </Button>
-</div>
+    </div>
 
       {/* Filter/Sort Panel */}
       <Collapse in={filtersOpen}>

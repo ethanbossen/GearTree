@@ -57,7 +57,7 @@ function CreateArtistButton({ onCreated }: CreateArtistButtonProps) {
 
   return (
     <>
-      <Button onClick={() => setOpened(true)}>Create New Artist</Button>
+      <Button className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)]" onClick={() => setOpened(true)}>Create New Artist</Button>
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}

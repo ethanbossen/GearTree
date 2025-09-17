@@ -56,7 +56,7 @@ function CreateGuitarButton({ onCreated }: CreateGuitarButtonProps) {
 
   return (
     <>
-      <Button onClick={() => setOpened(true)}>Create New Guitar</Button>
+      <Button className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)]" onClick={() => setOpened(true)}>Create New Guitar</Button>
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}

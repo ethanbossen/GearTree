@@ -31,14 +31,8 @@ export function EditArtistRelationsButton({
   const [selectedAmps, setSelectedAmps] = useState<string[]>([]);
 
   const handleSave = async () => {
-    // Add guitars
-    for (const idStr of selectedGuitars) {
-      await onAddGuitar(artistId, parseInt(idStr));
-    }
-    // Add amps
-    for (const idStr of selectedAmps) {
-      await onAddAmp(artistId, parseInt(idStr));
-    }
+    for (const idStr of selectedGuitars) await onAddGuitar(artistId, parseInt(idStr));
+    for (const idStr of selectedAmps) await onAddAmp(artistId, parseInt(idStr));
     setOpened(false);
     setSelectedGuitars([]);
     setSelectedAmps([]);
@@ -47,27 +41,42 @@ export function EditArtistRelationsButton({
 
   return (
     <>
-      <Button size="xs" onClick={() => setOpened(true)}>
+      <Button
+        size="xs"
+        className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)] text-white font-semibold"
+        onClick={() => setOpened(true)}
+      >
         Edit Relations
       </Button>
 
-      <Modal opened={opened} onClose={() => setOpened(false)} title={title} size="lg">
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title={<Text className="text-2xl font-bold">{title}</Text>}
+        size="lg"
+      >
         <Stack>
           {/* Guitars Section */}
           <div>
-            <Text fw={500} mb={4}>Guitars</Text>
-            <Group wrap="wrap">
-              {currentGuitars.length === 0 && <Text c="dimmed">None</Text>}
+            <Text className="text-[var(--brand-purple)] font-bold mb-2">Guitars</Text>
+            <Group wrap="wrap" className="mb-2">
+              {currentGuitars.length === 0 && <Text className="text-gray-400">None</Text>}
               {currentGuitars.map((g) => (
-                <Badge key={g.id} color="green" variant="light">{g.name}</Badge>
+                <Badge
+                  key={g.id}
+                  className="bg-purple-100 text-[var(--brand-purple)]"
+                  variant="light"
+                >
+                  {g.name}
+                </Badge>
               ))}
             </Group>
             <MultiSelect
               label="Add Guitars"
               placeholder="Select guitars..."
               data={allGuitars
-                .filter(g => !currentGuitars.some(c => c.id === g.id))
-                .map(g => ({ value: g.id.toString(), label: g.name }))}
+                .filter((g) => !currentGuitars.some((c) => c.id === g.id))
+                .map((g) => ({ value: g.id.toString(), label: g.name }))}
               value={selectedGuitars}
               onChange={setSelectedGuitars}
               searchable
@@ -77,27 +86,39 @@ export function EditArtistRelationsButton({
 
           {/* Amps Section */}
           <div>
-            <Text fw={500} mb={4}>Amplifiers</Text>
-            <Group wrap="wrap">
-              {currentAmps.length === 0 && <Text c="dimmed">None</Text>}
+            <Text className="text-[var(--brand-purple)] font-bold mb-2">Amplifiers</Text>
+            <Group wrap="wrap" className="mb-2">
+              {currentAmps.length === 0 && <Text className="text-gray-400">None</Text>}
               {currentAmps.map((a) => (
-                <Badge key={a.id} color="blue" variant="light">{a.name}</Badge>
+                <Badge
+                  key={a.id}
+                  className="bg-purple-100 text-[var(--brand-purple)]"
+                  variant="light"
+                >
+                  {a.name}
+                </Badge>
               ))}
             </Group>
             <MultiSelect
               label="Add Amps"
               placeholder="Select amplifiers..."
               data={allAmps
-                .filter(a => !currentAmps.some(c => c.id === a.id))
-                .map(a => ({ value: a.id.toString(), label: a.name }))}
+                .filter((a) => !currentAmps.some((c) => c.id === a.id))
+                .map((a) => ({ value: a.id.toString(), label: a.name }))}
               value={selectedAmps}
               onChange={setSelectedAmps}
               searchable
-              nothingFound="No matches"
+              nothingFoundMessage="No matches"
             />
           </div>
 
-          <Button fullWidth onClick={handleSave}>Save</Button>
+          <Button
+            fullWidth
+            className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)] text-white font-semibold"
+            onClick={handleSave}
+          >
+            Save
+          </Button>
         </Stack>
       </Modal>
     </>

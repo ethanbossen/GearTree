@@ -1,6 +1,6 @@
 // src/components/admin/ArtistsTab.tsx
 import { useEffect, useState } from "react";
-import { Text, Stack, Group, Card } from "@mantine/core";
+import { Text, TextInput, Stack, Group, Card } from "@mantine/core";
 import { Artists, Guitars, Amps } from "../../api";
 import type { Artist, Guitar, Amplifier } from "../../api";
 import CreateArtistButton from "./CreateArtistButton";
@@ -51,6 +51,7 @@ function ArtistsTab() {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [allGuitars, setAllGuitars] = useState<Guitar[]>([]);
   const [allAmps, setAllAmps] = useState<Amplifier[]>([]);
+  const [search, setSearch] = useState("");
 
   const loadArtists = async () => {
     try {
@@ -85,16 +86,27 @@ function ArtistsTab() {
     loadAllAmps();
   }, []);
 
+const filteredArtists = artists.filter((artist) =>
+  artist.name.toLowerCase().includes(search.toLowerCase())
+);
+
   return (
     <Stack gap="md">
-      <Text size="xl" fw={700}>
+      <Text className="pt-2" size="xl" fw={700}>
         Artists Admin
       </Text>
 
       <CreateArtistButton onCreated={loadArtists} />
 
+      <TextInput
+        placeholder="Search artists..."
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+        className="mb-4"
+      />
+
       <Stack>
-        {artists.map((artist) => (
+        {filteredArtists.map((artist) => (
           <Card key={artist.id} withBorder shadow="sm" padding="md">
             <Group justify="space-between">
               <div>

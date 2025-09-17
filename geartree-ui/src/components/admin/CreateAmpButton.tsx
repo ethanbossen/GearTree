@@ -61,7 +61,7 @@ function CreateAmpButton({ onCreated }: CreateAmpButtonProps) {
 
   return (
     <>
-      <Button onClick={() => setOpened(true)}>Create New Amplifier</Button>
+      <Button className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)]" onClick={() => setOpened(true)}>Create New Amplifier</Button>
 
       <Modal
         opened={opened}

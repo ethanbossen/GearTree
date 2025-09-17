@@ -9,6 +9,14 @@ interface EditScalarsButtonProps<T> {
   onSaved?: () => void;
 }
 
+export function formatTextCustom(str: string) {
+  if (!str) return "";
+  // insert space before capital letters
+  const spaced = str.replace(/([A-Z])/g, " $1");
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+
 export function EditScalarsButton<T extends Record<string, any>>({
   item,
   onSave,
@@ -32,21 +40,21 @@ export function EditScalarsButton<T extends Record<string, any>>({
 
   return (
     <>
-      <Button size="xs" onClick={() => setOpened(true)}>
+      <Button className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)]" size="xs" onClick={() => setOpened(true)}>
         Edit Scalars
       </Button>
 
-      <Modal opened={opened} onClose={() => setOpened(false)} title="Edit Scalars">
+      <Modal opened={opened} onClose={() => setOpened(false)} title={<h2 className="text-2xl font-bold">Edit Scalars</h2>}>
         <Stack>
             {scalarFields.map((field) => {
             const value = values[field];
 
-            if (field === "description") {
+            if (field === "description" || field === "tagline" || field === "summary") {
                 return (
         <Textarea
         autosize={true}
           key={String(field)}
-          label={String(field)}
+          label={formatTextCustom(String(field))}
           value={value}
           onChange={(e) => handleChange(field, e.currentTarget.value)}
         />
@@ -57,7 +65,7 @@ export function EditScalarsButton<T extends Record<string, any>>({
       return (
         <TextInput
           key={String(field)}
-          label={String(field)}
+          label={formatTextCustom(String(field))}
           value={value.join(", ")} // display as comma-separated
           onChange={(e) =>
             handleChange(field, e.currentTarget.value.split(",").map((v) => v.trim()))
@@ -69,13 +77,13 @@ export function EditScalarsButton<T extends Record<string, any>>({
     return (
       <TextInput
         key={String(field)}
-        label={String(field)}
+        label={formatTextCustom(String(field))}
         value={value}
         onChange={(e) => handleChange(field, e.currentTarget.value)}
       />
     );
   })}
-  <Button fullWidth onClick={handleSave}>Save</Button>
+  <Button className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)]"fullWidth onClick={handleSave}>Save</Button>
 </Stack>
       </Modal>
     </>

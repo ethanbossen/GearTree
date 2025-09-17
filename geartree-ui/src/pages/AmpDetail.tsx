@@ -76,8 +76,6 @@ function AmpDetail() {
     {amp.priceEnd != null && amp.priceEnd > amp.priceStart ? ` – $${amp.priceEnd}` : ""}
   </Text>
 )}
-
-
             {/* Description */}
       <section className="prose max-w-none">
         <p>{amp.description}</p>
@@ -101,8 +99,8 @@ function AmpDetail() {
       {/* Related Amps */}
       {amp.relatedAmps && amp.relatedAmps.length > 0 && (
         <section className="mb-16">
-          <Title order={2} className="mb-6">
-            Related Amps
+          <Title order={2} className="mb-6 text-black">
+            Related Amps:
           </Title>
           <CardGridContainer>
             {amp.relatedAmps.map((ra) => (
@@ -121,8 +119,8 @@ function AmpDetail() {
       {/* Artists */}
       {amp.artists && amp.artists.length > 0 && (
         <section className="mb-16">
-          <Title order={2} className="mb-6">
-            Artists Who Use This Amp
+          <Title order={2} className="mb-6 text-black">
+            Artists Who Use This Amp:
           </Title>
           <CardGridContainer>
             {amp.artists.map((artist) => (

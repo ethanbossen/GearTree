@@ -39,31 +39,39 @@ export function EditRelationsButton({
 
   return (
     <>
-      <Button size="xs" onClick={() => setOpened(true)}>
+      <Button
+        size="xs"
+        className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)] text-white font-semibold"
+        onClick={() => setOpened(true)}
+      >
         Edit Relations
       </Button>
 
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title={<h2 className="text-lg font-semibold">{title}</h2>}
+        title={<Text className="text-2xl font-bold">{title}</Text>}
         size="lg"
       >
         <Stack>
+          {/* Current Relations */}
           <div>
-            <Text fw={500} mb={4}>
-              Current Relations:
-            </Text>
-            <Group wrap="wrap">
-              {currentRelations.length === 0 && <Text c="dimmed">None</Text>}
+            <Text className="font-bold mb-2">Current Relations</Text>
+            <Group wrap="wrap" className="mb-2">
+              {currentRelations.length === 0 && <Text className="text-gray-400">None</Text>}
               {currentRelations.map((r) => (
-                <Badge key={r.id} color="grape" variant="light">
+                <Badge
+                  key={r.id}
+                  className="bg-purple-100 text-[var(--brand-purple)]"
+                  variant="light"
+                >
                   {r.name}
                 </Badge>
               ))}
             </Group>
           </div>
 
+          {/* MultiSelect to add new relations */}
           <MultiSelect
             label="Add New Relations"
             placeholder="Select items..."
@@ -72,9 +80,14 @@ export function EditRelationsButton({
             onChange={setSelected}
             searchable
             nothingFoundMessage="No matches"
+            className="mb-4"
           />
 
-          <Button fullWidth onClick={handleAdd} className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)]">
+          <Button
+            fullWidth
+            className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)] text-white font-semibold"
+            onClick={handleAdd}
+          >
             Add Selected
           </Button>
         </Stack>
