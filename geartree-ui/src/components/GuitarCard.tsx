@@ -23,7 +23,6 @@ export default function GuitarCard({
   photoUrl,
   summary,
   type,
-  manufacturer,
   yearStart,
   yearEnd,
   pickups,

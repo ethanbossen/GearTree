@@ -9,9 +9,10 @@ interface EditScalarsButtonProps<T> {
   onSaved?: () => void;
 }
 
-export function formatTextCustom(str: string) {
+export function formatTextCapitalizeFirstLetter(str: string) {
   if (!str) return "";
-  // insert space before capital letters
+  // insert space before capital letters for camelCase items and capitalizes first 
+  // letter of other fields
   const spaced = str.replace(/([A-Z])/g, " $1");
   return spaced.charAt(0).toUpperCase() + spaced.slice(1);
 }
@@ -54,7 +55,7 @@ export function EditScalarsButton<T extends Record<string, any>>({
         <Textarea
         autosize={true}
           key={String(field)}
-          label={formatTextCustom(String(field))}
+          label={formatTextCapitalizeFirstLetter(String(field))}
           value={value}
           onChange={(e) => handleChange(field, e.currentTarget.value)}
         />
@@ -65,7 +66,7 @@ export function EditScalarsButton<T extends Record<string, any>>({
       return (
         <TextInput
           key={String(field)}
-          label={formatTextCustom(String(field))}
+          label={formatTextCapitalizeFirstLetter(String(field))}
           value={value.join(", ")} // display as comma-separated
           onChange={(e) =>
             handleChange(field, e.currentTarget.value.split(",").map((v) => v.trim()))
@@ -77,7 +78,7 @@ export function EditScalarsButton<T extends Record<string, any>>({
     return (
       <TextInput
         key={String(field)}
-        label={formatTextCustom(String(field))}
+        label={formatTextCapitalizeFirstLetter(String(field))}
         value={value}
         onChange={(e) => handleChange(field, e.currentTarget.value)}
       />
