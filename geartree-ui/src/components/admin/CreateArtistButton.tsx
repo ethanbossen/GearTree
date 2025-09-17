@@ -7,6 +7,7 @@ import {
   TextInput,
   Textarea,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { Artists } from "../../api";
 
 const emptyForm = {
@@ -36,22 +37,23 @@ function CreateArtistButton({ onCreated }: CreateArtistButtonProps) {
     try {
       const payload = {
         ...form,
-        photoUrl: `/images/artists/${form.photoName}.jpg`,
-        heroPhotoUrl: `/images/artists/artistCont/${form.heroPhotoName}.jpg`,
+        photoUrl: `/images/artists/${form.photoName}`,
+        heroPhotoUrl: `/images/artists/artistCont/${form.heroPhotoName}`,
       };
       delete (payload as any).photoName;
       delete (payload as any).heroPhotoName;
 
-      console.log("Sending payload:", payload);
-
       await Artists.create(payload);
-      alert("Artist created!");
       setOpened(false);
       setForm({ ...emptyForm });
 
       if (onCreated) onCreated();
     } catch (err) {
-      alert("Failed to create artist: " + (err as Error).message);
+      notifications.show({
+      title: "Error",
+      message: `Failed to create artist: ${(err as Error).message}`,
+      color: "red",
+    });
     }
   };
 
@@ -72,13 +74,13 @@ function CreateArtistButton({ onCreated }: CreateArtistButtonProps) {
           />
           <TextInput
             label="Photo filename"
-            placeholder="e.g. zakk-wylde (no path, no extension)"
+            placeholder="e.g. zakk-wylde.jpg (no path))"
             value={form.photoName}
             onChange={(e) => handleChange("photoName", e.currentTarget.value)}
           />
           <TextInput
             label="Hero photo filename"
-            placeholder="e.g. Zakk/zakk-hero (no path, no extension)"
+            placeholder="e.g. Zakk/zakk-hero.jpg (no path)"
             value={form.heroPhotoName}
             onChange={(e) => handleChange("heroPhotoName", e.currentTarget.value)}
           />

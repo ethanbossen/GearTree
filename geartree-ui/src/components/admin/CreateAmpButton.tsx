@@ -9,6 +9,7 @@ import {
   Checkbox,
   Textarea,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { Amps } from "../../api";
 
 const emptyForm = {
@@ -44,18 +45,21 @@ function CreateAmpButton({ onCreated }: CreateAmpButtonProps) {
     try {
       const payload = {
         ...form,
-        photoUrl: `/images/amps/${form.photoName}.jpg`,
+        photoUrl: `/images/amps/${form.photoName}`,
       };
       delete (payload as any).photoName;
 
       await Amps.create(payload);
-      alert("Amplifier created!");
       setOpened(false);
       setForm({ ...emptyForm });
 
       if (onCreated) onCreated();
     } catch (err) {
-      alert("Failed to create amplifier: " + (err as Error).message);
+        notifications.show({
+            title: "Error",
+            message: `Failed to create amplifer: ${(err as Error).message}`,
+            color: "red",
+        });
     }
   };
 
@@ -77,7 +81,7 @@ function CreateAmpButton({ onCreated }: CreateAmpButtonProps) {
           />
           <TextInput
             label="Photo filename"
-            placeholder="e.g. fender-twin (no path, no extension)"
+            placeholder="e.g. fender-twin.jpg (no path)"
             value={form.photoName}
             onChange={(e) => handleChange("photoName", e.currentTarget.value)}
           />

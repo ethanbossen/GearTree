@@ -8,6 +8,7 @@ import {
   NumberInput,
   Textarea,
 } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { Guitars } from "../../api";
 
 const emptyForm = {
@@ -39,18 +40,21 @@ function CreateGuitarButton({ onCreated }: CreateGuitarButtonProps) {
     try {
       const payload = {
         ...form,
-        photoUrl: `/images/guitars/${form.photoName}.jpg`,
+        photoUrl: `/images/guitars/${form.photoName}`,
       };
       delete (payload as any).photoName;
 
       await Guitars.create(payload);
-      alert("Guitar created!");
       setOpened(false);
       setForm({ ...emptyForm });
 
       if (onCreated) onCreated();
     } catch (err) {
-      alert("Failed to create guitar: " + (err as Error).message);
+      notifications.show({
+      title: "Error",
+      message: `Failed to create guitar: ${(err as Error).message}`,
+      color: "red",
+    });
     }
   };
 
@@ -71,7 +75,7 @@ function CreateGuitarButton({ onCreated }: CreateGuitarButtonProps) {
           />
           <TextInput
             label="Photo filename"
-            placeholder="e.g. stratocaster (no path, no extension)"
+            placeholder="e.g. stratocaster.jpg etc."
             value={form.photoName}
             onChange={(e) => handleChange("photoName", e.currentTarget.value)}
           />
