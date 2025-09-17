@@ -4,16 +4,30 @@ import { Text, Stack, Group, Button, Card } from "@mantine/core";
 import { Guitars } from "../../api";
 import type { Guitar } from "../../api";
 import CreateGuitarButton from "./CreateGuitarButton";
+import { EditScalarsButton } from "./EditScalarsButton";
+
+const patchGuitarScalars = async (updatedGuitar: Guitar) => {
+  const { id, ...scalars } = updatedGuitar;
+  if (!id) throw new Error("Guitar ID is missing");
+  await Guitars.patch(id, scalars);
+};
 
 // Dual edit buttons for each guitar
-function EditGuitarButtons({ guitar }: { guitar: Guitar }) {
+function EditGuitarButtons({ guitar, onSaved }: { guitar: Guitar, onSaved: () => void; }) {
   return (
     <div className="flex gap-2">
-      <Button size="xs">Edit Scalars</Button>
+      <EditScalarsButton
+        item={guitar}
+        onSave={patchGuitarScalars}
+        scalarFields={["name", "type", "description", "summary", "yearStart", "yearEnd", "genres", "pickups"]} 
+        onSaved={onSaved}
+      />
       <Button size="xs">Edit Relations</Button>
     </div>
   );
 }
+
+
 
 function GuitarsTab() {
   const [guitars, setGuitars] = useState<Guitar[]>([]);
@@ -50,7 +64,7 @@ function GuitarsTab() {
                   {guitar.yearEnd ? `–${guitar.yearEnd}` : ""}
                 </Text>
               </div>
-              <EditGuitarButtons guitar={guitar} />
+              <EditGuitarButtons guitar={guitar} onSaved={loadGuitars} />
             </Group>
           </Card>
         ))}

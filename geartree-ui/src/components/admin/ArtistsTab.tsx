@@ -4,16 +4,34 @@ import { Text, Stack, Group, Button, Card } from "@mantine/core";
 import { Artists } from "../../api";
 import type { Artist } from "../../api";
 import CreateArtistButton from "./CreateArtistButton";
+import { EditScalarsButton } from "./EditScalarsButton";
 
-// New dual-edit buttons
-function EditArtistButtons({ artist }: { artist: Artist }) {
+const patchArtistScalars = async (updatedArtist: Artist): Promise<void> => {
+  const { id, ...scalars } = updatedArtist;
+  if (!id) throw new Error("Artist ID is missing");
+  await Artists.patch(id, scalars);
+};
+
+function EditArtistButtons({
+  artist,
+  onSaved,
+}: {
+  artist: Artist;
+  onSaved: () => void;
+}) {
   return (
     <div className="flex gap-2">
-      <Button size="xs">Edit Scalars</Button>
+      <EditScalarsButton
+        item={artist}
+        onSave={patchArtistScalars}
+        scalarFields={["name", "tagline", "description", "summary", "bands"]}
+        onSaved={onSaved} 
+      />
       <Button size="xs">Edit Relations</Button>
     </div>
   );
 }
+
 
 function ArtistsTab() {
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -49,7 +67,7 @@ function ArtistsTab() {
                   {artist.bands.join(", ")}
                 </Text>
               </div>
-              <EditArtistButtons artist={artist} />
+              <EditArtistButtons artist={artist} onSaved={loadArtists} />
             </Group>
           </Card>
         ))}

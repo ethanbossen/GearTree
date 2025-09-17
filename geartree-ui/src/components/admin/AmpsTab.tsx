@@ -4,16 +4,48 @@ import { Text, Stack, Group, Button, Card } from "@mantine/core";
 import { Amps } from "../../api";
 import type { Amplifier } from "../../api";
 import CreateAmpButton from "./CreateAmpButton";
+import { EditScalarsButton } from "./EditScalarsButton";
+
+const patchAmpScalars = async (updatedAmp: Amplifier): Promise<void> => {
+  const { id, ...scalars } = updatedAmp;
+  if (!id) throw new Error("Amp ID is missing");
+  await Amps.patch(id, scalars);
+};
 
 // Placeholder for edit button component
-function EditAmpButton({ amp }: { amp: Amplifier }) {
+function EditAmpButtons({
+  amp,
+  onSaved,
+}: {
+  amp: Amplifier;
+  onSaved: () => void;
+}) {
   return (
-  <div className="flex gap-2">
-    <Button size="xs">Edit Scalars</Button>
-    <Button size="xs">Edit Relations</Button>
-  </div>  
-    );
+    <div className="flex gap-2">
+      <EditScalarsButton
+        item={amp}
+        onSave={patchAmpScalars}
+        scalarFields={[
+          "name",
+          "manufacturer",
+          "description",
+          "summary",
+          "isTube",
+          "gainStructure",
+          "yearStart",
+          "yearEnd",
+          "priceStart",
+          "priceEnd",
+          "wattage",
+          "speakerConfiguration",
+        ]}
+        onSaved={onSaved} 
+      />
+      <Button size="xs">Edit Relations</Button>
+    </div>
+  );
 }
+
 
 function AmpsTab() {
   const [amps, setAmps] = useState<Amplifier[]>([]);
@@ -50,7 +82,7 @@ function AmpsTab() {
                   {amp.yearEnd ? `–${amp.yearEnd}` : ""}
                 </Text>
               </div>
-              <EditAmpButton amp={amp} />
+              <EditAmpButtons amp={amp} onSaved={loadAmps} />
             </Group>
           </Card>
         ))}
