@@ -19,7 +19,6 @@ function ArtistPage() {
         setArtist(data);
       } catch (err: any) {
         if (err.message.includes("404")) {
-          console.log("Artist not found, redirecting to NotFound page.");
           navigate("/404", { replace: true });
         } else {
           console.error("Unexpected error fetching artist:", err);

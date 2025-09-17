@@ -1,6 +1,6 @@
 // src/components/GuitarCard.tsx
 import { Link } from "react-router-dom";
-import { Card, Image, Text, Badge, Group, Stack } from "@mantine/core";
+import { Card, Image, Text, Badge, Group } from "@mantine/core";
 
 interface GuitarCardProps {
   id: number;
@@ -31,84 +31,71 @@ export default function GuitarCard({
   genres,
 }: GuitarCardProps) {
   return (
-    <Card
-      shadow="sm"
-      padding="lg"
-      radius="md"
-      withBorder
-      className="flex flex-col h-full"
+    <Link
+      to={`/guitars/${id}`}
+      style={{ textDecoration: "none", color: "inherit" }}
     >
-      {/* Image */}
-      <Card.Section>
-        <Link to={`/guitars/${id}`}>
-          <div className="h-[200px] w-full overflow-hidden">
-            <Image
-              src={photoUrl}
-              alt={name}
-              fit="cover"
-              className="h-full w-full object-cover object-top"
-            />
-          </div>
-        </Link>
-      </Card.Section>
+      <Card
+        shadow="sm"
+        radius="md"
+        withBorder
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: 400,
+        }}
+      >
+        {/* Image wrapper (flexible 70%) */}
+        <div style={{ flex: "7 1 0%", overflow: "hidden" }}>
+          <Image
+            src={photoUrl}
+            alt={name}
+            fit="cover"
+            style={{ width: "100%", height: "100%", objectPosition: "center" }}
+          />
+        </div>
 
-      {/* Content */}
-      <Stack gap="xs" className="flex-1 justify-between mt-4">
-        {/* Title */}
-        <Link
-          to={`/guitars/${id}`}
-          style={{ textDecoration: "none", color: "inherit" }}
+        {/* Content wrapper (flexible 30%) */}
+        <div
+          style={{
+            flex: "3 1 0%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            paddingLeft: "0.5rem",
+            paddingRight: "0.5rem"
+          }}
         >
-          <Text fw={700} size="lg" lineClamp={1}>
-            {name}
-          </Text>
-        </Link>
+          {/* Top section */}
+          <div>
+            <Text fw={700} size="xl" lineClamp={1}>
+              {name}
+            </Text>
 
-        {/* Type / Years */}
-{type && (
-  <Text size="sm" c="dimmed">
-    {type}
-  </Text>
-)}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", marginTop: "0.2rem" }}>
+              {type && <Text size="sm" c="dimmed">{type}</Text>}
+              {yearStart && <Text size="sm" c="dimmed">{yearStart} – {yearEnd || "Present"}</Text>}
+            </div>
 
-{yearStart && (
-  <Text size="sm" c="dimmed">
-    {yearStart} – {yearEnd || "Present"}
-  </Text>
-)}
+            <Group gap="xs" wrap="wrap" style={{ marginTop: "0.2rem", marginBottom:"0.4em" }}>
+              {pickups?.map((p, idx) => <Badge key={idx} color="grape" variant="light">{p}</Badge>)}
+              {genres?.map((g, idx) => <Badge key={idx} color="blue" variant="light">{g}</Badge>)}
+              {priceStart != null && priceStart > 0 && (
+                <Badge color="yellow" variant="light">
+                  ~${priceStart}{priceEnd != null && priceEnd > priceStart ? ` - $${priceEnd}` : ""}
+                </Badge>
+              )}
+            </Group>
+          </div>
 
-
-        {/* Badges row */}
-        <Group gap="xs" wrap="wrap">
-          {pickups &&
-            pickups.map((p, idx) => (
-              <Badge key={idx} color="grape" variant="light">
-                {p}
-              </Badge>
-            ))}
-          {genres &&
-            genres.map((g, idx) => (
-              <Badge key={idx} color="blue" variant="light">
-                {g}
-              </Badge>
-            ))}
-          {priceStart != null && priceStart > 0 && (
-            <Badge color="yellow" variant="light">
-              ~${priceStart}
-              {priceEnd != null && priceEnd > priceStart
-                ? ` - $${priceEnd}`
-                : ""}
-            </Badge>
+          {/* Bottom summary */}
+          {summary && (
+            <Text size="sm" c="gray.7" lineClamp={2}>
+              {summary}
+            </Text>
           )}
-        </Group>
-
-        {/* Summary */}
-        {summary && (
-          <Text size="sm" c="gray.7" lineClamp={2} className="min-h-[2rem]">
-            {summary}
-          </Text>
-        )}
-      </Stack>
-    </Card>
+        </div>
+      </Card>
+    </Link>
   );
 }
