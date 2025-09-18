@@ -12,8 +12,8 @@ interface GuitarCardProps {
   yearStart?: number;
   yearEnd?: number | null;
   pickups?: string[];
-  priceStart?: number;
-  priceEnd?: number;
+  PriceStart?: number;
+  PriceEnd?: number;
   genres?: string[];
 }
 
@@ -26,8 +26,8 @@ export default function GuitarCard({
   yearStart,
   yearEnd,
   pickups,
-  priceStart,
-  priceEnd,
+  PriceStart,
+  PriceEnd,
   genres,
 }: GuitarCardProps) {
   return (
@@ -80,9 +80,9 @@ export default function GuitarCard({
             <Group gap="xs" wrap="wrap" style={{ marginTop: "0.2rem", marginBottom:"0.4em" }}>
               {pickups?.map((p, idx) => <Badge key={idx} color="grape" variant="light">{p}</Badge>)}
               {genres?.map((g, idx) => <Badge key={idx} color="blue" variant="light">{g}</Badge>)}
-              {priceStart != null && priceStart > 0 && (
+              {PriceStart != null && PriceStart > 0 && (
                 <Badge color="yellow" variant="light">
-                  ~${priceStart}{priceEnd != null && priceEnd > priceStart ? ` - $${priceEnd}` : ""}
+                  ~${PriceStart}{PriceEnd != null && PriceEnd > PriceStart ? ` - $${PriceEnd}` : ""}
                 </Badge>
               )}
             </Group>

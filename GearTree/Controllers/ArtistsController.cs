@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using GearTree.Data;
 using GearTree.Dtos;
 using GearTree.Models;
+using GearTree.Helpers;
 
 [ApiController]
 [Route("artists")]
@@ -93,37 +94,6 @@ public class ArtistsController : ControllerBase
         return Created($"/artists/{created!.Id}", created.ToDto());
     }
 
-// -------------------------
-// UPDATE (PUT) - Full overwrite
-// -------------------------
-[HttpPut("{id}")]
-public async Task<IActionResult> Update(int id, [FromBody] UpdateArtistDto dto)
-{
-    if (!ModelState.IsValid)
-        return BadRequest(ModelState);
-
-    var artist = await _db.Artists.FirstOrDefaultAsync(a => a.Id == id);
-    if (artist == null) return NotFound();
-
-    artist.Name = dto.Name;
-    artist.PhotoUrl = dto.PhotoUrl;
-    artist.HeroPhotoUrl = dto.HeroPhotoUrl;
-    artist.Tagline = dto.Tagline;
-    artist.Description = dto.Description;
-    artist.Summary = dto.Summary;
-
-    artist.Bands = dto.Bands ?? new List<string>();
-    artist.OtherPhotos = dto.OtherPhotos ?? new List<string>();
-
-    await _db.SaveChangesAsync();
-
-    var updated = await _db.Artists
-        .Include(a => a.Amplifiers)
-        .Include(a => a.Guitars)
-        .FirstOrDefaultAsync(a => a.Id == id);
-
-    return Ok(updated!.ToDto());
-}
 
     // -------------------------
 // PARTIAL UPDATE (PATCH)
@@ -138,47 +108,7 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateArtistDto dto)
 
     if (dto.OtherPhotos != null && dto.OtherPhotos.Any())
     {
-<<<<<<< HEAD
         artist.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !artist.OtherPhotos.Contains(p)));
-=======
-        var artist = await _db.Artists.FirstOrDefaultAsync(a => a.Id == id);
-        if (artist is null) return NotFound();
-
-        // Scalars
-        if (!string.IsNullOrWhiteSpace(dto.Name)) artist.Name = dto.Name;
-        if (!string.IsNullOrWhiteSpace(dto.PhotoUrl)) artist.PhotoUrl = dto.PhotoUrl;
-        if (!string.IsNullOrWhiteSpace(dto.HeroPhotoUrl)) artist.HeroPhotoUrl = dto.HeroPhotoUrl;
-        if (!string.IsNullOrWhiteSpace(dto.Tagline)) artist.Tagline = dto.Tagline;
-        if (!string.IsNullOrWhiteSpace(dto.Description)) artist.Description = dto.Description;
-        if (!string.IsNullOrWhiteSpace(dto.Summary)) artist.Summary = dto.Summary;
-
-        // Merge Bands instead of overwriting
-        if(updateDto.Bands != null && updateDto.Genres.Any()) {
-            if artist.Bands == null || !artist.Bands.Any() {
-                artist.Bands = updateDto.Bands.ToList();
-            } else {
-                artist.Bands.AddRange(updateDto.Bands.Where(a => !artist.Bands.Contains(a)));
-            }
-        }
-    
-
-        // Merge OtherPhotos instead of overwriting
-        if (dto.OtherPhotos != null && dto.OtherPhotos.Any())
-        {
-            artist.OtherPhotos ??= new List<string>();
-            artist.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !artist.OtherPhotos.Contains(p)));
-        }
-
-        await _db.SaveChangesAsync();
-
-        // Reload artist with relationships for return
-        var updated = await _db.Artists
-            .Include(a => a.Amplifiers)
-            .Include(a => a.Guitars)
-            .FirstOrDefaultAsync(a => a.Id == id);
-
-        return Ok(updated!.ToDto());
->>>>>>> feature/related-carousels
     }
 
     if (dto.Bands != null && dto.Bands.Any())

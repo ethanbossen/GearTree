@@ -67,8 +67,8 @@ public class AmplifiersController : ControllerBase
             IsTube = dto.IsTube ?? false,
             YearStart = dto.YearStart ?? 0,
             YearEnd = dto.YearEnd ?? 0,
-            priceStart = dto.PriceStart ?? 0,
-            priceEnd = dto.PriceEnd ?? 0,
+            PriceStart = dto.PriceStart ?? 0,
+            PriceEnd = dto.PriceEnd ?? 0,
             Wattage = dto.Wattage ?? 0,
             SpeakerConfiguration = dto.SpeakerConfiguration ?? "",
             Manufacturer = dto.Manufacturer ?? "",
@@ -101,39 +101,6 @@ public class AmplifiersController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = amp.Id }, created!.ToDto());
     }
-
-    // -------------------------
-    // UPDATE (PUT)
-    // -------------------------
-    [HttpPut("{id}")]
-public async Task<IActionResult> Update(int id, [FromBody] AmplifierDto dto)
-{
-    if (!ModelState.IsValid)
-        return BadRequest(ModelState);
-
-    var amp = await _db.Amplifiers.FindAsync(id);
-    if (amp == null) return NotFound();
-
-    // Overwrite all fields
-    amp.Name = dto.Name;
-    amp.PhotoUrl = dto.PhotoUrl;
-    amp.Description = dto.Description;
-    amp.Summary = dto.Summary;
-    amp.GainStructure = dto.GainStructure;
-    amp.IsTube = dto.IsTube;
-    amp.YearStart = dto.YearStart;
-    amp.YearEnd = dto.YearEnd;
-    amp.PriceStart = dto.PriceStart;
-    amp.PriceEnd = dto.PriceEnd;
-    amp.Wattage = dto.Wattage;
-    amp.SpeakerConfiguration = dto.SpeakerConfiguration;
-    amp.Manufacturer = dto.Manufacturer;
-    amp.OtherPhotos = dto.OtherPhotos ?? new List<string>();
-
-    await _db.SaveChangesAsync();
-    return Ok(amp.ToDto());
-}
-
 
     // -------------------------
     // PARTIAL UPDATE (PATCH)

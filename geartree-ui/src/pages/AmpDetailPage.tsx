@@ -70,10 +70,10 @@ function AmpDetailPage() {
           </Group>
 
           {/* Price */}
-          {amp.priceStart != null && amp.priceStart > 0 && (
+          {amp.PriceStart != null && amp.PriceStart > 0 && (
   <Text size="md" fw={500}>
-    ~${amp.priceStart}
-    {amp.priceEnd != null && amp.priceEnd > amp.priceStart ? ` – $${amp.priceEnd}` : ""}
+    ~${amp.PriceStart}
+    {amp.PriceEnd != null && amp.PriceEnd > amp.PriceStart ? ` – $${amp.PriceEnd}` : ""}
   </Text>
 )}
             {/* Description */}

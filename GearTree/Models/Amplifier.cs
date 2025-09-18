@@ -11,8 +11,8 @@ public class Amplifier
     public string GainStructure { get; set; } = "";
     public int YearStart { get; set; }
     public int? YearEnd { get; set; }
-    public int priceStart { get; set; }
-    public int priceEnd { get; set; }
+    public int PriceStart { get; set; }
+    public int PriceEnd { get; set; }
     public int Wattage { get; set; }
     public string SpeakerConfiguration { get; set; } = "";
     public string Manufacturer { get; set; } = "";

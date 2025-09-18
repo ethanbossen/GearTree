@@ -21,8 +21,8 @@ const emptyForm = {
   gainStructure: "",
   yearStart: undefined as number | undefined,
   yearEnd: undefined as number | undefined,
-  priceStart: undefined as number | undefined,
-  priceEnd: undefined as number | undefined,
+  PriceStart: undefined as number | undefined,
+  PriceEnd: undefined as number | undefined,
   wattage: undefined as number | undefined,
   speakerConfiguration: "",
   manufacturer: "",
@@ -117,13 +117,13 @@ function CreateAmpButton({ onCreated }: CreateAmpButtonProps) {
           />
           <NumberInput
             label="Price Start"
-            value={form.priceStart}
-            onChange={(val) => handleChange("priceStart", val ?? undefined)}
+            value={form.PriceStart}
+            onChange={(val) => handleChange("PriceStart", val ?? undefined)}
           />
           <NumberInput
             label="Price End"
-            value={form.priceEnd}
-            onChange={(val) => handleChange("priceEnd", val ?? undefined)}
+            value={form.PriceEnd}
+            onChange={(val) => handleChange("PriceEnd", val ?? undefined)}
           />
           <NumberInput
             label="Wattage"

@@ -48,8 +48,8 @@ function AmpsTab() {
             "gainStructure",
             "yearStart",
             "yearEnd",
-            "priceStart",
-            "priceEnd",
+            "PriceStart",
+            "PriceEnd",
             "wattage",
             "speakerConfiguration",
           ]}

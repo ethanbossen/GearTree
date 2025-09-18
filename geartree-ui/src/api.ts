@@ -157,8 +157,8 @@ export interface Amplifier {
   gainStructure: string;
   yearStart: number;
   yearEnd: number | null;
-  priceStart: number | null;
-  priceEnd: number | null;
+  PriceStart: number | null;
+  PriceEnd: number | null;
   wattage: number;
   speakerConfiguration: string;
   manufacturer: string;

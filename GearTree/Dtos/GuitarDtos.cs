@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace GearTree.Dtos
 {
 public class UpdateGuitarDto

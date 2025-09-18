@@ -31,13 +31,34 @@ export function EditScalarsButton<T extends Record<string, any>>({
     setValues((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleSave = async () => {
-    await onSave(values as T);
-    setOpened(false);
-    if (onSaved) {
-        onSaved();
+const handleSave = async () => {
+  // Build a clean PATCH payload with only scalar fields
+  const patchPayload: Partial<T> = {};
+
+  scalarFields.forEach((field) => {
+    const value = values[field];
+
+    // Include only primitives or array-of-strings
+    if (
+      typeof value === "string" ||
+      typeof value === "number" ||
+      typeof value === "boolean" ||
+      (Array.isArray(value) && value.every((v: string) => typeof v === "string"))
+    ) {
+      patchPayload[field] = value;
     }
-  };
+  });
+
+  if ("id" in values) {
+    (patchPayload as any).id = values["id"];
+  }
+
+  await onSave(patchPayload as T);
+  setOpened(false);
+  if (onSaved) onSaved();
+};
+
+
 
   return (
     <>

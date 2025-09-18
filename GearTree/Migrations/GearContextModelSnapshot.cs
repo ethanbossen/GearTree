@@ -110,10 +110,10 @@ namespace GearTree.Migrations
                     b.Property<int>("YearStart")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("priceEnd")
+                    b.Property<int>("PriceEnd")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("priceStart")
+                    b.Property<int>("PriceStart")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
