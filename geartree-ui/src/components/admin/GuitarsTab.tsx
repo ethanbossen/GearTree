@@ -1,24 +1,26 @@
 // src/components/admin/GuitarsTab.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Text, Stack, Group, Card, TextInput } from "@mantine/core";
 import { Guitars } from "../../api";
 import type { Guitar } from "../../api";
 import CreateGuitarButton from "./CreateGuitarButton";
 import { EditScalarsButton } from "./EditScalarsButton";
 import { EditRelationsButton } from "./EditRelationsButton";
- 
+
+// Patch guitar scalars helper
 const patchGuitarScalars = async (updatedGuitar: Guitar) => {
-    const { id, ...scalars } = updatedGuitar;
-    if (!id) throw new Error("Guitar ID is missing");
-    await Guitars.patch(id, scalars);
-  };
+  const { id, ...scalars } = updatedGuitar;
+  if (!id) throw new Error("Guitar ID is missing");
+  await Guitars.patch(id, scalars);
+};
 
 function GuitarsTab() {
   const [guitars, setGuitars] = useState<Guitar[]>([]);
   const [allGuitars, setAllGuitars] = useState<Guitar[]>([]);
   const [search, setSearch] = useState("");
 
-  const loadGuitars = async () => {
+  // Load guitars from API
+  const loadGuitars = useCallback(async () => {
     try {
       const data = await Guitars.list();
       setGuitars(data);
@@ -26,22 +28,23 @@ function GuitarsTab() {
     } catch (err) {
       console.error("Failed to load guitars", err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadGuitars();
-  }, []);
+  }, [loadGuitars]);
 
-const filteredGuitars = guitars.filter((guitar) =>
-guitar.name.toLowerCase().includes(search.toLowerCase())
-);
+  // Filtered list based on search
+  const filteredGuitars = guitars.filter((guitar) =>
+    guitar.name.toLowerCase().includes(search.toLowerCase())
+  );
 
-  // Dual edit buttons for a guitar
-  function EditGuitarButtons({
-    guitar,
-  }: {
-    guitar: Guitar;
-  }) {
+  // Dual edit buttons component
+  const EditGuitarButtons = ({ guitar }: { guitar: Guitar }) => {
+    const relationOptions = allGuitars
+      .filter((g) => g.id !== guitar.id)
+      .map((g) => ({ id: g.id, name: g.name }));
+
     return (
       <div className="flex gap-2">
         <EditScalarsButton
@@ -61,19 +64,14 @@ guitar.name.toLowerCase().includes(search.toLowerCase())
         />
         <EditRelationsButton
           itemId={guitar.id}
-          currentRelations={guitar.relatedGuitars.map((r) => ({
-            id: r.id,
-            name: r.name,
-          }))}
-          options={allGuitars
-            .filter((g) => g.id !== guitar.id)
-            .map((g) => ({ id: g.id, name: g.name }))}
+          currentRelations={guitar.relatedGuitars.map(({ id, name }) => ({ id, name }))}
+          options={relationOptions}
           onAdd={Guitars.addRelated}
           onSaved={loadGuitars}
         />
       </div>
     );
-  }
+  };
 
   return (
     <Stack gap="md">
@@ -83,13 +81,12 @@ guitar.name.toLowerCase().includes(search.toLowerCase())
 
       <CreateGuitarButton onCreated={loadGuitars} />
 
-            <TextInput
-              placeholder="Search guitars..."
-              value={search}
-              onChange={(e) => setSearch(e.currentTarget.value)}
-              className="mb-4"
-            />
-      
+      <TextInput
+        placeholder="Search guitars..."
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+        className="mb-4"
+      />
 
       <Stack>
         {filteredGuitars.map((guitar) => (

@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { LandingSection } from "../components/LandingSection";
 import ArtistsContainer from "../components/ArtistsContainer";
 import AmpsContainer from "../components/AmpsContainer";
-import AmplifierCarousel from "../components/AmplifierCarousel";
-import ArtistCarousel from "../components/ArtistsCarousel";
+import Carousel from "../components/Carousel";
+import type { CarouselItem } from "../components/Carousel";
 import { Amps, Artists } from "../api";
 import type { AmplifierBrief, Artist } from "../api";
 
@@ -50,12 +50,20 @@ export default function Home() {
           <h2 className="m-10 text-3xl font-bold border-b-4 inline-block mb-8">
             Featured Artists:
           </h2>
-          <ArtistCarousel artists={artists} />
+          <Carousel itemsPerPage={1 }items={artists} />
 
           <h2 className="m-10 text-3xl font-bold border-b-4 inline-block mb-8">
             Featured Amps:
           </h2>
-          <AmplifierCarousel amplifiers={amps} />
+          <Carousel
+  itemsPerPage={1}
+  items={amps.map((amp): CarouselItem => ({
+    id: amp.id,
+    name: amp.name,
+    photoUrl: amp.photoUrl,
+    summary: amp.summary,
+  }))}
+/>
         </div>
       ) : (
         <div>

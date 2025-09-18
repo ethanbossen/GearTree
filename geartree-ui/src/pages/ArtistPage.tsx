@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Artists } from "../api";
 import type { ArtistDetail } from "../api";
-import AmplifierCarousel from "../components/AmplifierCarousel";
-import GuitarCarousel from "../components/GuitarCarousel";
+import Carousel from "../components/Carousel";
+import type { CarouselItem } from "../components/Carousel";
+
 
 function ArtistPage() {
   const { id } = useParams(); 
@@ -51,7 +52,15 @@ function ArtistPage() {
   {artist.guitars.length > 0 && (
     <div className="basis-1/2 w-full min-w-0 md:pr-6">
       <h2 className="text-3xl text-black font-semibold mt-10 mb-4">Guitars:</h2>
-      <GuitarCarousel guitars={artist.guitars} />
+    <Carousel
+  itemsPerPage={1}
+  items={artist.guitars.map((guitar): CarouselItem => ({
+    id: guitar.id,
+    name: guitar.name,
+    photoUrl: guitar.photoUrl,     
+    summary: guitar.summary,        
+  }))}
+/>
     </div>
   )}
 
@@ -59,7 +68,15 @@ function ArtistPage() {
   {artist.amplifiers.length > 0 && (
     <div className="basis-1/2 w-full min-w-0 md:pl-6">
       <h2 className="text-3xl text-black font-semibold mt-10 mb-4">Amplifiers:</h2>
-      <AmplifierCarousel amplifiers={artist.amplifiers} />
+      <Carousel 
+      itemsPerPage={1} 
+      items={artist.amplifiers.map((amplifier): CarouselItem => ({
+        id: amplifier.id,
+        name: amplifier.name,
+        photoUrl: amplifier.photoUrl,
+        summary: amplifier.summary
+      }))} 
+      />
     </div>
   )}
 </div>

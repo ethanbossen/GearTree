@@ -32,6 +32,7 @@ function OneLineBadges({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState<number>(0);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const items: string[] = [
     ...pickups,
@@ -39,53 +40,101 @@ function OneLineBadges({
     PriceStart != null && PriceStart > 0
       ? `~$${PriceStart}${PriceEnd != null && PriceEnd > PriceStart ? ` - $${PriceEnd}` : ""}`
       : null,
-  ].filter((i): i is string => i !== null); // type guard
+  ].filter((i): i is string => i !== null);
 
-  // Measure after render
+  // Create a shared canvas for text measurement (more efficient than DOM)
+  const getCanvas = () => {
+    if (!canvasRef.current) {
+      canvasRef.current = document.createElement('canvas');
+    }
+    return canvasRef.current;
+  };
+
+  const measureTextWidth = (text: string, fontSize: string = '14px', fontFamily: string = 'system-ui, sans-serif') => {
+    const canvas = getCanvas();
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return 0;
+    
+    ctx.font = `${fontSize} ${fontFamily}`;
+    return ctx.measureText(text).width;
+  };
+
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) return;
+    if (!container || items.length === 0) {
+      setVisibleCount(items.length);
+      return;
+    }
 
-    const children = Array.from(container.children) as HTMLElement[];
-    let widthUsed = 0;
-    let lastVisibleIndex = -1;
-    const containerWidth = container.offsetWidth;
+    const calculateVisibleBadges = () => {
+      const containerWidth = container.offsetWidth;
+      if (containerWidth === 0) return;
 
-    children.forEach((child, idx) => {
-      const style = getComputedStyle(child);
-      const marginRight = parseFloat(style.marginRight);
-      const childWidth = child.offsetWidth + marginRight;
-      widthUsed += childWidth;
-      if (widthUsed <= containerWidth) lastVisibleIndex = idx;
-    });
+      let totalWidth = 0;
+      let count = 0;
+      const gap = 8; // 0.5rem gap
+      const badgePadding = 16; // Approximate badge padding (8px each side)
+      const badgeBorderRadius = 4; // Additional space for rounded corners
 
-    setVisibleCount(lastVisibleIndex + 1);
+      for (let i = 0; i < items.length; i++) {
+        const textWidth = measureTextWidth(items[i]);
+        const badgeWidth = textWidth + badgePadding + badgeBorderRadius;
+        const proposedWidth = totalWidth + badgeWidth + (i > 0 ? gap : 0);
+
+        if (proposedWidth <= containerWidth) {
+          totalWidth = proposedWidth;
+          count = i + 1;
+        } else {
+          break;
+        }
+      }
+
+      setVisibleCount(count);
+    };
+
+    // Debounced calculation to avoid excessive calls
+    let timeoutId: NodeJS.Timeout;
+    const debouncedCalculate = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(calculateVisibleBadges, 50);
+    };
+
+    // Initial calculation
+    calculateVisibleBadges();
+
+    // Use ResizeObserver for container size changes
+    const resizeObserver = new ResizeObserver(debouncedCalculate);
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+      clearTimeout(timeoutId);
+    };
   }, [items]);
 
-  // Recalculate on window resize
-  useEffect(() => {
-    const handleResize = () => setVisibleCount(0); // trigger re-measure
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  if (items.length === 0) return null;
 
   return (
     <div
       ref={containerRef}
       style={{
-        display: "inline-flex",
+        display: "flex",
         gap: "0.5rem",
         overflow: "hidden",
         marginTop: "0.2rem",
         marginBottom: "0.4rem",
+        width: "100%",
       }}
     >
-      {items.map((item, idx) => (
+      {items.slice(0, visibleCount).map((item, idx) => (
         <Badge
-          key={item?.toString() ?? idx}
+          key={`${item}-${idx}`}
           color={pickups.includes(item) ? "grape" : genres.includes(item) ? "blue" : "yellow"}
           variant="light"
-          style={{ display: idx < visibleCount ? "inline-block" : "none" }}
+          style={{ 
+            flexShrink: 0,
+            whiteSpace: "nowrap"
+          }}
         >
           {item}
         </Badge>
@@ -145,7 +194,8 @@ export default function GuitarCard({
             paddingTop:
               pickups?.length || genres?.length || (PriceStart != null && PriceStart > 0)
                 ? "0"
-                : "0.5rem", // add top padding only if no badges
+                : "0.5rem",
+            minWidth: 0,
           }}
         >
           {/* Title */}
@@ -162,7 +212,7 @@ export default function GuitarCard({
                 marginTop:
                   pickups?.length || genres?.length || (PriceStart != null && PriceStart > 0)
                     ? "0.2rem"
-                    : "0.1rem", // tighter spacing if no badges
+                    : "0.1rem",
               }}
             >
               {type && <span>{type}</span>}
@@ -172,14 +222,12 @@ export default function GuitarCard({
           )}
 
           {/* One-line dynamic badges */}
-          {(pickups?.length || genres?.length || (PriceStart != null && PriceStart > 0)) && (
-            <OneLineBadges
-              pickups={pickups}
-              genres={genres}
-              PriceStart={PriceStart}
-              PriceEnd={PriceEnd}
-            />
-          )}
+          <OneLineBadges
+            pickups={pickups}
+            genres={genres}
+            PriceStart={PriceStart}
+            PriceEnd={PriceEnd}
+          />
 
           {/* Summary */}
           {summary && (
@@ -191,7 +239,7 @@ export default function GuitarCard({
                 marginTop:
                   pickups?.length || genres?.length || (PriceStart != null && PriceStart > 0)
                     ? "0.25rem"
-                    : "0", // tighter gap if no badges
+                    : "0",
               }}
             >
               {summary}

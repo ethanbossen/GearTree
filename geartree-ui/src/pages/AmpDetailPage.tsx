@@ -6,7 +6,7 @@ import type { Amplifier } from "../api";
 import { Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
 import AmpCard from "../components/AmpCard";
 import ArtistCard from "../components/ArtistCard"; 
-import CardGridCarousel from "../components/CardGridCarousel";
+import Carousel from "../components/Carousel";
 
 function AmpDetailPage() {
   const { id } = useParams();
@@ -44,16 +44,13 @@ function AmpDetailPage() {
         {/* Info */}
         <Stack gap="sm">
           <Title order={1}>{amp.name}</Title>
-          <Text size="lg" c="dimmed">
-            {amp.yearStart} – {amp.yearEnd || "Present"}
-          </Text>
-                 {/* Price */}
-          {amp.priceStart != null && amp.priceStart > 0 && (
-  <Text size="lg" c="dimmed">
-    ~${amp.priceStart}
-    {amp.priceEnd != null && amp.priceEnd > amp.priceStart ? ` – $${amp.priceEnd}` : ""}
-  </Text>
-)}
+    <Text size="lg" c="dimmed">
+  {amp.yearStart} – {amp.yearEnd || "Present"}
+  {amp.priceStart != null && amp.priceStart > 0 && (
+    <> • ~${amp.priceStart}{amp.priceEnd != null && amp.priceEnd > amp.priceStart ? ` – $${amp.priceEnd}` : ""}</>
+  )}
+</Text>
+
 
           <Group gap="xs" wrap="wrap">
             <Badge color={amp.isTube ? "red" : "blue"} variant="light">
@@ -102,7 +99,7 @@ function AmpDetailPage() {
           <Title order={2} className="mb-6 text-black">
             Related Amps:
           </Title>
-          <CardGridCarousel>
+          <Carousel>
             {amp.relatedAmps.map((ra) => (
               <AmpCard
                 key={ra.id}
@@ -112,7 +109,7 @@ function AmpDetailPage() {
                 summary={ra.summary ?? ""}
               />
             ))}
-          </CardGridCarousel>
+          </Carousel>
         </section>
       )}
 
@@ -122,11 +119,11 @@ function AmpDetailPage() {
           <Title order={2} className="mb-6 text-black">
             Artists Who Use This Amp:
           </Title>
-          <CardGridCarousel>
+          <Carousel>
             {amp.artists.map((artist) => (
               <ArtistCard key={artist.id} {...artist} />
             ))}
-          </CardGridCarousel>
+          </Carousel>
         </section>
       )}
     </div>

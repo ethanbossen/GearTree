@@ -181,7 +181,7 @@ function Amplifiers() {
       </Collapse>
 
       {/* Amp Grid */}
-      <div className="grid gap-8 md:grid-cols-3 mb-12">
+      <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-12">
         {sortedAmps.slice(0, visibleCount).map((amp) => (
           <AmpCardDetailed key={amp.id} {...amp} />
         ))}

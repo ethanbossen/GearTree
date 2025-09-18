@@ -172,7 +172,7 @@ function Guitars() {
       </Collapse>
 
       {/* Card Grid */}
-      <div className="grid gap-8 md:grid-cols-3 pb-8">
+      <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 pb-8">
         {sortedGuitars.slice(0, visibleCount).map((guitar) => (
           <GuitarCard
             key={guitar.id}

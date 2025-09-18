@@ -4,10 +4,9 @@ import { useParams } from "react-router-dom";
 import { Guitars } from "../api";  
 import type { GuitarDetail } from "../api"; 
 import { Button, Loader, Title } from "@mantine/core";
-import CardGridContainer from "../components/CardGridContainer";
 import GuitarCard from "../components/GuitarCard";
 import ArtistCard from "../components/ArtistCard";
-import CardGridCarousel from "../components/CardGridCarousel";
+import Carousel from "../components/Carousel";
 
 function GuitarDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -104,7 +103,7 @@ function GuitarDetailPage() {
            <Title order={2} className="mb-6 text-black">
             Related Guitars:
           </Title>
-          <CardGridCarousel>
+          <Carousel>
             {guitar.relatedGuitars.map((rg) => (
               <GuitarCard
                 key={rg.id}
@@ -114,7 +113,7 @@ function GuitarDetailPage() {
                 summary={rg.summary ?? ""}     
               />
             ))}
-          </CardGridCarousel>
+          </Carousel>
         </section>
       )}
 
@@ -124,11 +123,11 @@ function GuitarDetailPage() {
  <Title order={2} className="mb-6 text-black">
             Artists Who Use This Guitar:
           </Title>
-          <CardGridCarousel>
+          <Carousel>
             {guitar.artists.map((artist) => (
               <ArtistCard key={artist.id} {...artist} />
             ))}
-          </CardGridCarousel>
+          </Carousel>
         </section>
       )}
     </div>
