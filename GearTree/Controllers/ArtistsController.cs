@@ -111,11 +111,14 @@ public class ArtistsController : ControllerBase
         if (!string.IsNullOrWhiteSpace(dto.Summary)) artist.Summary = dto.Summary;
 
         // Merge Bands instead of overwriting
-        if (dto.Bands != null && dto.Bands.Any())
-        {
-            artist.Bands ??= new List<string>();
-            artist.Bands.AddRange(dto.Bands.Where(p => !artist.Bands.Contains(p)));
+        if(updateDto.Bands != null && updateDto.Genres.Any()) {
+            if artist.Bands == null || !artist.Bands.Any() {
+                artist.Bands = updateDto.Bands.ToList();
+            } else {
+                artist.Bands.AddRange(updateDto.Bands.Where(a => !artist.Bands.Contains(a)));
+            }
         }
+    
 
         // Merge OtherPhotos instead of overwriting
         if (dto.OtherPhotos != null && dto.OtherPhotos.Any())
