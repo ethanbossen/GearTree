@@ -1,39 +1,49 @@
 // src/components/admin/AmpsTab.tsx
-import { useEffect, useState } from "react";
-import { Text, Stack, Group, Card } from "@mantine/core";
+import { useEffect, useState, useCallback } from "react";
+import { Text, TextInput, Stack, Group, Card } from "@mantine/core";
 import { Amps } from "../../api";
 import type { Amplifier } from "../../api";
 import CreateAmpButton from "./CreateAmpButton";
 import { EditScalarsButton } from "./EditScalarsButton";
 import { EditRelationsButton } from "./EditRelationsButton";
 
+// Patch amp scalars helper
+const patchAmpScalars = async (updatedAmp: Amplifier) => {
+  const { id, ...scalars } = updatedAmp;
+  if (!id) throw new Error("Amp ID is missing");
+  await Amps.patch(id, scalars);
+};
+
 function AmpsTab() {
   const [amps, setAmps] = useState<Amplifier[]>([]);
   const [allAmps, setAllAmps] = useState<Amplifier[]>([]);
+  const [search, setSearch] = useState("");
 
-  const loadAmps = async () => {
+  // Load amps from API
+  const loadAmps = useCallback(async () => {
     try {
       const data = await Amps.list();
       setAmps(data);
-      setAllAmps(data); // store full list for relations
+      setAllAmps(data);
     } catch (err) {
       console.error("Failed to load amps", err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadAmps();
-  }, []);
+  }, [loadAmps]);
 
-  // Patch helper for scalars
-  const patchAmpScalars = async (updatedAmp: Amplifier): Promise<void> => {
-    const { id, ...scalars } = updatedAmp;
-    if (!id) throw new Error("Amp ID is missing");
-    await Amps.patch(id, scalars);
-  };
+  const filteredAmps = amps.filter((amp) =>
+    amp.name.toLowerCase().includes(search.toLowerCase())
+  );
 
-  // Dual edit buttons for an amp
-  function EditAmpButtons({ amp }: { amp: Amplifier }) {
+  // Dual edit buttons component
+  const EditAmpButtons = ({ amp }: { amp: Amplifier }) => {
+    const relationOptions = allAmps
+      .filter((a) => a.id !== amp.id)
+      .map((a) => ({ id: a.id, name: a.name }));
+
     return (
       <div className="flex gap-2">
         <EditScalarsButton
@@ -48,8 +58,8 @@ function AmpsTab() {
             "gainStructure",
             "yearStart",
             "yearEnd",
-            "PriceStart",
-            "PriceEnd",
+            "priceStart",
+            "priceEnd",
             "wattage",
             "speakerConfiguration",
           ]}
@@ -57,16 +67,14 @@ function AmpsTab() {
         />
         <EditRelationsButton
           itemId={amp.id}
-          currentRelations={amp.relatedAmps.map((r) => ({ id: r.id, name: r.name }))}
-          options={allAmps
-            .filter((a) => a.id !== amp.id)
-            .map((a) => ({ id: a.id, name: a.name }))}
+          currentRelations={amp.relatedAmps.map(({ id, name }) => ({ id, name }))}
+          options={relationOptions}
           onAdd={Amps.addRelated}
           onSaved={loadAmps}
         />
       </div>
     );
-  }
+  };
 
   return (
     <Stack gap="md">
@@ -76,8 +84,15 @@ function AmpsTab() {
 
       <CreateAmpButton onCreated={loadAmps} />
 
+      <TextInput
+        placeholder="Search amps..."
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+        className="mb-4"
+      />
+
       <Stack>
-        {amps.map((amp) => (
+        {filteredAmps.map((amp) => (
           <Card key={amp.id} withBorder shadow="sm" padding="md">
             <Group justify="space-between">
               <div>

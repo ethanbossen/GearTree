@@ -47,6 +47,13 @@ function AmpDetailPage() {
           <Text size="lg" c="dimmed">
             {amp.yearStart} – {amp.yearEnd || "Present"}
           </Text>
+                 {/* Price */}
+          {amp.priceStart != null && amp.priceStart > 0 && (
+  <Text size="lg" c="dimmed">
+    ~${amp.priceStart}
+    {amp.priceEnd != null && amp.priceEnd > amp.priceStart ? ` – $${amp.priceEnd}` : ""}
+  </Text>
+)}
 
           <Group gap="xs" wrap="wrap">
             <Badge color={amp.isTube ? "red" : "blue"} variant="light">
@@ -69,13 +76,6 @@ function AmpDetailPage() {
             )}
           </Group>
 
-          {/* Price */}
-          {amp.PriceStart != null && amp.PriceStart > 0 && (
-  <Text size="md" fw={500}>
-    ~${amp.PriceStart}
-    {amp.PriceEnd != null && amp.PriceEnd > amp.PriceStart ? ` – $${amp.PriceEnd}` : ""}
-  </Text>
-)}
             {/* Description */}
       <section className="prose max-w-none">
         <p>{amp.description}</p>

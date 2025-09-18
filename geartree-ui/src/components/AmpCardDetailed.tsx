@@ -17,8 +17,8 @@ function AmpCardDetailed({
   wattage,
   speakerConfiguration,
   manufacturer,
-  PriceStart,
-  PriceEnd,
+  priceStart,
+  priceEnd,
 }: AmpCardDetailedProps) {
   return (
     <Card
@@ -67,10 +67,10 @@ function AmpCardDetailed({
               {wattage}W
             </Badge>
           )}
-          {PriceStart != null && PriceStart > 0 && (
+          {priceStart != null && priceStart > 0 && (
             <Badge color="yellow" variant="light">
-              ~${PriceStart}
-              {PriceEnd != null && PriceEnd > PriceStart ? ` - $${PriceEnd}` : ""}
+              ~${priceStart}
+              {priceEnd != null && priceEnd > priceStart ? ` - $${priceEnd}` : ""}
             </Badge>
           )}
         </Group>

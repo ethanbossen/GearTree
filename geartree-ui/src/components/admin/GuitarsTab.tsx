@@ -1,15 +1,22 @@
 // src/components/admin/GuitarsTab.tsx
 import { useEffect, useState } from "react";
-import { Text, Stack, Group, Card } from "@mantine/core";
+import { Text, Stack, Group, Card, TextInput } from "@mantine/core";
 import { Guitars } from "../../api";
 import type { Guitar } from "../../api";
 import CreateGuitarButton from "./CreateGuitarButton";
 import { EditScalarsButton } from "./EditScalarsButton";
 import { EditRelationsButton } from "./EditRelationsButton";
+ 
+const patchGuitarScalars = async (updatedGuitar: Guitar) => {
+    const { id, ...scalars } = updatedGuitar;
+    if (!id) throw new Error("Guitar ID is missing");
+    await Guitars.patch(id, scalars);
+  };
 
 function GuitarsTab() {
   const [guitars, setGuitars] = useState<Guitar[]>([]);
   const [allGuitars, setAllGuitars] = useState<Guitar[]>([]);
+  const [search, setSearch] = useState("");
 
   const loadGuitars = async () => {
     try {
@@ -25,12 +32,9 @@ function GuitarsTab() {
     loadGuitars();
   }, []);
 
-  // Patch helper for scalars
-  const patchGuitarScalars = async (updatedGuitar: Guitar) => {
-    const { id, ...scalars } = updatedGuitar;
-    if (!id) throw new Error("Guitar ID is missing");
-    await Guitars.patch(id, scalars);
-  };
+const filteredGuitars = guitars.filter((guitar) =>
+guitar.name.toLowerCase().includes(search.toLowerCase())
+);
 
   // Dual edit buttons for a guitar
   function EditGuitarButtons({
@@ -79,8 +83,16 @@ function GuitarsTab() {
 
       <CreateGuitarButton onCreated={loadGuitars} />
 
+            <TextInput
+              placeholder="Search guitars..."
+              value={search}
+              onChange={(e) => setSearch(e.currentTarget.value)}
+              className="mb-4"
+            />
+      
+
       <Stack>
-        {guitars.map((guitar) => (
+        {filteredGuitars.map((guitar) => (
           <Card key={guitar.id} withBorder shadow="sm" padding="md">
             <Group justify="space-between">
               <div>
