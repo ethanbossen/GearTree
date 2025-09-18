@@ -51,3 +51,13 @@ coverage/
 # Ignore build artifacts
 GearTree/bin/
 GearTree/obj/
+
+# Ignore Vite cache
+geartree-ui/.vite/
+
+# Ignore build output
+GearTree/bin/
+GearTree/obj/
+dist/
+build/
+out/
