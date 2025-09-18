@@ -51,8 +51,9 @@ function ArtistPage() {
   {/* Guitars */}
   {artist.guitars.length > 0 && (
     <div className="basis-1/2 w-full min-w-0 md:pr-6">
-      <h2 className="text-3xl text-black font-semibold mt-10 mb-4">Guitars:</h2>
+      <h2 className="text-3xl text-black font-semibold mt-10">Guitars:</h2>
     <Carousel
+    basePath="guitars"
   itemsPerPage={1}
   items={artist.guitars.map((guitar): CarouselItem => ({
     id: guitar.id,
@@ -67,8 +68,9 @@ function ArtistPage() {
   {/* Amplifiers */}
   {artist.amplifiers.length > 0 && (
     <div className="basis-1/2 w-full min-w-0 md:pl-6">
-      <h2 className="text-3xl text-black font-semibold mt-10 mb-4">Amplifiers:</h2>
+      <h2 className="text-3xl text-black font-semibold mt-10">Amplifiers:</h2>
       <Carousel 
+      basePath="amplifiers"
       itemsPerPage={1} 
       items={artist.amplifiers.map((amplifier): CarouselItem => ({
         id: amplifier.id,

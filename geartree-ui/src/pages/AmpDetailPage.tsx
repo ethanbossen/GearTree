@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Amps} from "../api";
 import type { Amplifier } from "../api";
 import { Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
-import AmpCard from "../components/AmpCard";
+import EntityCard from "../components/EntityCard";
 import ArtistCard from "../components/ArtistCard"; 
 import Carousel from "../components/Carousel";
 
@@ -99,10 +99,11 @@ function AmpDetailPage() {
           <Title order={2} className="mb-6 text-black">
             Related Amps:
           </Title>
-          <Carousel>
+          <Carousel basePath="amplifiers">
             {amp.relatedAmps.map((ra) => (
-              <AmpCard
+              <EntityCard
                 key={ra.id}
+                basePath="amplifiers"
                 id={ra.id}
                 name={ra.name}
                 photoUrl={ra.photoUrl ?? ""}
@@ -119,7 +120,7 @@ function AmpDetailPage() {
           <Title order={2} className="mb-6 text-black">
             Artists Who Use This Amp:
           </Title>
-          <Carousel>
+          <Carousel basePath="artists">
             {amp.artists.map((artist) => (
               <ArtistCard key={artist.id} {...artist} />
             ))}

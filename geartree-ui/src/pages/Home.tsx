@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { LandingSection } from "../components/LandingSection";
-import ArtistsContainer from "../components/ArtistsContainer";
-import AmpsContainer from "../components/AmpsContainer";
+import AmpsContainer from "../components/HomePageAmpsContainer";
 import Carousel from "../components/Carousel";
 import type { CarouselItem } from "../components/Carousel";
 import { Amps, Artists } from "../api";
@@ -22,7 +21,7 @@ function useWindowWidth() {
 
 export default function Home() {
   const width = useWindowWidth();
-  const isMobile = width < 768; // md breakpoint
+  const isMobile = width < 768; 
 
   const [amps, setAmps] = useState<AmplifierBrief[]>([]);
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -30,14 +29,14 @@ export default function Home() {
   // Fetch amps
   useEffect(() => {
     Amps.list()
-      .then((data) => setAmps(data.slice(0, 4))) // first 4 for carousel
+      .then((data) => setAmps(data.slice(0, 4))) 
       .catch(console.error);
   }, []);
 
   // Fetch artists
   useEffect(() => {
     Artists.list()
-      .then((data) => setArtists(data.slice(0, 4))) // first 4 for carousel
+      .then((data) => setArtists(data.slice(0, 3))) 
       .catch(console.error);
   }, []);
 
@@ -50,12 +49,13 @@ export default function Home() {
           <h2 className="m-10 text-3xl font-bold border-b-4 inline-block mb-8">
             Featured Artists:
           </h2>
-          <Carousel itemsPerPage={1 }items={artists} />
+          <Carousel basePath="artists" itemsPerPage={1}items={artists} />
 
           <h2 className="m-10 text-3xl font-bold border-b-4 inline-block mb-8">
             Featured Amps:
           </h2>
           <Carousel
+          basePath="amplifiers"
   itemsPerPage={1}
   items={amps.map((amp): CarouselItem => ({
     id: amp.id,
@@ -67,7 +67,12 @@ export default function Home() {
         </div>
       ) : (
         <div>
-          <ArtistsContainer />
+          <section className="px-8 max-w-7xl mx-auto">
+           <h2 className="text-3xl font-bold border-b-4 inline-block">
+        Featured Artists:
+      </h2>
+          <Carousel basePath="artists" items={artists}/>
+          </section>
           <AmpsContainer />
         </div>
       )}

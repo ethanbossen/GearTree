@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Artists } from "../api";
 import type { Artist } from "../api";
-import ArtistCard from "../components/ArtistCard";
+import EntityCard from "../components/EntityCard";
 import { Button, Collapse, Input, Select } from "@mantine/core";
 
 function AllArtistsPage() {
@@ -119,8 +119,9 @@ function AllArtistsPage() {
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {visibleArtists.map((artist) => (
           <div key={artist.id} className="pb-6">
-            <ArtistCard
+            <EntityCard
               id={artist.id}
+              basePath="artists"
               name={artist.name}
               summary={artist.summary}
               photoUrl={artist.photoUrl}

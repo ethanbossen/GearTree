@@ -4,9 +4,8 @@ import { useParams } from "react-router-dom";
 import { Guitars } from "../api";  
 import type { GuitarDetail } from "../api"; 
 import { Button, Loader, Title } from "@mantine/core";
-import GuitarCard from "../components/GuitarCard";
-import ArtistCard from "../components/ArtistCard";
 import Carousel from "../components/Carousel";
+import EntityCard from "../components/EntityCard";
 
 function GuitarDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -103,9 +102,10 @@ function GuitarDetailPage() {
            <Title order={2} className="mb-6 text-black">
             Related Guitars:
           </Title>
-          <Carousel>
+          <Carousel basePath="guitars">
             {guitar.relatedGuitars.map((rg) => (
-              <GuitarCard
+              <EntityCard
+              basePath="guitars"
                 key={rg.id}
                 id={rg.id}
                 name={rg.name}
@@ -123,9 +123,9 @@ function GuitarDetailPage() {
  <Title order={2} className="mb-6 text-black">
             Artists Who Use This Guitar:
           </Title>
-          <Carousel>
+          <Carousel basePath="guitars">
             {guitar.artists.map((artist) => (
-              <ArtistCard key={artist.id} {...artist} />
+              <EntityCard basePath="artists" key={artist.id} {...artist} />
             ))}
           </Carousel>
         </section>
