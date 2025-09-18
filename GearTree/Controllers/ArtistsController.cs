@@ -93,123 +93,68 @@ public class ArtistsController : ControllerBase
         return Created($"/artists/{created!.Id}", created.ToDto());
     }
 
+// -------------------------
+// UPDATE (PUT) - Full overwrite
+// -------------------------
+[HttpPut("{id}")]
+public async Task<IActionResult> Update(int id, [FromBody] UpdateArtistDto dto)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+
+    var artist = await _db.Artists.FirstOrDefaultAsync(a => a.Id == id);
+    if (artist == null) return NotFound();
+
+    artist.Name = dto.Name;
+    artist.PhotoUrl = dto.PhotoUrl;
+    artist.HeroPhotoUrl = dto.HeroPhotoUrl;
+    artist.Tagline = dto.Tagline;
+    artist.Description = dto.Description;
+    artist.Summary = dto.Summary;
+
+    artist.Bands = dto.Bands ?? new List<string>();
+    artist.OtherPhotos = dto.OtherPhotos ?? new List<string>();
+
+    await _db.SaveChangesAsync();
+
+    var updated = await _db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == id);
+
+    return Ok(updated!.ToDto());
+}
+
     // -------------------------
-    // UPDATE (PUT)
-    // -------------------------
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UpdateArtistDto dto)
+// PARTIAL UPDATE (PATCH)
+// -------------------------
+[HttpPatch("{id}")]
+public async Task<IActionResult> Patch(int id, [FromBody] UpdateArtistDto dto)
+{
+    var artist = await _db.Artists.FirstOrDefaultAsync(a => a.Id == id);
+    if (artist is null) return NotFound();
+
+    artist.ApplyPatch(dto);
+
+    if (dto.OtherPhotos != null && dto.OtherPhotos.Any())
     {
-        var artist = await _db.Artists
-            .Include(a => a.Amplifiers)
-            .Include(a => a.Guitars)
-            .FirstOrDefaultAsync(a => a.Id == id);
-
-        if (artist is null) return NotFound();
-
-        // Scalars
-        artist.Name = dto.Name ?? artist.Name;
-        artist.PhotoUrl = dto.PhotoUrl ?? artist.PhotoUrl;
-        artist.HeroPhotoUrl = dto.HeroPhotoUrl ?? artist.HeroPhotoUrl;
-        artist.Tagline = dto.Tagline ?? artist.Tagline;
-        artist.Description = dto.Description ?? artist.Description;
-        artist.Summary = dto.Summary ?? artist.Summary;
-        artist.Bands = dto.Bands ?? artist.Bands;
-        artist.OtherPhotos = dto.OtherPhotos ?? artist.OtherPhotos;
-
-        // Amplifiers
-        if (dto.AmplifierIds != null)
-        {
-            artist.Amplifiers.Clear();
-            if (dto.AmplifierIds.Any())
-            {
-                var amps = await _db.Amplifiers
-                    .Where(a => dto.AmplifierIds.Contains(a.Id))
-                    .ToListAsync();
-                artist.Amplifiers = amps;
-            }
-        }
-
-        // Guitars
-        if (dto.GuitarIds != null)
-        {
-            artist.Guitars.Clear();
-            if (dto.GuitarIds.Any())
-            {
-                var guitars = await _db.Guitars
-                    .Where(g => dto.GuitarIds.Contains(g.Id))
-                    .ToListAsync();
-                artist.Guitars = guitars;
-            }
-        }
-
-        await _db.SaveChangesAsync();
-
-        var updated = await _db.Artists
-            .Include(a => a.Amplifiers)
-            .Include(a => a.Guitars)
-            .FirstOrDefaultAsync(a => a.Id == id);
-
-        return Ok(updated!.ToDto());
+        artist.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !artist.OtherPhotos.Contains(p)));
     }
 
-    // -------------------------
-    // PARTIAL UPDATE (PATCH)
-    // -------------------------
-    [HttpPatch("{id}")]
-    public async Task<IActionResult> Patch(int id, UpdateArtistDto dto)
+    if (dto.Bands != null && dto.Bands.Any())
     {
-        var artist = await _db.Artists
-            .Include(a => a.Amplifiers)
-            .Include(a => a.Guitars)
-            .FirstOrDefaultAsync(a => a.Id == id);
-
-        if (artist is null) return NotFound();
-
-        // Scalars
-        if (!string.IsNullOrWhiteSpace(dto.Name)) artist.Name = dto.Name;
-        if (!string.IsNullOrWhiteSpace(dto.PhotoUrl)) artist.PhotoUrl = dto.PhotoUrl;
-        if (!string.IsNullOrWhiteSpace(dto.HeroPhotoUrl)) artist.HeroPhotoUrl = dto.HeroPhotoUrl;
-        if (!string.IsNullOrWhiteSpace(dto.Tagline)) artist.Tagline = dto.Tagline;
-        if (!string.IsNullOrWhiteSpace(dto.Description)) artist.Description = dto.Description;
-        if (!string.IsNullOrWhiteSpace(dto.Summary)) artist.Summary = dto.Summary;
-        if (dto.Bands != null) artist.Bands = dto.Bands;
-        if (dto.OtherPhotos != null) artist.OtherPhotos = dto.OtherPhotos;
-
-        // Amplifiers
-        if (dto.AmplifierIds != null)
-        {
-            artist.Amplifiers.Clear();
-            if (dto.AmplifierIds.Any())
-            {
-                var amps = await _db.Amplifiers
-                    .Where(a => dto.AmplifierIds.Contains(a.Id))
-                    .ToListAsync();
-                artist.Amplifiers = amps;
-            }
-        }
-
-        // Guitars
-        if (dto.GuitarIds != null)
-        {
-            artist.Guitars.Clear();
-            if (dto.GuitarIds.Any())
-            {
-                var guitars = await _db.Guitars
-                    .Where(g => dto.GuitarIds.Contains(g.Id))
-                    .ToListAsync();
-                artist.Guitars = guitars;
-            }
-        }
-
-        await _db.SaveChangesAsync();
-
-        var updated = await _db.Artists
-            .Include(a => a.Amplifiers)
-            .Include(a => a.Guitars)
-            .FirstOrDefaultAsync(a => a.Id == id);
-
-        return Ok(updated!.ToDto());
+        artist.Bands.AddRange(dto.Bands.Where(p => !artist.Bands.Contains(p)));
     }
+
+    await _db.SaveChangesAsync();
+
+    var updated = await _db.Artists
+        .Include(a => a.Amplifiers)
+        .Include(a => a.Guitars)
+        .FirstOrDefaultAsync(a => a.Id == id);
+
+    return Ok(updated!.ToDto());
+}
     
 // -------------------------
 // Add an amplifier to an artist (symmetric)
@@ -251,8 +196,6 @@ public async Task<IActionResult> AddAmplifier(int artistId, int ampId)
     return Ok(artist.ToDto());
 }
 
-
-
     // -------------------------
     // Add a guitar to an artist (symmetric)
     // -------------------------
@@ -292,124 +235,6 @@ public async Task<IActionResult> AddAmplifier(int artistId, int ampId)
         await _db.SaveChangesAsync();
         return Ok(artist.ToDto());
     }
-
-// -------------------------
-// Remove an amplifier from an artist (symmetric)
-// -------------------------
-[HttpDelete("{artistId}/amps/{ampId}")]
-public async Task<IActionResult> RemoveAmplifier(int artistId, int ampId)
-{
-    var artist = await _db.Artists
-        .Include(a => a.Amplifiers)
-        .FirstOrDefaultAsync(a => a.Id == artistId);
-
-    var amp = await _db.Amplifiers
-        .Include(a => a.Artists)
-        .FirstOrDefaultAsync(a => a.Id == ampId);
-
-    if (artist is null) return NotFound($"Artist {artistId} not found");
-    if (amp is null) return NotFound($"Amp {ampId} not found");
-
-    var updated = false;
-
-    // Remove amp from artist
-    if (artist.Amplifiers.Any(a => a.Id == ampId))
-    {
-        artist.Amplifiers.Remove(amp);
-        updated = true;
-    }
-
-    // Remove artist from amp
-    if (amp.Artists.Any(a => a.Id == artistId))
-    {
-        amp.Artists.Remove(artist);
-        updated = true;
-    }
-
-    if (!updated)
-        return NotFound("Relation not found.");
-
-    await _db.SaveChangesAsync();
-    return Ok(artist.ToDto());
-}
-
-
-
-// -------------------------
-// Remove a guitar from an artist (symmetric)
-// -------------------------
-[HttpDelete("{artistId}/guitars/{guitarId}")]
-public async Task<IActionResult> RemoveGuitar(int artistId, int guitarId)
-{
-    var artist = await _db.Artists
-        .Include(a => a.Guitars)
-        .FirstOrDefaultAsync(a => a.Id == artistId);
-
-    var guitar = await _db.Guitars
-        .Include(g => g.Artists)
-        .FirstOrDefaultAsync(g => g.Id == guitarId);
-
-    if (artist is null) return NotFound($"Artist {artistId} not found");
-    if (guitar is null) return NotFound($"Guitar {guitarId} not found");
-
-    var updated = false;
-
-    // Remove guitar from artist
-    if (artist.Guitars.Any(g => g.Id == guitarId))
-    {
-        artist.Guitars.Remove(guitar);
-        updated = true;
-    }
-
-    // Remove artist from guitar
-    if (guitar.Artists.Any(a => a.Id == artistId))
-    {
-        guitar.Artists.Remove(artist);
-        updated = true;
-    }
-
-    if (!updated)
-        return NotFound("Relation not found.");
-
-    await _db.SaveChangesAsync();
-    return Ok(artist.ToDto());
-}
-
-
-
-    [HttpPost("{artistId}/bands")]
-public async Task<IActionResult> AddBandsToArtist(int artistId, [FromBody] List<string> newBands)
-{
-    var artist = await _db.Artists
-        .Include(a => a.Amplifiers)
-        .Include(a => a.Guitars)
-        .FirstOrDefaultAsync(a => a.Id == artistId);
-
-    if (artist is null) 
-        return NotFound($"Artist {artistId} not found");
-
-    if (newBands == null || !newBands.Any())
-        return BadRequest("No bands provided.");
-
-    // Initialize if null
-    artist.Bands ??= new List<string>();
-
-    // Add only unique bands
-    foreach (var band in newBands)
-    {
-        if (!artist.Bands.Contains(band))
-        {
-            artist.Bands.Add(band);
-        }
-    }
-
-    // Force EF to see the change
-    _db.Entry(artist).State = EntityState.Modified;
-
-    await _db.SaveChangesAsync();
-
-    return Ok(artist.ToDto());
-}
 
     // -------------------------
     // DELETE

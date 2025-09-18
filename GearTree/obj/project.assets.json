@@ -5115,11 +5115,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ebossenbroek\\Documents\\Intern Project\\GearTree Project\\GearTree\\GearTree.csproj",
+      "projectUniqueName": "C:\\Users\\ebossenbroek\\OneDrive - BizStream\\Documents\\Intern Project\\GearTree Project\\GearTree\\GearTree.csproj",
       "projectName": "GearTree",
-      "projectPath": "C:\\Users\\ebossenbroek\\Documents\\Intern Project\\GearTree Project\\GearTree\\GearTree.csproj",
+      "projectPath": "C:\\Users\\ebossenbroek\\OneDrive - BizStream\\Documents\\Intern Project\\GearTree Project\\GearTree\\GearTree.csproj",
       "packagesPath": "C:\\Users\\ebossenbroek\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ebossenbroek\\Documents\\Intern Project\\GearTree Project\\GearTree\\obj\\",
+      "outputPath": "C:\\Users\\ebossenbroek\\OneDrive - BizStream\\Documents\\Intern Project\\GearTree Project\\GearTree\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ebossenbroek\\AppData\\Roaming\\NuGet\\NuGet.Config"

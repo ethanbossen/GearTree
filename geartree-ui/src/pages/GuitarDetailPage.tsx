@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Guitars } from "../api";  
 import type { GuitarDetail } from "../api"; 
-import { Button, Loader } from "@mantine/core";
+import { Button, Loader, Title } from "@mantine/core";
 import CardGridContainer from "../components/CardGridContainer";
 import GuitarCard from "../components/GuitarCard";
 import ArtistCard from "../components/ArtistCard";
@@ -100,7 +100,9 @@ function GuitarDetailPage() {
       {/* Related Guitars */}
       {guitar.relatedGuitars && guitar.relatedGuitars.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">Related Guitars</h2>
+           <Title order={2} className="mb-6 text-black">
+            Related Guitars:
+          </Title>
           <CardGridContainer>
             {guitar.relatedGuitars.map((rg) => (
               <GuitarCard
@@ -118,7 +120,9 @@ function GuitarDetailPage() {
       {/* Artists */}
       {guitar.artists && guitar.artists.length > 0 && (
         <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-4">Artists Who Use This Guitar</h2>
+ <Title order={2} className="mb-6 text-black">
+            Artists Who Use This Guitar:
+          </Title>
           <CardGridContainer>
             {guitar.artists.map((artist) => (
               <ArtistCard key={artist.id} {...artist} />

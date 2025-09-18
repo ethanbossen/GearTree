@@ -9,7 +9,6 @@ function AmpsContainer() {
 
   useEffect(() => {
     Amps.list().then((data) => {
-      // Just grab the first 2
       setAmps(data.slice(0, 4));
     });
   }, []);

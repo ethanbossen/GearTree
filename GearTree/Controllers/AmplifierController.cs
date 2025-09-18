@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using GearTree.Data;
 using GearTree.Models;
 using GearTree.Dtos;
+using GearTree.Helpers;
 
 [ApiController]
 [Route("amps")]
@@ -23,6 +24,7 @@ public class AmplifiersController : ControllerBase
     {
         var amps = await _db.Amplifiers
             .Include(a => a.Artists)
+            .Include(a => a.RelatedAmplifiers)
             .ToListAsync();
 
         return Ok(amps.Select(a => a.ToDto()).ToList());
@@ -43,176 +45,117 @@ public class AmplifiersController : ControllerBase
         return Ok(amp.ToDto());
     }
 
-   // -------------------------
-// CREATE (POST)
-// -------------------------
-[HttpPost]
-public async Task<IActionResult> Create([FromBody] UpdateAmplifierDto dto)
-{
-    if (string.IsNullOrWhiteSpace(dto.Name))
-        return BadRequest("Amplifier name is required.");
-
-    if (await _db.Amplifiers.AnyAsync(a => a.Name == dto.Name))
-        return Conflict($"An amplifier with the name '{dto.Name}' already exists.");
-
-    var amp = new Amplifier
-    {
-        Name = dto.Name!,
-        PhotoUrl = dto.PhotoUrl ?? "",
-        Description = dto.Description ?? "",
-        Summary = dto.Summary ?? "",
-        GainStructure = dto.GainStructure ?? "",
-        IsTube = dto.IsTube ?? false,
-        YearStart = dto.YearStart,
-        YearEnd = dto.YearEnd ?? 0,
-        priceStart = dto.PriceStart ?? 0,
-        priceEnd = dto.PriceEnd ?? 0,
-        Wattage = dto.Wattage ?? 0,
-        SpeakerConfiguration = dto.SpeakerConfiguration ?? "",
-        Manufacturer = dto.Manufacturer ?? "",
-        OtherPhotos = dto.OtherPhotos ?? new List<string>()
-    };
-
-    // Resolve artists
-    if (dto.ArtistIds != null && dto.ArtistIds.Any())
-    {
-        amp.Artists = await _db.Artists
-            .Where(a => dto.ArtistIds.Contains(a.Id))
-            .ToListAsync();
-    }
-
-    // Resolve related amps
-    if (dto.RelatedIds != null && dto.RelatedIds.Any())
-    {
-        amp.RelatedAmplifiers = await _db.Amplifiers
-            .Where(a => dto.RelatedIds.Contains(a.Id))
-            .ToListAsync();
-    }
-
-    _db.Amplifiers.Add(amp);
-    await _db.SaveChangesAsync();
-
-    var created = await _db.Amplifiers
-        .Include(a => a.Artists)
-        .Include(a => a.RelatedAmplifiers)
-        .FirstOrDefaultAsync(a => a.Id == amp.Id);
-
-    return CreatedAtAction(nameof(GetById), new { id = amp.Id }, created!.ToDto());
-}
-
     // -------------------------
-    // UPDATE (PUT)
+    // CREATE (POST)
     // -------------------------
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateAmplifierDto dto)
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] UpdateAmplifierDto dto)
     {
-        var amp = await _db.Amplifiers
-            .Include(a => a.Artists)
-            .Include(a => a.RelatedAmplifiers)
-            .FirstOrDefaultAsync(a => a.Id == id);
+        if (string.IsNullOrWhiteSpace(dto.Name))
+            return BadRequest("Amplifier name is required.");
 
-        if (amp == null) return NotFound();
+        if (await _db.Amplifiers.AnyAsync(a => a.Name == dto.Name))
+            return Conflict($"An amplifier with the name '{dto.Name}' already exists.");
 
-        amp.Name = dto.Name ?? amp.Name;
-        amp.PhotoUrl = dto.PhotoUrl ?? amp.PhotoUrl;
-        amp.Description = dto.Description ?? amp.Description;
-        amp.Summary = dto.Summary ?? amp.Summary;
-        amp.GainStructure = dto.GainStructure ?? amp.GainStructure;
-        amp.IsTube = dto.IsTube ?? amp.IsTube;
-        amp.YearStart = dto.YearStart != 0 ? dto.YearStart : amp.YearStart;
-        amp.YearEnd = dto.YearEnd ?? amp.YearEnd;
-        amp.priceStart = dto.PriceStart ?? amp.priceStart;
-        amp.priceEnd = dto.PriceEnd ?? amp.priceEnd;
-        amp.Wattage = dto.Wattage ?? amp.Wattage;
-        amp.SpeakerConfiguration = dto.SpeakerConfiguration ?? amp.SpeakerConfiguration;
-        amp.Manufacturer = dto.Manufacturer ?? amp.Manufacturer;
-        amp.OtherPhotos = dto.OtherPhotos ?? amp.OtherPhotos;
+        var amp = new Amplifier
+        {
+            Name = dto.Name!,
+            PhotoUrl = dto.PhotoUrl ?? "",
+            Description = dto.Description ?? "",
+            Summary = dto.Summary ?? "",
+            GainStructure = dto.GainStructure ?? "",
+            IsTube = dto.IsTube ?? false,
+            YearStart = dto.YearStart ?? 0,
+            YearEnd = dto.YearEnd ?? 0,
+            priceStart = dto.PriceStart ?? 0,
+            priceEnd = dto.PriceEnd ?? 0,
+            Wattage = dto.Wattage ?? 0,
+            SpeakerConfiguration = dto.SpeakerConfiguration ?? "",
+            Manufacturer = dto.Manufacturer ?? "",
+            OtherPhotos = dto.OtherPhotos ?? new List<string>()
+        };
 
-        // Update artists
-        if (dto.ArtistIds != null)
+        // Resolve artists
+        if (dto.ArtistIds != null && dto.ArtistIds.Any())
         {
             amp.Artists = await _db.Artists
                 .Where(a => dto.ArtistIds.Contains(a.Id))
                 .ToListAsync();
         }
 
-        // Update related amps
-        if (dto.RelatedIds != null)
+        // Resolve related amps
+        if (dto.RelatedIds != null && dto.RelatedIds.Any())
         {
             amp.RelatedAmplifiers = await _db.Amplifiers
                 .Where(a => dto.RelatedIds.Contains(a.Id))
                 .ToListAsync();
         }
 
+        _db.Amplifiers.Add(amp);
         await _db.SaveChangesAsync();
-        return Ok(amp.ToDto());
+
+        var created = await _db.Amplifiers
+            .Include(a => a.Artists)
+            .Include(a => a.RelatedAmplifiers)
+            .FirstOrDefaultAsync(a => a.Id == amp.Id);
+
+        return CreatedAtAction(nameof(GetById), new { id = amp.Id }, created!.ToDto());
     }
 
     // -------------------------
-// PARTIAL UPDATE (PATCH)
-// -------------------------
-[HttpPatch("{id}")]
-public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto)
+    // UPDATE (PUT)
+    // -------------------------
+    [HttpPut("{id}")]
+public async Task<IActionResult> Update(int id, [FromBody] AmplifierDto dto)
 {
-    var amp = await _db.Amplifiers
-        .Include(a => a.Artists)
-        .Include(a => a.RelatedAmplifiers)
-        .FirstOrDefaultAsync(a => a.Id == id);
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
 
+    var amp = await _db.Amplifiers.FindAsync(id);
     if (amp == null) return NotFound();
 
-    if (!string.IsNullOrEmpty(dto.Name))
-        amp.Name = dto.Name;
-    if (!string.IsNullOrEmpty(dto.PhotoUrl))
-        amp.PhotoUrl = dto.PhotoUrl;
-    if (!string.IsNullOrEmpty(dto.Description))
-        amp.Description = dto.Description;
-    if (!string.IsNullOrEmpty(dto.Summary))
-        amp.Summary = dto.Summary;
-    if (!string.IsNullOrEmpty(dto.GainStructure))
-        amp.GainStructure = dto.GainStructure;
-
-    if (dto.YearStart != 0)
-        amp.YearStart = dto.YearStart;
-    if (dto.YearEnd != null)
-        amp.YearEnd = dto.YearEnd ?? amp.YearEnd;
-
-    amp.IsTube = dto.IsTube ?? amp.IsTube;
-    
-    if (dto.PriceStart != null)
-        amp.priceStart = dto.PriceStart ?? amp.priceStart;
-    if (dto.PriceEnd != null)
-        amp.priceEnd = dto.PriceEnd ?? amp.priceEnd;
-    if (dto.Wattage != null)
-        amp.Wattage = dto.Wattage ?? amp.Wattage;
-    if (!string.IsNullOrEmpty(dto.SpeakerConfiguration))
-        amp.SpeakerConfiguration = dto.SpeakerConfiguration;
-    if (!string.IsNullOrEmpty(dto.Manufacturer))
-        amp.Manufacturer = dto.Manufacturer;
-    if (dto.OtherPhotos != null)
-        amp.OtherPhotos = dto.OtherPhotos;
-    
-
-    // Optionally update relations if provided
-        if (dto.ArtistIds != null)
-        {
-            amp.Artists = await _db.Artists
-                .Where(a => dto.ArtistIds.Contains(a.Id))
-                .ToListAsync();
-        }
-
-    if (dto.RelatedIds != null)
-    {
-        amp.RelatedAmplifiers = await _db.Amplifiers
-            .Where(a => dto.RelatedIds.Contains(a.Id))
-            .ToListAsync();
-    }
+    // Overwrite all fields
+    amp.Name = dto.Name;
+    amp.PhotoUrl = dto.PhotoUrl;
+    amp.Description = dto.Description;
+    amp.Summary = dto.Summary;
+    amp.GainStructure = dto.GainStructure;
+    amp.IsTube = dto.IsTube;
+    amp.YearStart = dto.YearStart;
+    amp.YearEnd = dto.YearEnd;
+    amp.PriceStart = dto.PriceStart;
+    amp.PriceEnd = dto.PriceEnd;
+    amp.Wattage = dto.Wattage;
+    amp.SpeakerConfiguration = dto.SpeakerConfiguration;
+    amp.Manufacturer = dto.Manufacturer;
+    amp.OtherPhotos = dto.OtherPhotos ?? new List<string>();
 
     await _db.SaveChangesAsync();
     return Ok(amp.ToDto());
 }
 
 
+    // -------------------------
+    // PARTIAL UPDATE (PATCH)
+    // -------------------------
+    [HttpPatch("{id}")]
+public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto)
+{
+    if (!ModelState.IsValid) return BadRequest(ModelState);
+
+    var amp = await _db.Amplifiers.FindAsync(id);
+    if (amp == null) return NotFound();
+
+    amp.ApplyPatch(dto);
+
+    if (dto.OtherPhotos.Any())
+    {
+        amp.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !amp.OtherPhotos.Contains(p)));
+    }
+
+    await _db.SaveChangesAsync();
+    return Ok(amp.ToDto());
+}
     // -------------------------
     // Add an artist to an amplifier
     // -------------------------
@@ -235,77 +178,40 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto
 
         return Ok(amp.ToDto());
     }
-// -------------------------
-// Add a related amp (symmetric)
-// -------------------------
-[HttpPost("{ampId}/related/{relatedId}")]
-public async Task<IActionResult> AddRelatedAmp(int ampId, int relatedId)
-{
-    if (ampId == relatedId)
-        return BadRequest("An amp cannot be related to itself.");
 
-    var amp = await _db.Amplifiers
-        .Include(a => a.RelatedAmplifiers)
-        .FirstOrDefaultAsync(a => a.Id == ampId);
+    // -------------------------
+    // Add a related amp (symmetric)
+    // -------------------------
+    [HttpPost("{ampId}/related/{relatedId}")]
 
-    var related = await _db.Amplifiers
-        .Include(a => a.RelatedAmplifiers)
-        .FirstOrDefaultAsync(a => a.Id == relatedId);
-
-    if (amp == null || related == null)
-        return NotFound("Amp or related amp not found.");
-
-    // Add both directions if missing
-    if (!amp.RelatedAmplifiers.Any(a => a.Id == relatedId))
-        amp.RelatedAmplifiers.Add(related);
-
-    if (!related.RelatedAmplifiers.Any(a => a.Id == ampId))
-        related.RelatedAmplifiers.Add(amp);
-
-    await _db.SaveChangesAsync();
-    return Ok(amp.ToDto());
-}
-
-// -------------------------
-// Remove a related amp (symmetric)
-// -------------------------
-[HttpDelete("{ampId}/related/{relatedId}")]
-public async Task<IActionResult> RemoveRelatedAmp(int ampId, int relatedId)
-{
-    var amp = await _db.Amplifiers
-        .Include(a => a.RelatedAmplifiers)
-        .FirstOrDefaultAsync(a => a.Id == ampId);
-
-    var related = await _db.Amplifiers
-        .Include(a => a.RelatedAmplifiers)
-        .FirstOrDefaultAsync(a => a.Id == relatedId);
-
-    if (amp == null || related == null)
-        return NotFound("Amp or related amp not found.");
-
-    // Remove both directions if they exist
-    var removed = false;
-    var relatedFromAmp = amp.RelatedAmplifiers.FirstOrDefault(a => a.Id == relatedId);
-    if (relatedFromAmp != null)
+    public async Task<IActionResult> AddRelatedAmp(int ampId, int relatedId)
     {
-        amp.RelatedAmplifiers.Remove(relatedFromAmp);
-        removed = true;
+        if (ampId == relatedId)
+            return BadRequest("An amp cannot be related to itself.");
+
+        var amp = await _db.Amplifiers
+            .Include(a => a.RelatedAmplifiers)
+            .FirstOrDefaultAsync(a => a.Id == ampId);
+
+        var related = await _db.Amplifiers
+            .Include(a => a.RelatedAmplifiers)
+            .FirstOrDefaultAsync(a => a.Id == relatedId);
+
+        if (amp == null || related == null)
+            return NotFound("Amp or related amp not found.");
+
+        // Add both directions if missing
+        if (!amp.RelatedAmplifiers.Any(a => a.Id == relatedId))
+            amp.RelatedAmplifiers.Add(related);
+
+        if (!related.RelatedAmplifiers.Any(a => a.Id == ampId))
+            related.RelatedAmplifiers.Add(amp);
+
+        await _db.SaveChangesAsync();
+        return Ok(amp.ToDto());
     }
 
-    var ampFromRelated = related.RelatedAmplifiers.FirstOrDefault(a => a.Id == ampId);
-    if (ampFromRelated != null)
-    {
-        related.RelatedAmplifiers.Remove(ampFromRelated);
-        removed = true;
-    }
-
-    if (!removed)
-        return NotFound("Relation not found.");
-
-    await _db.SaveChangesAsync();
-    return Ok(amp.ToDto());
-}
-
+   
     // -------------------------
     // DELETE
     // -------------------------

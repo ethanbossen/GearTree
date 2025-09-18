@@ -39,16 +39,12 @@ export const Artists = {
   delete: (id: number) =>
     fetchJson<void>(`${HOSTNAME}/artists/${id}`, { method: "DELETE" }),
 
-  // Relations
+  // Relations add a guitar to an artist and add an amp to an artist
   addGuitar: (artistId: number, guitarId: number) =>
     fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${artistId}/guitars/${guitarId}`, { method: "POST" }),
-  removeGuitar: (artistId: number, guitarId: number) =>
-    fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${artistId}/guitars/${guitarId}`, { method: "DELETE" }),
-
   addAmp: (artistId: number, ampId: number) =>
     fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${artistId}/amps/${ampId}`, { method: "POST" }),
-  removeAmp: (artistId: number, ampId: number) =>
-    fetchJson<ArtistDetail>(`${HOSTNAME}/artists/${artistId}/amps/${ampId}`, { method: "DELETE" }),
+
 };
 
 // -------------------------
@@ -65,11 +61,9 @@ export const Guitars = {
   delete: (id: number) =>
     fetchJson<void>(`${HOSTNAME}/guitars/${id}`, { method: "DELETE" }),
 
-  // Relations
+  // Relations add a guitar as a related guitar (symetrical) and add a guitar to an artist
   addRelated: (id: number, relatedId: number) =>
     fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${id}/related/${relatedId}`, { method: "POST" }),
-  addArtist: (guitarId: number, artistId: number) =>
-    fetchJson<GuitarDetail>(`${HOSTNAME}/guitars/${guitarId}/artists/${artistId}`, { method: "POST" }),
 };
 
 // -------------------------
@@ -86,7 +80,7 @@ export const Amps = {
   delete: (id: number) =>
     fetchJson<void>(`${HOSTNAME}/amps/${id}`, { method: "DELETE" }),
 
-  // Relations
+  // Relational - add an amp as a related amp
   addRelated: (id: number, relatedId: number) =>
     fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}/related/${relatedId}`, { method: "POST" }),
 };
