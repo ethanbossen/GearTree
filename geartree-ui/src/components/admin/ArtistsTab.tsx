@@ -13,17 +13,19 @@ const patchArtistScalars = async (updatedArtist: Artist): Promise<void> => {
   await Artists.patch(id, scalars);
 };
 
+interface EditArtistButtonsProps {
+  artist: Artist;
+  onSaved: () => void;
+  allGuitars: Guitar[];
+  allAmps: Amplifier[];
+}
+
 function EditArtistButtons({
   artist,
   onSaved,
   allGuitars,
   allAmps,
-}: {
-  artist: Artist;
-  onSaved: () => void;
-  allGuitars: Guitar[];
-  allAmps: Amplifier[];
-}) {
+}: EditArtistButtonsProps) {
   return (
     <div className="flex gap-2">
       <EditScalarsButton

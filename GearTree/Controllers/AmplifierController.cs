@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using GearTree.Data;
 using GearTree.Models;
 using GearTree.Dtos;
+using GearTree.Helpers;
 
 [ApiController]
 [Route("amps")]
@@ -105,76 +106,56 @@ public class AmplifiersController : ControllerBase
     // UPDATE (PUT)
     // -------------------------
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateAmplifierDto dto)
-    {
-        var amp = await _db.Amplifiers.FirstOrDefaultAsync(a => a.Id == id);
-        if (amp == null) return NotFound();
+public async Task<IActionResult> Update(int id, [FromBody] AmplifierDto dto)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
 
-        // Scalars
-        if (!string.IsNullOrWhiteSpace(dto.Name)) amp.Name = dto.Name;
-        if (!string.IsNullOrWhiteSpace(dto.PhotoUrl)) amp.PhotoUrl = dto.PhotoUrl;
-        if (!string.IsNullOrWhiteSpace(dto.Description)) amp.Description = dto.Description;
-        if (!string.IsNullOrWhiteSpace(dto.Summary)) amp.Summary = dto.Summary;
-        if (!string.IsNullOrWhiteSpace(dto.GainStructure)) amp.GainStructure = dto.GainStructure;
-        if (dto.IsTube.HasValue) amp.IsTube = dto.IsTube.Value;
-        if (dto.YearStart.HasValue) amp.YearStart = dto.YearStart.Value;
-        if (dto.YearEnd.HasValue) amp.YearEnd = dto.YearEnd.Value;
-        if (dto.PriceStart.HasValue) amp.priceStart = dto.PriceStart.Value;
-        if (dto.PriceEnd.HasValue) amp.priceEnd = dto.PriceEnd.Value;
-        if (dto.Wattage.HasValue) amp.Wattage = dto.Wattage.Value;
-        if (!string.IsNullOrWhiteSpace(dto.SpeakerConfiguration)) amp.SpeakerConfiguration = dto.SpeakerConfiguration;
-        if (!string.IsNullOrWhiteSpace(dto.Manufacturer)) amp.Manufacturer = dto.Manufacturer;
+    var amp = await _db.Amplifiers.FindAsync(id);
+    if (amp == null) return NotFound();
 
-        // Merge OtherPhotos instead of replacing
-        if (dto.OtherPhotos != null && dto.OtherPhotos.Any())
-        {
-            amp.OtherPhotos ??= new List<string>();
-            amp.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !amp.OtherPhotos.Contains(p)));
-        }
+    // Overwrite all fields
+    amp.Name = dto.Name;
+    amp.PhotoUrl = dto.PhotoUrl;
+    amp.Description = dto.Description;
+    amp.Summary = dto.Summary;
+    amp.GainStructure = dto.GainStructure;
+    amp.IsTube = dto.IsTube;
+    amp.YearStart = dto.YearStart;
+    amp.YearEnd = dto.YearEnd;
+    amp.PriceStart = dto.PriceStart;
+    amp.PriceEnd = dto.PriceEnd;
+    amp.Wattage = dto.Wattage;
+    amp.SpeakerConfiguration = dto.SpeakerConfiguration;
+    amp.Manufacturer = dto.Manufacturer;
+    amp.OtherPhotos = dto.OtherPhotos ?? new List<string>();
 
-        await _db.SaveChangesAsync();
-
-        var updated = await _db.Amplifiers.FirstOrDefaultAsync(a => a.Id == id);
-        return Ok(updated!.ToDto());
-    }
+    await _db.SaveChangesAsync();
+    return Ok(amp.ToDto());
+}
 
 
     // -------------------------
     // PARTIAL UPDATE (PATCH)
     // -------------------------
     [HttpPatch("{id}")]
-    public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto)
+public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto)
+{
+    if (!ModelState.IsValid) return BadRequest(ModelState);
+
+    var amp = await _db.Amplifiers.FindAsync(id);
+    if (amp == null) return NotFound();
+
+    amp.ApplyPatch(dto);
+
+    if (dto.OtherPhotos.Any())
     {
-        var amp = await _db.Amplifiers.FirstOrDefaultAsync(a => a.Id == id);
-        if (amp == null) return NotFound();
-
-        if (!string.IsNullOrWhiteSpace(dto.Name)) amp.Name = dto.Name;
-        if (!string.IsNullOrWhiteSpace(dto.PhotoUrl)) amp.PhotoUrl = dto.PhotoUrl;
-        if (!string.IsNullOrWhiteSpace(dto.Description)) amp.Description = dto.Description;
-        if (!string.IsNullOrWhiteSpace(dto.Summary)) amp.Summary = dto.Summary;
-        if (!string.IsNullOrWhiteSpace(dto.GainStructure)) amp.GainStructure = dto.GainStructure;
-        if (dto.IsTube.HasValue) amp.IsTube = dto.IsTube.Value;
-        if (dto.YearStart.HasValue) amp.YearStart = dto.YearStart.Value;
-        if (dto.YearEnd.HasValue) amp.YearEnd = dto.YearEnd.Value;
-        if (dto.PriceStart.HasValue) amp.priceStart = dto.PriceStart.Value;
-        if (dto.PriceEnd.HasValue) amp.priceEnd = dto.PriceEnd.Value;
-        if (dto.Wattage.HasValue) amp.Wattage = dto.Wattage.Value;
-        if (!string.IsNullOrWhiteSpace(dto.SpeakerConfiguration)) amp.SpeakerConfiguration = dto.SpeakerConfiguration;
-        if (!string.IsNullOrWhiteSpace(dto.Manufacturer)) amp.Manufacturer = dto.Manufacturer;
-
-        // Merge OtherPhotos instead of replacing
-        if (dto.OtherPhotos != null && dto.OtherPhotos.Any())
-        {
-            amp.OtherPhotos ??= new List<string>();
-            amp.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !amp.OtherPhotos.Contains(p)));
-        }
-
-        await _db.SaveChangesAsync();
-
-        var updated = await _db.Amplifiers.FirstOrDefaultAsync(a => a.Id == id);
-        return Ok(updated!.ToDto());
+        amp.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !amp.OtherPhotos.Contains(p)));
     }
 
+    await _db.SaveChangesAsync();
+    return Ok(amp.ToDto());
+}
     // -------------------------
     // Add an artist to an amplifier
     // -------------------------
