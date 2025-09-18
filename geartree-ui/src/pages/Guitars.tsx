@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Guitars as GuitarsAPI } from "../api";              // ✅ use the new namespace
 import type { Guitar } from "../api";
-import GuitarCard from "../components/GuitarCard";
+import GuitarCard from "../components/GuitarCardDetailed";
 import { Button, Collapse, Input, MultiSelect, Select } from "@mantine/core";
 
 function Guitars() {

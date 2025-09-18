@@ -5,7 +5,6 @@ import { Amps} from "../api";
 import type { Amplifier } from "../api";
 import { Badge, Button, Group, Stack, Text, Title } from "@mantine/core";
 import EntityCard from "../components/EntityCard";
-import ArtistCard from "../components/ArtistCard"; 
 import Carousel from "../components/Carousel";
 
 function AmpDetailPage() {
@@ -122,7 +121,7 @@ function AmpDetailPage() {
           </Title>
           <Carousel basePath="artists">
             {amp.artists.map((artist) => (
-              <ArtistCard key={artist.id} {...artist} />
+              <EntityCard basePath="artists" key={artist.id} {...artist} />
             ))}
           </Carousel>
         </section>

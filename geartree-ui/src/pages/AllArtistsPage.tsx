@@ -118,7 +118,7 @@ function AllArtistsPage() {
       {/* Grid of Artist Cards */}
       <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {visibleArtists.map((artist) => (
-          <div key={artist.id} className="pb-6">
+          <div key={artist.id}>
             <EntityCard
               id={artist.id}
               basePath="artists"
@@ -137,7 +137,7 @@ function AllArtistsPage() {
 
       {/* Load More Button */}
       {visibleCount < filteredArtists.length && (
-        <div className="flex justify-center">
+        <div className="flex justify-center pt-6">
           <button
             onClick={() => setVisibleCount((prev) => prev + 9)}
             className="px-6 mb-8 bg-brand-purple text-white font-semibold rounded-lg shadow hover:bg-brand-purple/90"
