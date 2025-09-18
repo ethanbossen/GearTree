@@ -45,7 +45,7 @@ function AmplifierCarousel({ amplifiers }: AmplifierCarouselProps) {
                 className="w-full h-64 object-cover object-top rounded-lg shadow-md"
               />
             )}
-            <h2 className="text-2xl font-bold w-full overflow-hidden text-center">
+            <h2 className="text-2xl text-black font-bold w-full overflow-hidden text-center">
               {amplifiers[currentIndex].name}
             </h2>
             <p className="text-sm text-gray-600 italic">

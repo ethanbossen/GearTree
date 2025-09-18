@@ -74,13 +74,13 @@ function CreateArtistButton({ onCreated }: CreateArtistButtonProps) {
           />
           <TextInput
             label="Photo filename"
-            placeholder="e.g. zakk-wylde (no path, no extension)"
+            placeholder="e.g. zakk-wylde.jpg (no path))"
             value={form.photoName}
             onChange={(e) => handleChange("photoName", e.currentTarget.value)}
           />
           <TextInput
             label="Hero photo filename"
-            placeholder="e.g. Zakk/zakk-hero (no path, no extension)"
+            placeholder="e.g. Zakk/zakk-hero.jpg (no path)"
             value={form.heroPhotoName}
             onChange={(e) => handleChange("heroPhotoName", e.currentTarget.value)}
           />

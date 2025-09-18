@@ -138,7 +138,47 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateArtistDto dto)
 
     if (dto.OtherPhotos != null && dto.OtherPhotos.Any())
     {
+<<<<<<< HEAD
         artist.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !artist.OtherPhotos.Contains(p)));
+=======
+        var artist = await _db.Artists.FirstOrDefaultAsync(a => a.Id == id);
+        if (artist is null) return NotFound();
+
+        // Scalars
+        if (!string.IsNullOrWhiteSpace(dto.Name)) artist.Name = dto.Name;
+        if (!string.IsNullOrWhiteSpace(dto.PhotoUrl)) artist.PhotoUrl = dto.PhotoUrl;
+        if (!string.IsNullOrWhiteSpace(dto.HeroPhotoUrl)) artist.HeroPhotoUrl = dto.HeroPhotoUrl;
+        if (!string.IsNullOrWhiteSpace(dto.Tagline)) artist.Tagline = dto.Tagline;
+        if (!string.IsNullOrWhiteSpace(dto.Description)) artist.Description = dto.Description;
+        if (!string.IsNullOrWhiteSpace(dto.Summary)) artist.Summary = dto.Summary;
+
+        // Merge Bands instead of overwriting
+        if(updateDto.Bands != null && updateDto.Genres.Any()) {
+            if artist.Bands == null || !artist.Bands.Any() {
+                artist.Bands = updateDto.Bands.ToList();
+            } else {
+                artist.Bands.AddRange(updateDto.Bands.Where(a => !artist.Bands.Contains(a)));
+            }
+        }
+    
+
+        // Merge OtherPhotos instead of overwriting
+        if (dto.OtherPhotos != null && dto.OtherPhotos.Any())
+        {
+            artist.OtherPhotos ??= new List<string>();
+            artist.OtherPhotos.AddRange(dto.OtherPhotos.Where(p => !artist.OtherPhotos.Contains(p)));
+        }
+
+        await _db.SaveChangesAsync();
+
+        // Reload artist with relationships for return
+        var updated = await _db.Artists
+            .Include(a => a.Amplifiers)
+            .Include(a => a.Guitars)
+            .FirstOrDefaultAsync(a => a.Id == id);
+
+        return Ok(updated!.ToDto());
+>>>>>>> feature/related-carousels
     }
 
     if (dto.Bands != null && dto.Bands.Any())

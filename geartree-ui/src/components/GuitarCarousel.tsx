@@ -45,7 +45,7 @@ function GuitarCarousel({ guitars }: GuitarCarouselProps) {
                 className="w-full h-64 object-cover object-top rounded-lg shadow-md"
               />
             )}
-            <h2 className="text-2xl font-bold truncate text-center w-full overflow-hidden">
+            <h2 className="text-2xl text-black font-bold truncate text-center w-full overflow-hidden">
               {guitars[currentIndex].name}
             </h2>
             <p className="text-sm text-gray-600 italic">

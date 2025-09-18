@@ -162,6 +162,70 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateGuitarDto dto)
         return Ok(guitar.ToDto());
     }
 
+<<<<<<< HEAD
+=======
+
+    // -------------------------
+    // PARTIAL UPDATE (PATCH) - Scalars Only
+    // -------------------------
+    [HttpPatch("{id}")]
+
+    public async Task<IActionResult> PatchScalars(int id, [FromBody] UpdateGuitarDto updateDto)
+    {
+        var guitar = await _db.Guitars.FirstOrDefaultAsync(g => g.Id == id);
+
+        if (guitar is null) return NotFound();
+
+        // Update scalar properties only if provided
+        if (!string.IsNullOrWhiteSpace(updateDto.Name))
+            guitar.Name = updateDto.Name;
+        if (!string.IsNullOrWhiteSpace(updateDto.PhotoUrl))
+            guitar.PhotoUrl = updateDto.PhotoUrl;
+        if (!string.IsNullOrWhiteSpace(updateDto.Description))
+            guitar.Description = updateDto.Description;
+        if (!string.IsNullOrWhiteSpace(updateDto.Summary))
+            guitar.Summary = updateDto.Summary;
+        if (!string.IsNullOrWhiteSpace(updateDto.Type))
+            guitar.Type = updateDto.Type;
+
+        if (updateDto.YearStart != 0)
+            guitar.YearStart = updateDto.YearStart;
+
+        if (updateDto.YearEnd.HasValue)
+            guitar.YearEnd = updateDto.YearEnd.Value == 0 ? null : updateDto.YearEnd;
+
+ if (updateDto.Genres != null && updateDto.Genres.Any())
+    {
+        if (guitar.Genres == null || !guitar.Genres.Any()) {
+            guitar.Genres = updateDto.Genres.ToList();
+        } else {
+            guitar.Genres.AddRange(updateDto.Genres.Where(g => !guitar.Genres.Contains(g)));
+        }
+    }
+
+   if (updateDto.Pickups != null && updateDto.Pickups.Any())
+    {
+        if (guitar.Pickups == null || !guitar.Pickups.Any())
+        {
+            guitar.Pickups = updateDto.Pickups.ToList();
+        }
+        else
+        {
+            guitar.Pickups.AddRange(updateDto.Pickups.Where(p => !guitar.Pickups.Contains(p)));
+        }
+    }
+
+        await _db.SaveChangesAsync();
+
+        // Return the guitar with relationships for consistency in the response
+        var updated = await _db.Guitars
+            .Include(g => g.Artists)
+            .Include(g => g.RelatedGuitars)
+            .FirstOrDefaultAsync(g => g.Id == id);
+
+        return Ok(updated!.ToDto());
+    }
+>>>>>>> feature/related-carousels
     // -------------------------
     // DELETE
     // -------------------------

@@ -1,54 +1,101 @@
 // src/components/GuitarCard.tsx
 import { Link } from "react-router-dom";
+import { Card, Image, Text, Badge, Group } from "@mantine/core";
 
 interface GuitarCardProps {
   id: number;
   name: string;
   photoUrl: string;
-  summary: string;
+  summary?: string;
   type?: string;
+  manufacturer?: string;
+  yearStart?: number;
+  yearEnd?: number | null;
+  pickups?: string[];
+  priceStart?: number;
+  priceEnd?: number;
   genres?: string[];
 }
 
-function GuitarCard({ id, name, photoUrl, summary, type, genres }: GuitarCardProps) {
+export default function GuitarCard({
+  id,
+  name,
+  photoUrl,
+  summary,
+  type,
+  yearStart,
+  yearEnd,
+  pickups,
+  priceStart,
+  priceEnd,
+  genres,
+}: GuitarCardProps) {
   return (
     <Link
       to={`/guitars/${id}`}
-      className="block bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+      style={{ textDecoration: "none", color: "inherit" }}
     >
-      {/* Image */}
-      {photoUrl && (
-        <img
-          src={photoUrl}
-          alt={name}
-          className="w-full h-56 object-cover"
-        />
-      )}
+      <Card
+        shadow="sm"
+        radius="md"
+        withBorder
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: 400,
+        }}
+      >
+        {/* Image wrapper (flexible 70%) */}
+        <div style={{ flex: "7 1 0%", overflow: "hidden" }}>
+          <Image
+            src={photoUrl}
+            alt={name}
+            fit="cover"
+            style={{ width: "100%", height: "100%", objectPosition: "center" }}
+          />
+        </div>
 
-      {/* Content */}
-      <div className="p-4 flex flex-col h-full">
-        {/* Guitar name */}
-        <h3 className="text-xl font-bold mb-2 truncate">{name}</h3>
+        {/* Content wrapper (flexible 30%) */}
+        <div
+          style={{
+            flex: "3 1 0%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            paddingLeft: "0.5rem",
+            paddingRight: "0.5rem"
+          }}
+        >
+          {/* Top section */}
+          <div>
+            <Text fw={700} size="xl" lineClamp={1}>
+              {name}
+            </Text>
 
-        {/* Optional type */}
-        {type && (
-          <p className="text-sm text-gray-500 mb-1">Type: {type}</p>
-        )}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", marginTop: "0.2rem" }}>
+              {type && <Text size="sm" c="dimmed">{type}</Text>}
+              {yearStart && <Text size="sm" c="dimmed">{yearStart} – {yearEnd || "Present"}</Text>}
+            </div>
 
-        {/* Optional genres */}
-        {genres && genres.length > 0 && (
-          <p className="text-sm text-gray-500 mb-2">
-            Genres: {genres.join(", ")}
-          </p>
-        )}
+            <Group gap="xs" wrap="wrap" style={{ marginTop: "0.2rem", marginBottom:"0.4em" }}>
+              {pickups?.map((p, idx) => <Badge key={idx} color="grape" variant="light">{p}</Badge>)}
+              {genres?.map((g, idx) => <Badge key={idx} color="blue" variant="light">{g}</Badge>)}
+              {priceStart != null && priceStart > 0 && (
+                <Badge color="yellow" variant="light">
+                  ~${priceStart}{priceEnd != null && priceEnd > priceStart ? ` - $${priceEnd}` : ""}
+                </Badge>
+              )}
+            </Group>
+          </div>
 
-        {/* Summary (2 lines max, always fixed height) */}
-        <p className="text-gray-700 text-sm line-clamp-2 min-h-[3rem]">
-          {summary}
-        </p>
-      </div>
+          {/* Bottom summary */}
+          {summary && (
+            <Text size="sm" c="gray.7" lineClamp={2}>
+              {summary}
+            </Text>
+          )}
+        </div>
+      </Card>
     </Link>
   );
 }
-
-export default GuitarCard;

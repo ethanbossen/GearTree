@@ -44,7 +44,7 @@ export default function ArtistCard({ id, name, summary, photoUrl }: ArtistCardPr
             paddingTop: "0.5rem",
           }}
         >
-          <Text fw={700} size="lg" lineClamp={1}>
+          <Text fw={700} size="xl" lineClamp={1}>
             {name}
           </Text>
 
