@@ -27,7 +27,7 @@ public class GuitarsController : ControllerBase
             .Include(g => g.RelatedGuitars)
             .ToListAsync();
 
-        return Ok(guitars.Select(g => g.ToDto()).ToList());
+        return Ok(guitars.Select(g => g.ToDto(Request)).ToList());
     }
 
     // -------------------------
@@ -43,7 +43,7 @@ public class GuitarsController : ControllerBase
 
         if (guitar is null) return NotFound();
 
-        return Ok(guitar.ToDto());
+        return Ok(guitar.ToDto(Request));
     }
 
     // -------------------------
@@ -62,7 +62,7 @@ public class GuitarsController : ControllerBase
             .Include(g => g.Artists)
             .FirstOrDefaultAsync(g => g.Id == guitar.Id);
 
-        return Created($"/guitars/{guitar.Id}", created!.ToDto());
+        return Created($"/guitars/{guitar.Id}", created!.ToDto(Request));
     }
 
 // -------------------------
@@ -92,7 +92,7 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateGuitarDto dto)
         .Include(g => g.RelatedGuitars)
         .FirstOrDefaultAsync(g => g.Id == id);
 
-    return Ok(updated!.ToDto());
+    return Ok(updated!.ToDto(Request));
 }
 
     // -------------------------
@@ -122,7 +122,7 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateGuitarDto dto)
             related.RelatedGuitars.Add(guitar);
 
         await _db.SaveChangesAsync();
-        return Ok(guitar.ToDto());
+        return Ok(guitar.ToDto(Request));
     }
 
     // -------------------------

@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using GearTree.Data;
 using GearTree.Models;
 using GearTree.Dtos;
+using Microsoft.Extensions.FileProviders;
 
 // Parse command line arguments manually
 var reseed = false;
@@ -62,6 +63,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseCors();

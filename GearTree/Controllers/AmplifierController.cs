@@ -27,7 +27,7 @@ public class AmplifiersController : ControllerBase
             .Include(a => a.RelatedAmplifiers)
             .ToListAsync();
 
-        return Ok(amps.Select(a => a.ToDto()).ToList());
+        return Ok(amps.Select(a => a.ToDto(Request)).ToList());
     }
 
     // -------------------------
@@ -42,7 +42,7 @@ public class AmplifiersController : ControllerBase
             .FirstOrDefaultAsync(a => a.Id == id);
 
         if (amp == null) return NotFound();
-        return Ok(amp.ToDto());
+        return Ok(amp.ToDto(Request));
     }
 
     // -------------------------
@@ -99,7 +99,7 @@ public class AmplifiersController : ControllerBase
             .Include(a => a.RelatedAmplifiers)
             .FirstOrDefaultAsync(a => a.Id == amp.Id);
 
-        return CreatedAtAction(nameof(GetById), new { id = amp.Id }, created!.ToDto());
+        return CreatedAtAction(nameof(GetById), new { id = amp.Id }, created!.ToDto(Request));
     }
 
     // -------------------------
@@ -121,7 +121,7 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto
     }
 
     await _db.SaveChangesAsync();
-    return Ok(amp.ToDto());
+    return Ok(amp.ToDto(Request));
 }
     // -------------------------
     // Add an artist to an amplifier
@@ -143,7 +143,7 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto
 
         await _db.SaveChangesAsync();
 
-        return Ok(amp.ToDto());
+        return Ok(amp.ToDto(Request));
     }
 
     // -------------------------
@@ -175,7 +175,7 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateAmplifierDto dto
             related.RelatedAmplifiers.Add(amp);
 
         await _db.SaveChangesAsync();
-        return Ok(amp.ToDto());
+        return Ok(amp.ToDto(Request));
     }
 
    

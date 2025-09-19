@@ -1,35 +1,37 @@
 using System.Linq;
 using GearTree.Models;
+using GearTree.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace GearTree.Dtos
 {
     public static class DtoMappings
     {
-        public static ArtistDto ToDto(this Artist a)
+        public static ArtistDto ToDto(this Artist a, HttpRequest request)
         {
             return new ArtistDto
             {
                 Id = a.Id,
                 Name = a.Name,
-                PhotoUrl = a.PhotoUrl,
-                HeroPhotoUrl = a.HeroPhotoUrl,
+                PhotoUrl = UrlHelper.FullUrl(request, a.PhotoUrl),
+                HeroPhotoUrl = UrlHelper.FullUrl(request, a.HeroPhotoUrl),
                 OtherPhotos = a.OtherPhotos ?? new List<string>(),
                 Tagline = a.Tagline,
                 Description = a.Description,
                 Summary = a.Summary,
                 Bands = a.Bands ?? new List<string>(),
-                Amplifiers = (a.Amplifiers ?? Enumerable.Empty<Amplifier>()).Select(am => am.ToDto()).ToList(),
-                Guitars = (a.Guitars ?? Enumerable.Empty<Guitar>()).Select(g => g.ToDto()).ToList()
+                Amplifiers = (a.Amplifiers ?? Enumerable.Empty<Amplifier>()).Select(am => am.ToDto(request)).ToList(),
+                Guitars = (a.Guitars ?? Enumerable.Empty<Guitar>()).Select(g => g.ToDto(request)).ToList()
             };
         }
 
-        public static AmplifierDto ToDto(this Amplifier amp)
+        public static AmplifierDto ToDto(this Amplifier amp, HttpRequest request)
 {
     return new AmplifierDto
     {
         Id = amp.Id,
         Name = amp.Name,
-        PhotoUrl = amp.PhotoUrl,
+        PhotoUrl = UrlHelper.FullUrl(request, amp.PhotoUrl),
         Description = amp.Description,
         Summary = amp.Summary,
         IsTube = amp.IsTube,
@@ -48,7 +50,7 @@ namespace GearTree.Dtos
             {
                 Id = ar.Id,
                 Name = ar.Name,
-                PhotoUrl = ar.PhotoUrl,
+                PhotoUrl = UrlHelper.FullUrl(request, ar.PhotoUrl),
                 Summary = ar.Summary
             })
             .ToList(),
@@ -58,7 +60,7 @@ namespace GearTree.Dtos
             {
                 Id = ra.Id,
                 Name = ra.Name,
-                PhotoUrl = ra.PhotoUrl,
+                PhotoUrl = UrlHelper.FullUrl(request, ra.PhotoUrl),
                 Summary = ra.Summary,
                 YearStart = ra.YearStart,
                 YearEnd = ra.YearEnd
@@ -68,13 +70,13 @@ namespace GearTree.Dtos
 }
         
 
-        public static GuitarDto ToDto(this Guitar g)
+        public static GuitarDto ToDto(this Guitar g, HttpRequest request)
         {
             return new GuitarDto
             {
                 Id = g.Id,
                 Name = g.Name,
-                PhotoUrl = g.PhotoUrl,
+                PhotoUrl = UrlHelper.FullUrl(request, g.PhotoUrl),
                 Description = g.Description,
                 Summary = g.Summary,
                 Type = g.Type,
@@ -83,20 +85,20 @@ namespace GearTree.Dtos
                 YearStart = g.YearStart,
                 YearEnd = g.YearEnd,
                 Artists = (g.Artists ?? Enumerable.Empty<Artist>())
-                    .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name, PhotoUrl = ar.PhotoUrl, Summary = ar.Summary })
+                    .Select(ar => new ArtistBriefDto { Id = ar.Id, Name = ar.Name, PhotoUrl = UrlHelper.FullUrl(request, ar.PhotoUrl), Summary = ar.Summary })
                     .ToList(),
                 RelatedGuitars = (g.RelatedGuitars ?? Enumerable.Empty<Guitar>())
                     .Select(r => new GuitarBriefDto
                     {
                         Id = r.Id,
                         Name = r.Name,
-                        PhotoUrl = r.PhotoUrl,
+                        PhotoUrl = UrlHelper.FullUrl(request, r.PhotoUrl),
                         Summary = r.Summary,
                         Type = r.Type,
                         YearStart = r.YearStart,
                         YearEnd = r.YearEnd
                     })
-                    .ToList(),
+                    .ToList()
             };
         }
     }

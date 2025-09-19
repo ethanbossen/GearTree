@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Tabs } from "@mantine/core";
-import ArtistsTab from "../components/admin/ArtistsTab";
-import GuitarsTab from "../components/admin/GuitarsTab";
-import AmpsTab from "../components/admin/AmpsTab";
+import ArtistsTab from "../components/admin/Wrappers/ArtistsTab";
+import GuitarsTab from "../components/admin/Wrappers/GuitarsTab";
+import AmpsTab from "../components/admin/Wrappers/AmpsTab";
 import LoginButton from "../components/admin/LoginButton";
-import { auth, provider } from "../firebase";
+import { auth } from "../firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 
 const ALLOWED_EMAIL = "ethan.bossenbroek@gmail.com"; // your email

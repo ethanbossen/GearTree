@@ -85,6 +85,39 @@ export const Amps = {
     fetchJson<AmplifierDetail>(`${HOSTNAME}/amps/${id}/related/${relatedId}`, { method: "POST" }),
 };
 
+// -------------------------
+// Upload
+// -------------------------
+export const Upload = {
+  uploadFile: async (
+    file: File,
+    entityType: string,
+    fieldKey: string,
+    artistName?: string // only used for artist hero photos
+  ): Promise<{ url: string }> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("entityType", entityType);
+    formData.append("fieldKey", fieldKey);
+
+    if (entityType === "artists" && artistName) {
+      formData.append("artistName", artistName);
+    }
+
+    const res = await fetch(`${HOSTNAME}/upload`, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error(`Upload failed: ${res.statusText}`);
+    }
+
+    return res.json();
+  },
+};
+
+
 
 // -------------------------
 // Interfaces

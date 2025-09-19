@@ -1,4 +1,3 @@
-// src/components/admin/EditRelationsButton.tsx
 import { useState } from "react";
 import { Button, Modal, MultiSelect, Stack, Text, Group, Badge } from "@mantine/core";
 
@@ -7,34 +6,36 @@ export interface Relation {
   name: string;
 }
 
+export interface RelationGroup {
+  label: string;                    
+  current: Relation[];            
+  options: Relation[];           
+  onAdd: (itemId: number, relatedId: number) => Promise<any>;
+}
+
 interface EditRelationsButtonProps {
   itemId: number;
-  currentRelations: Relation[];
-  options: Relation[]; // all possible items to add
-  onAdd: (id: number, relatedId: number) => Promise<any>;
-  onSaved: () => void;
+  groups: RelationGroup[];       
   title?: string;
 }
 
 export function EditRelationsButton({
   itemId,
-  currentRelations,
-  options,
-  onAdd,
-  onSaved,
+  groups,
   title = "Edit Relations",
 }: EditRelationsButtonProps) {
   const [opened, setOpened] = useState(false);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Record<string, string[]>>({});
 
-  const handleAdd = async () => {
-    for (const idStr of selected) {
-      const id = parseInt(idStr);
-      await onAdd(itemId, id);
+  const handleSave = async () => {
+    for (const group of groups) {
+      const ids = selected[group.label] ?? [];
+      for (const idStr of ids) {
+        await group.onAdd(itemId, parseInt(idStr));
+      }
     }
     setOpened(false);
-    setSelected([]);
-    onSaved();
+    setSelected({});
   };
 
   return (
@@ -54,41 +55,47 @@ export function EditRelationsButton({
         size="lg"
       >
         <Stack>
-          {/* Current Relations */}
-          <div>
-            <Text className="font-bold mb-2">Current Relations</Text>
-            <Group wrap="wrap" className="mb-2">
-              {currentRelations.length === 0 && <Text className="text-gray-400">None</Text>}
-              {currentRelations.map((r) => (
-                <Badge
-                  key={r.id}
-                  className="bg-purple-100 text-[var(--brand-purple)]"
-                  variant="light"
-                >
-                  {r.name}
-                </Badge>
-              ))}
-            </Group>
-          </div>
-
-          {/* MultiSelect to add new relations */}
-          <MultiSelect
-            label="Add New Relations"
-            placeholder="Select items..."
-            data={options.map((opt) => ({ value: opt.id.toString(), label: opt.name }))}
-            value={selected}
-            onChange={setSelected}
-            searchable
-            nothingFoundMessage="No matches"
-            className="mb-4"
-          />
+          {groups.map((group) => (
+            <div key={group.label}>
+              <Text className="text-[var(--brand-purple)] font-bold mb-2">
+                {group.label}
+              </Text>
+              <Group wrap="wrap" className="mb-2">
+                {group.current.length === 0 && (
+                  <Text className="text-gray-400">None</Text>
+                )}
+                {group.current.map((r) => (
+                  <Badge
+                    key={r.id}
+                    className="bg-purple-100 text-[var(--brand-purple)]"
+                    variant="light"
+                  >
+                    {r.name}
+                  </Badge>
+                ))}
+              </Group>
+              <MultiSelect
+                label={`Add ${group.label}`}
+                placeholder={`Select ${group.label.toLowerCase()}...`}
+                data={group.options
+                  .filter((opt) => !group.current.some((c) => c.id === opt.id))
+                  .map((opt) => ({ value: opt.id.toString(), label: opt.name }))}
+                value={selected[group.label] ?? []}
+                onChange={(vals) =>
+                  setSelected((prev) => ({ ...prev, [group.label]: vals }))
+                }
+                searchable
+                nothingFoundMessage="No matches"
+              />
+            </div>
+          ))}
 
           <Button
             fullWidth
             className="bg-[var(--brand-purple)] hover:bg-[var(--brand-purple-light)] text-white font-semibold"
-            onClick={handleAdd}
+            onClick={handleSave}
           >
-            Add Selected
+            Save
           </Button>
         </Stack>
       </Modal>

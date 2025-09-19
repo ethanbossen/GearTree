@@ -96,6 +96,18 @@ const handleSave = async () => {
       );
     }
 
+     if (typeof value === "number") {
+              return (
+                <TextInput
+                  key={String(field)}
+                  type="number"
+                  label={formatTextCapitalizeFirstLetter(String(field))}
+                  value={value}
+                  onChange={(e) => handleChange(field, Number(e.currentTarget.value))}
+                />
+              );
+            }
+
     return (
       <TextInput
         key={String(field)}

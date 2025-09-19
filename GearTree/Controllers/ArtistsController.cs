@@ -27,7 +27,7 @@ public class ArtistsController : ControllerBase
             .Include(a => a.Guitars)
             .ToListAsync();
 
-        return Ok(artists.Select(a => a.ToDto()).ToList());
+        return Ok(artists.Select(a => a.ToDto(Request)).ToList());
     }
 
     // -------------------------
@@ -43,7 +43,7 @@ public class ArtistsController : ControllerBase
 
         if (artist is null) return NotFound();
 
-        return Ok(artist.ToDto());
+        return Ok(artist.ToDto(Request));
     }
 
     // -------------------------
@@ -91,7 +91,7 @@ public class ArtistsController : ControllerBase
             .Include(a => a.Guitars)
             .FirstOrDefaultAsync(a => a.Id == artist.Id);
 
-        return Created($"/artists/{created!.Id}", created.ToDto());
+        return Created($"/artists/{created!.Id}", created.ToDto(Request));
     }
 
 
@@ -123,7 +123,7 @@ public async Task<IActionResult> Patch(int id, [FromBody] UpdateArtistDto dto)
         .Include(a => a.Guitars)
         .FirstOrDefaultAsync(a => a.Id == id);
 
-    return Ok(updated!.ToDto());
+    return Ok(updated!.ToDto(Request));
 }
     
 // -------------------------
@@ -163,7 +163,7 @@ public async Task<IActionResult> AddAmplifier(int artistId, int ampId)
         return Conflict("Artist is already linked to this amplifier.");
 
     await _db.SaveChangesAsync();
-    return Ok(artist.ToDto());
+    return Ok(artist.ToDto(Request));
 }
 
     // -------------------------
@@ -203,7 +203,7 @@ public async Task<IActionResult> AddAmplifier(int artistId, int ampId)
             return Conflict("Artist is already linked to this guitar.");
 
         await _db.SaveChangesAsync();
-        return Ok(artist.ToDto());
+        return Ok(artist.ToDto(Request));
     }
 
     // -------------------------
