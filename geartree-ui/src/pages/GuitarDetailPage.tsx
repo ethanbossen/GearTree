@@ -98,8 +98,8 @@ function GuitarDetailPage() {
 
       {/* Related Guitars */}
       {guitar.relatedGuitars && guitar.relatedGuitars.length > 0 && (
-        <section className="mb-12">
-           <Title order={2} className="mb-6 text-black">
+        <section>
+           <Title order={2} className="text-black">
             Related Guitars:
           </Title>
           <Carousel basePath="guitars">
@@ -119,8 +119,8 @@ function GuitarDetailPage() {
 
       {/* Artists */}
       {guitar.artists && guitar.artists.length > 0 && (
-        <section className="mb-12">
- <Title order={2} className="mb-6 text-black">
+        <section className="mb-8">
+ <Title order={2} className="mt-4 text-black">
             Artists Who Use This Guitar:
           </Title>
           <Carousel basePath="guitars">

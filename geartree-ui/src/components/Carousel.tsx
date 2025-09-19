@@ -39,6 +39,12 @@ function Carousel({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPageState, setItemsPerPageState] = useState(1);
 
+  // Reset carousel when items or children change
+useEffect(() => {
+  setCurrentIndex(0);
+}, [children, items]);
+
+
   // Responsive logic
   useEffect(() => {
     const updateItemsPerPage = () => {

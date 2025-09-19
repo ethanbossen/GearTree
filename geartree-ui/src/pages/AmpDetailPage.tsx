@@ -94,8 +94,8 @@ function AmpDetailPage() {
     
       {/* Related Amps */}
       {amp.relatedAmps && amp.relatedAmps.length > 0 && (
-        <section className="mb-16">
-          <Title order={2} className="mb-6 text-black">
+        <section>
+          <Title order={2} className="text-black">
             Related Amps:
           </Title>
           <Carousel basePath="amplifiers">
@@ -115,8 +115,8 @@ function AmpDetailPage() {
 
       {/* Artists */}
       {amp.artists && amp.artists.length > 0 && (
-        <section className="mb-16">
-          <Title order={2} className="mb-6 text-black">
+        <section className="mb-8">
+          <Title order={2} className="mt-4 text-black">
             Artists Who Use This Amp:
           </Title>
           <Carousel basePath="artists">
