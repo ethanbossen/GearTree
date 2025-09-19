@@ -3,16 +3,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-export interface CarouselItem {
-  id: number | string;
-  name: string;
-  photoUrl?: string | null;
-  summary?: string | null;
-  tagline?: string;
-  yearStart?: number;
-  yearEnd?: number;
-}
+import type { CarouselItem } from "../types";
 
 interface GenericCarouselProps {
   children?: React.ReactNode[];

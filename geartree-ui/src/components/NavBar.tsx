@@ -2,7 +2,7 @@ import { Burger, Container, Group, Collapse } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link, useLocation } from "react-router-dom";
 import geartreeLogo from "../assets/GearTreeLogo.svg";
-import classes from "./NavBar.module.css";
+import classes from "./styles/NavBar.module.css";
 import { useRef } from "react";
 
 const links = [

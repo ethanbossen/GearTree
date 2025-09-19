@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Container, Group, Text, Stack } from "@mantine/core";
 import { Link } from "react-router-dom";
 import geartreeLogo from "../assets/GearTreeLogo.svg";
-import classes from "./Footer.module.css";
+import classes from "./styles/Footer.module.css";
 import { Artists, Guitars, Amps } from "../api";
 
 export default function Footer() {
