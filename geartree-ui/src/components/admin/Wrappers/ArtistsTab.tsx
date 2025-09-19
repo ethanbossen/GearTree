@@ -5,7 +5,7 @@ import { Artists, Guitars, Amps } from "../../../api";
 import CreateItemButton from "../CreateItemButton";
 import { EditScalarsButton } from "../EditScalarsButton";
 import { EditRelationsButton } from "../EditRelationsButton";
-import type { Artist, Guitar, Amplifier } from "../../../api";
+import type { Artist, Guitar, Amplifier } from "../../../types";
 
 export default function ArtistsTab() {
   const [allGuitars, setAllGuitars] = useState<Guitar[]>([]);

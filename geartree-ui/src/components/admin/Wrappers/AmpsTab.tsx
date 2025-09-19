@@ -4,7 +4,7 @@ import { Amps } from "../../../api";
 import CreateItemButton from "../CreateItemButton";
 import { EditScalarsButton } from "../EditScalarsButton";
 import { EditRelationsButton } from "../EditRelationsButton";
-import type { Amplifier } from "../../../api";
+import type { Amplifier } from "../../../types";
 
 export default function AmpsTab() {
   const [allAmps, setAllAmps] = useState<Amplifier[]>([]);

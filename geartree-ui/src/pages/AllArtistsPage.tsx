@@ -1,7 +1,7 @@
 // src/pages/Artists.tsx
 import { useEffect, useState } from "react";
 import { Artists } from "../api";
-import type { Artist } from "../api";
+import type { Artist } from "../types";
 import EntityCard from "../components/EntityCard";
 import { Button, Collapse, Input, Select } from "@mantine/core";
 

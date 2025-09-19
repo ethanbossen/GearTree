@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import shuffleIcon from "../assets/arrows-shuffle.svg";
 import mastodonStudio from "../assets/MastodonStudio2.png";
 import { Artists } from "../api";
-import type { Artist } from "../api";
+import type { Artist } from "../types";
 
 export function LandingSection() {
   const [artistIds, setArtistIds] = useState<number[]>([]);

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Artists } from "../api";
-import type { ArtistDetail } from "../api";
+import type { ArtistDetail } from "../types";
 import Carousel from "../components/Carousel";
 import type { CarouselItem } from "../components/Carousel";
 

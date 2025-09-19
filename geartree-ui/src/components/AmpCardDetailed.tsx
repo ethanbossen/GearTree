@@ -1,7 +1,7 @@
 // src/components/AmpCardDetailed.tsx
 import { Card, Image, Text, Badge, Group, Stack } from "@mantine/core";
 import { Link } from "react-router-dom";
-import type { Amplifier } from "../api";
+import type { Amplifier } from "../types";
 
 interface AmpCardDetailedProps extends Amplifier {}
 

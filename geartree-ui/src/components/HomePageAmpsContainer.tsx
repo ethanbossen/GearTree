@@ -1,7 +1,7 @@
 // src/components/AmpsContainer.tsx
 import { useEffect, useState } from "react";
 import { Amps } from "../api";
-import type { AmplifierBrief } from "../api";
+import type { AmplifierBrief } from "../types";
 import EntityCard from "./EntityCard";
 
 function AmpsContainer() {

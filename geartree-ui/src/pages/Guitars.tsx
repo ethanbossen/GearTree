@@ -1,7 +1,7 @@
 // src/pages/Guitars.tsx
 import { useEffect, useState } from "react";
 import { Guitars as GuitarsAPI } from "../api";              // ✅ use the new namespace
-import type { Guitar } from "../api";
+import type { Guitar } from "../types";
 import GuitarCard from "../components/GuitarCardDetailed";
 import { Button, Collapse, Input, MultiSelect, Select } from "@mantine/core";
 

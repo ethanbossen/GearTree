@@ -1,5 +1,13 @@
 // src/api.ts
 const HOSTNAME = "http://localhost:5262";
+import type {
+  Artist,
+  ArtistDetail,
+  Guitar,
+  GuitarDetail,
+  Amplifier,
+  AmplifierDetail,
+} from "./types";
 
 // -------------------------
 // Generic helpers
@@ -118,100 +126,3 @@ export const Upload = {
 };
 
 
-
-// -------------------------
-// Interfaces
-// -------------------------
-
-// ---- Brief DTOs ----
-export interface ArtistBrief {
-  id: number;
-  name: string;
-  photoUrl: string | null;
-  summary: string | null;
-}
-
-export interface GuitarBrief {
-  id: number;
-  name: string;
-  photoUrl: string | null;
-  summary: string | null;
-  yearStart: number;
-  yearEnd: number | null;
-}
-
-export interface AmplifierBrief {
-  id: number;
-  name: string;
-  photoUrl: string | null;
-  summary: string | null;
-  yearStart: number;
-  yearEnd: number | null;
-}
-
-// ---- Full DTOs ----
-export interface Artist {
-  id: number;
-  name: string;
-  photoUrl: string;
-  heroPhotoUrl: string;
-  otherPhotos: string[];
-  tagline: string;
-  description: string;
-  summary: string;
-  bands: string[];
-  amplifiers: AmplifierBrief[]; // uses brief
-  guitars: GuitarBrief[];       // uses brief
-}
-
-export interface Guitar {
-  id: number;
-  name: string;
-  photoUrl: string;
-  description: string;
-  summary: string;
-  type: string;
-  genres: string[];
-  pickups: string[];
-  yearStart: number;
-  yearEnd: number | null;
-  otherPhotos: string[];
-  relatedGuitars: GuitarBrief[];
-  artists: ArtistBrief[];
-}
-
-export interface Amplifier {
-  id: number;
-  name: string;
-  photoUrl: string;
-  description: string;
-  summary: string;
-  isTube: boolean;
-  gainStructure: string;
-  yearStart: number;
-  yearEnd: number | null;
-  priceStart: number | null;
-  priceEnd: number | null;
-  wattage: number;
-  speakerConfiguration: string;
-  manufacturer: string;
-  otherPhotos: string[];
-  relatedAmps: AmplifierBrief[];
-  artists: ArtistBrief[];
-}
-
-// ---- Detail DTOs ----
-export interface ArtistDetail extends Artist {
-  amplifiers: AmplifierBrief[];
-  guitars: GuitarBrief[];
-}
-
-export interface AmplifierDetail extends Amplifier {
-  artists: ArtistBrief[];
-  relatedAmps: AmplifierBrief[];
-}
-
-export interface GuitarDetail extends Guitar {
-  artists: ArtistBrief[];
-  relatedGuitars: GuitarBrief[];
-}

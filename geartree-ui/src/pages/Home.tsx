@@ -2,9 +2,8 @@ import { useState, useEffect } from "react";
 import { LandingSection } from "../components/LandingSection";
 import AmpsContainer from "../components/HomePageAmpsContainer";
 import Carousel from "../components/Carousel";
-import type { CarouselItem } from "../components/Carousel";
 import { Amps, Artists } from "../api";
-import type { AmplifierBrief, Artist } from "../api";
+import type { AmplifierBrief, Artist, CarouselItem } from "../types";
 
 // Custom hook to track window width
 function useWindowWidth() {
@@ -49,7 +48,12 @@ export default function Home() {
           <h2 className="m-10 text-3xl font-bold border-b-4 inline-block mb-8">
             Featured Artists:
           </h2>
-          <Carousel basePath="artists" itemsPerPage={1}items={artists} />
+          <Carousel basePath="artists" itemsPerPage={1}   items={artists.map((artist): CarouselItem => ({
+    id: artist.id,
+    name: artist.name,
+    photoUrl: artist.photoUrl ?? undefined,
+    summary: artist.summary ?? undefined,
+  }))} />
 
           <h2 className="m-10 text-3xl font-bold border-b-4 inline-block mb-8">
             Featured Amps:
@@ -71,7 +75,12 @@ export default function Home() {
            <h2 className="text-3xl font-bold border-b-4 inline-block">
         Featured Artists:
       </h2>
-          <Carousel basePath="artists" items={artists}/>
+          <Carousel basePath="artists"   items={artists.map((artist): CarouselItem => ({
+    id: artist.id,
+    name: artist.name,
+    photoUrl: artist.photoUrl ?? undefined,
+    summary: artist.summary ?? undefined,
+  }))} />
           </section>
           <AmpsContainer />
         </div>
