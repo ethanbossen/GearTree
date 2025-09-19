@@ -104,5 +104,5 @@ export interface CarouselItem {
 // API Service shape
 // -------------------------
 export interface ApiService<T> {
-  get: (id: number) => Promise<T>;
+  get: (id: number, forceRefresh: boolean) => Promise<T>;
 }

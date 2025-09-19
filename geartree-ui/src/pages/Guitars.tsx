@@ -1,9 +1,8 @@
 // src/pages/Guitars.tsx
-import { useMemo } from "react";
 import GenericListPage from "../components/GenericListPage";
 import { Guitars as GuitarsAPI } from "../api";
 import type { Guitar } from "../types";
-import GuitarCard from "../components/GuitarCardDetailed";
+import GuitarCard from "../components/Wrappers/GuitarCardDetailed";
 
 function Guitars() {
   const guitarFilterFunction = (guitars: Guitar[], filters: Record<string, any>) => {

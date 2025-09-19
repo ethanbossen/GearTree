@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Artists } from "../api";
 import type { ArtistDetail } from "../types";
 import Carousel from "../components/Carousel";
-import type { CarouselItem } from "../components/Carousel";
+import type { CarouselItem } from "../types";
 
 
 function ArtistPage() {
@@ -16,7 +16,7 @@ function ArtistPage() {
   useEffect(() => {
    async function loadArtist() {
       try {
-        const data = await Artists.get(Number(id));
+        const data = await Artists.get(Number(id), false);
         setArtist(data);
       } catch (err: any) {
         if (err.message.includes("404")) {

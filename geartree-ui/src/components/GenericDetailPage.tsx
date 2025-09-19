@@ -1,14 +1,10 @@
 // src/components/GenericDetailPage.tsx
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button, Loader, Title } from "@mantine/core";
 import Carousel from "./Carousel";
 import EntityCard from "./EntityCard";
-
-// Generic API service interface
-interface ApiService<T> {
-  get: (id: number) => Promise<T>;
-}
+import type { ApiService } from "../types";
 
 interface BaseEntity {
   id: number;
@@ -50,6 +46,7 @@ function GenericDetailPage<T extends BaseEntity>({
   getRelatedSections,
 }: GenericDetailPageProps<T>) {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [entity, setEntity] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,12 +54,15 @@ function GenericDetailPage<T extends BaseEntity>({
   useEffect(() => {
     if (!id) return;
     
-    apiService.get(Number(id))
+    apiService.get(Number(id), false)
       .then((data) => {
         setEntity(data);
         setLoading(false);
       })
       .catch((err) => {
+        if (err.message.includes("404")) {
+          navigate("/404");
+        }
         setError(err.message);
         setLoading(false);
       });

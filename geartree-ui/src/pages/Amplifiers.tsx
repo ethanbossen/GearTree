@@ -2,7 +2,7 @@
 import GenericListPage from "../components/GenericListPage";
 import { Amps } from "../api";
 import type { Amplifier } from "../types";
-import AmpCardDetailed from "../components/AmpCardDetailed";
+import AmpCardDetailed from "../components/Wrappers/AmpCardDetailed";
 
 function Amplifiers() {
   const ampFilterFunction = (amps: Amplifier[], filters: Record<string, any>) => {
