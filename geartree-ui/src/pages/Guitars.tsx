@@ -1,6 +1,5 @@
-// src/pages/Guitars.tsx
 import GenericListPage from "../components/GenericListPage";
-import { Guitars as GuitarsAPI } from "../api";
+import { useGuitars } from "../api";
 import type { Guitar } from "../types";
 import GuitarCard from "../components/Wrappers/GuitarCardDetailed";
 
@@ -67,49 +66,27 @@ function Guitars() {
   const introContent = (
     <>
       <p className="text-lg text-gray-700 mb-4">
-        Guitars are the heart and soul of modern music, capable of shaping
-        everything from delicate melodies to walls of sound. More than just an
-        instrument, the guitar has become a symbol of creativity, expression,
-        and cultural identity. Whether electric, acoustic, or hybrid, each
-        guitar carries a unique voice that inspires players and listeners
-        alike.
+        Guitars are the heart and soul of modern music...
       </p>
       <p className="text-lg text-gray-700 mb-4">
-        Electric guitars in particular revolutionized the sound of the 20th
-        century, introducing sustain, feedback, and tonal flexibility that
-        reshaped entire genres. Acoustic guitars, with their resonance and
-        warmth, continue to provide the foundation for countless songs,
-        blending tradition with innovation.
+        Electric guitars revolutionized the sound of the 20th century...
       </p>
       <p className="text-lg text-gray-700">
-        This section of the site is dedicated to exploring guitars of all
-        kinds—from legendary models that defined eras to modern instruments
-        that push boundaries. Here you can learn the stories, specs, and sound
-        of each guitar while discovering how they shaped the artists and music
-        we know today.
+        This section is dedicated to exploring guitars of all kinds...
       </p>
     </>
   );
 
   return (
-    <GenericListPage
+    <GenericListPage<Guitar>
       title="Explore Guitars"
       introContent={introContent}
-      apiCall={GuitarsAPI.list}
-      renderItem={(guitar: Guitar) => (
-        <GuitarCard
-          id={guitar.id}
-          name={guitar.name}
-          summary={guitar.summary}
-          photoUrl={guitar.photoUrl}
-          type={guitar.type}
-          genres={guitar.genres}
-          yearStart={guitar.yearStart}
-          yearEnd={guitar.yearEnd}
-        />
+      useQueryHook={useGuitars}           // <-- React Query hook
+      renderItem={(guitar) => (
+        <GuitarCard {...guitar} />
       )}
-      getItemKey={(guitar: Guitar) => guitar.id}
-      searchFields={['name', 'summary'] as (keyof Guitar)[]}
+      getItemKey={(guitar) => guitar.id}
+      searchFields={['name', 'summary']}
       sortOptions={[
         { value: "name-asc", label: "Name (A–Z)" },
         { value: "name-desc", label: "Name (Z–A)" },
@@ -119,6 +96,7 @@ function Guitars() {
       sortFunction={guitarSortFunction}
       filterFunction={guitarFilterFunction}
       filterConfigs={filterConfigs}
+      showRefreshButton
     />
   );
 }

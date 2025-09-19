@@ -1,6 +1,7 @@
 // src/components/GenericListPage.tsx
-import { useEffect, useState } from "react";
-import { Button, Collapse, Input, Select, MultiSelect, Checkbox } from "@mantine/core";
+import { useState } from "react";
+import { Button, Collapse, Input, Select, MultiSelect, Checkbox, Loader, Alert } from "@mantine/core";
+import type { UseQueryResult } from '@tanstack/react-query';
 
 interface FilterConfig<T> {
   key: string;
@@ -20,7 +21,7 @@ interface SortOption {
 interface GenericListPageProps<T> {
   title: string;
   introContent?: React.ReactNode;
-  apiCall: () => Promise<T[]>;
+  useQueryHook: () => UseQueryResult<T[], Error>; // React Query hook instead of API call
   renderItem: (item: T) => React.ReactNode;
   getItemKey: (item: T) => string | number;
   searchFields: (keyof T)[];
@@ -30,12 +31,14 @@ interface GenericListPageProps<T> {
   filterFunction?: (items: T[], filters: Record<string, any>) => T[];
   initialPageSize?: number;
   gridCols?: string;
+  showRefreshButton?: boolean; // Option to show manual refresh
+  enabledWhen?: boolean; // Control when query should be enabled
 }
 
 function GenericListPage<T>({
   title,
   introContent,
-  apiCall,
+  useQueryHook,
   renderItem,
   getItemKey,
   searchFields,
@@ -44,20 +47,18 @@ function GenericListPage<T>({
   sortFunction,
   filterFunction,
   initialPageSize = 9,
-  gridCols = "sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+  gridCols = "sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
+  showRefreshButton = false,
 }: GenericListPageProps<T>) {
-  const [items, setItems] = useState<T[]>([]);
+  // React Query hook usage
+  const { data: items = [], isLoading, error, refetch, isFetching } = useQueryHook();
+
+  // Local state for UI controls
   const [search, setSearch] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [sort, setSort] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(initialPageSize);
   const [filters, setFilters] = useState<Record<string, any>>({});
-
-  useEffect(() => {
-    apiCall()
-      .then(setItems)
-      .catch(console.error);
-  }, [apiCall]);
 
   // Generic search logic
   const searchFilter = (item: T): boolean => {
@@ -154,19 +155,51 @@ function GenericListPage<T>({
     }
   };
 
+  // Loading state
+  if (isLoading && items.length === 0) {
+    return (
+      <div className="px-8 pt-5 max-w-7xl mx-auto">
+        <div className="flex justify-center items-center py-20">
+          <div className="text-center">
+            <Loader size="lg" className="mb-4" />
+            <p className="text-gray-600">Loading {title.toLowerCase()}...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="px-8 pt-5 max-w-7xl mx-auto">
+        <Alert color="red" title="Error loading data" className="mb-6">
+          <p>{error.message}</p>
+          <Button onClick={() => refetch()} className="mt-3" variant="outline">
+            Try Again
+          </Button>
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <div className="px-8 pt-5 max-w-7xl mx-auto">
       {/* Intro Section */}
       {introContent && (
         <section className="prose max-w-none mb-10">
-          <h1 className="text-4xl font-bold mb-4">{title}</h1>
+          <h1 className="text-4xl font-bold mb-4 flex items-center gap-3">
+            {title}
+            {isFetching && <Loader size="sm" />}
+          </h1>
           {introContent}
         </section>
       )}
 
       {!introContent && (
-        <h1 className="text-4xl font-bold mt-10 mb-8 border-b-4 inline-block border-[var(--brand-purple)]">
+        <h1 className="text-4xl font-bold mt-10 mb-8 border-b-4 inline-block border-[var(--brand-purple)] flex items-center gap-3">
           {title}
+          {isFetching && <Loader size="sm" />}
         </h1>
       )}
 
@@ -180,16 +213,31 @@ function GenericListPage<T>({
           className="rounded-lg w-full flex-[2] min-w-[250px]"
         />
 
-        {(currentFilterConfigs.length > 0 || sortOptions.length > 0) && (
-          <Button
-            variant="outline"
-            color="dark"
-            onClick={() => setFiltersOpen((o) => !o)}
-            className="mt-3 md:mt-0"
-          >
-            {filtersOpen ? "Hide Filters & Sort" : "Show Filters & Sort"}
-          </Button>
-        )}
+        <div className="flex gap-2 mt-3 md:mt-0">
+          {/* Filters Toggle */}
+          {(currentFilterConfigs.length > 0 || sortOptions.length > 0) && (
+            <Button
+              variant="outline"
+              color="dark"
+              onClick={() => setFiltersOpen((o) => !o)}
+            >
+              {filtersOpen ? "Hide Filters & Sort" : "Show Filters & Sort"}
+            </Button>
+          )}
+
+          {/* Manual Refresh Button */}
+          {showRefreshButton && (
+            <Button
+              variant="outline"
+              color="blue"
+              onClick={() => refetch()}
+              loading={isFetching}
+              loaderProps={{ size: 'xs' }}
+            >
+              Refresh
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Collapsible Filters */}
@@ -224,19 +272,48 @@ function GenericListPage<T>({
       </div>
 
       {/* No Results */}
-      {sortedItems.length === 0 && (
-        <p className="text-gray-500 mt-8">No {title.toLowerCase()} found.</p>
+      {sortedItems.length === 0 && !isLoading && (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">
+            {search || Object.values(filters).some(f => f) ? 
+              `No ${title.toLowerCase()} match your criteria.` : 
+              `No ${title.toLowerCase()} found.`
+            }
+          </p>
+          {(search || Object.values(filters).some(f => f)) && (
+            <Button 
+              variant="subtle" 
+              onClick={() => {
+                setSearch("");
+                setFilters({});
+                setSort(null);
+              }}
+              className="mt-3"
+            >
+              Clear all filters
+            </Button>
+          )}
+        </div>
       )}
 
       {/* Load More */}
       {visibleCount < sortedItems.length && (
         <div className="flex justify-center mb-5">
-          <button 
+          <Button 
             onClick={() => setVisibleCount((c) => c + initialPageSize)}
-            className="px-6 bg-brand-purple text-white font-semibold rounded-lg shadow hover:bg-brand-purple/90"
+            size="lg"
+            className="bg-brand-purple hover:bg-brand-purple/90"
           >
             Load More
-          </button>
+          </Button>
+        </div>
+      )}
+
+      {/* Background refresh indicator */}
+      {isFetching && items.length > 0 && (
+        <div className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 z-50">
+          <Loader size="xs" color="white" />
+          <span className="text-sm">Refreshing...</span>
         </div>
       )}
     </div>
@@ -244,3 +321,4 @@ function GenericListPage<T>({
 }
 
 export default GenericListPage;
+

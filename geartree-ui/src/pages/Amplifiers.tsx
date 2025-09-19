@@ -1,6 +1,5 @@
-// src/pages/Amplifiers.tsx
 import GenericListPage from "../components/GenericListPage";
-import { Amps } from "../api";
+import { useAmps } from "../api";
 import type { Amplifier } from "../types";
 import AmpCardDetailed from "../components/Wrappers/AmpCardDetailed";
 
@@ -8,12 +7,11 @@ function Amplifiers() {
   const ampFilterFunction = (amps: Amplifier[], filters: Record<string, any>) => {
     return amps.filter((amp) => {
       const matchesAmpType =
-  !filters.ampType || filters.ampType === 'both'
-    ? true
-    : filters.ampType === 'tube'
-      ? amp.isTube
-      : !amp.isTube;
-
+        !filters.ampType || filters.ampType === 'both'
+          ? true
+          : filters.ampType === 'tube'
+          ? amp.isTube
+          : !amp.isTube;
 
       const matchesGain =
         !filters.selectedGain || filters.selectedGain.length === 0 || 
@@ -95,35 +93,25 @@ function Amplifiers() {
   const introContent = (
     <>
       <p className="text-lg text-gray-700 mb-4">
-        Guitar amplifiers are at the core of every great tone, transforming the vibrations of the strings into a voice that can fill a room or shake an arena.
-        They aren't just about volume—they shape the character, feel, and dynamics of a player's sound. From shimmering cleans to heavy distortion, 
-        the amp often defines the style of music as much as the guitar itself.
+        Guitar amplifiers are at the core of every great tone...
       </p>
       <p className="text-lg text-gray-700 mb-4">
-        At their heart, amplifiers generally come in two main types: tube and
-        solid-state. Tube amps are celebrated for their warmth and responsive
-        feel, while solid-state amps deliver reliable performance and clean
-        tone. Both have their strengths, and many players use them side by
-        side.
+        Tube amps are celebrated for their warmth...
       </p>
       <p className="text-lg text-gray-700 mb-4">
-        This section of the site is dedicated to exploring amplifiers of all
-        kinds—from classic icons that defined generations to modern designs
-        pushing the limits of technology.
+        This section of the site is dedicated to exploring amplifiers...
       </p>
     </>
   );
 
   return (
-    <GenericListPage
+    <GenericListPage<Amplifier>
       title="Explore Amplifiers"
       introContent={introContent}
-      apiCall={Amps.list}
-      renderItem={(amp: Amplifier) => (
-        <AmpCardDetailed {...amp} />
-      )}
-      getItemKey={(amp: Amplifier) => amp.id}
-      searchFields={['name', 'manufacturer', 'speakerConfiguration', 'gainStructure'] as (keyof Amplifier)[]}
+      useQueryHook={useAmps} 
+      renderItem={(amp) => <AmpCardDetailed {...amp} />}
+      getItemKey={(amp) => amp.id}
+      searchFields={['name', 'manufacturer', 'speakerConfiguration', 'gainStructure']}
       filterConfigs={filterConfigs}
       sortOptions={[
         { value: "name-asc", label: "Name (A–Z)" },
@@ -133,6 +121,7 @@ function Amplifiers() {
       ]}
       sortFunction={ampSortFunction}
       filterFunction={ampFilterFunction}
+      showRefreshButton
     />
   );
 }

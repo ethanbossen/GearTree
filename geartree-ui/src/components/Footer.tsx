@@ -1,20 +1,13 @@
-import { useEffect, useState } from "react";
 import { Container, Group, Text, Stack } from "@mantine/core";
 import { Link } from "react-router-dom";
 import geartreeLogo from "../assets/GearTreeLogo.svg";
 import classes from "./styles/Footer.module.css";
-import { Artists, Guitars, Amps } from "../api";
+import { useArtists, useGuitars, useAmps } from "../api";
 
 export default function Footer() {
-  const [artists, setArtists] = useState<any[]>([]);
-  const [guitars, setGuitars] = useState<any[]>([]);
-  const [amps, setAmps] = useState<any[]>([]);
-
-  useEffect(() => {
-    Artists.list().then(setArtists).catch(console.error);
-    Guitars.list().then(setGuitars).catch(console.error);
-    Amps.list().then(setAmps).catch(console.error);
-  }, []);
+  const { data: artists = [] } = useArtists();
+  const { data: guitars = [] } = useGuitars();
+  const { data: amps = [] } = useAmps();
 
   return (
     <footer className={classes.footer}>
@@ -22,11 +15,7 @@ export default function Footer() {
         {/* Logo + Rights */}
         <Stack gap="xs" className={classes.left}>
           <Group>
-            <img
-              src={geartreeLogo}
-              alt="GearTree Logo"
-              className={classes.logo}
-            />
+            <img src={geartreeLogo} alt="GearTree Logo" className={classes.logo} />
             <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
               <Text fw={700} size="xl" className={classes.brand}>
                 GearTree
@@ -42,15 +31,9 @@ export default function Footer() {
         <Group gap="5rem" className={`${classes.links} hidden md:flex`}>
           {/* Artists */}
           <Stack gap="xs">
-            <Link to="/artists" className={classes.columnTitle}>
-              Artists
-            </Link>
+            <Link to="/artists" className={classes.columnTitle}>Artists</Link>
             {artists.slice(0, 3).map((artist) => (
-              <Link
-                key={artist.id}
-                to={`/artists/${artist.id}`}
-                className={classes.subLink}
-              >
+              <Link key={artist.id} to={`/artists/${artist.id}`} className={classes.subLink}>
                 {artist.name}
               </Link>
             ))}
@@ -58,15 +41,9 @@ export default function Footer() {
 
           {/* Guitars */}
           <Stack gap="xs">
-            <Link to="/guitars" className={classes.columnTitle}>
-              Guitars
-            </Link>
+            <Link to="/guitars" className={classes.columnTitle}>Guitars</Link>
             {guitars.slice(0, 3).map((guitar) => (
-              <Link
-                key={guitar.id}
-                to={`/guitars/${guitar.id}`}
-                className={classes.subLink}
-              >
+              <Link key={guitar.id} to={`/guitars/${guitar.id}`} className={classes.subLink}>
                 {guitar.name}
               </Link>
             ))}
@@ -74,15 +51,9 @@ export default function Footer() {
 
           {/* Amplifiers */}
           <Stack gap="xs">
-            <Link to="/amplifiers" className={classes.columnTitle}>
-              Amplifiers
-            </Link>
+            <Link to="/amplifiers" className={classes.columnTitle}>Amplifiers</Link>
             {amps.slice(0, 3).map((amp) => (
-              <Link
-                key={amp.id}
-                to={`/amplifiers/${amp.id}`}
-                className={classes.subLink}
-              >
+              <Link key={amp.id} to={`/amplifiers/${amp.id}`} className={classes.subLink}>
                 {amp.name}
               </Link>
             ))}
@@ -91,15 +62,9 @@ export default function Footer() {
 
         {/* Mobile Links */}
         <Stack gap="xs" className="flex md:hidden mt-4">
-          <Link to="/artists" className={classes.columnTitle}>
-            Artists
-          </Link>
-          <Link to="/guitars" className={classes.columnTitle}>
-            Guitars
-          </Link>
-          <Link to="/amplifiers" className={classes.columnTitle}>
-            Amplifiers
-          </Link>
+          <Link to="/artists" className={classes.columnTitle}>Artists</Link>
+          <Link to="/guitars" className={classes.columnTitle}>Guitars</Link>
+          <Link to="/amplifiers" className={classes.columnTitle}>Amplifiers</Link>
         </Stack>
       </Container>
     </footer>

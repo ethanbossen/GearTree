@@ -1,25 +1,16 @@
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import shuffleIcon from "../assets/arrows-shuffle.svg";
 import mastodonStudio from "../assets/MastodonStudio2.png";
-import { Artists } from "../api";
-import type { Artist } from "../types";
+import { useArtists } from "../api";
 
 export function LandingSection() {
-  const [artistIds, setArtistIds] = useState<number[]>([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    Artists.list().then((artists: Artist[]) => {
-      setArtistIds(artists.map((a) => a.id));
-    });
-  }, []);
+  const { data: artists = [] } = useArtists();
 
   const handleRandomClick = () => {
-    if (artistIds.length === 0) return;
-
-    const randomId = artistIds[Math.floor(Math.random() * artistIds.length)];
-    navigate(`/artists/${randomId}`);
+    if (artists.length === 0) return;
+    const randomArtist = artists[Math.floor(Math.random() * artists.length)];
+    navigate(`/artists/${randomArtist.id}`);
   };
 
   return (
@@ -52,9 +43,7 @@ export function LandingSection() {
             src={mastodonStudio}
             alt="Mastodon in the studio, b+w image"
             className="w-full h-full object-cover blur-xs brightness-50"
-            style={{
-              objectPosition: "center top",
-            }}
+            style={{ objectPosition: "center top" }}
           />
         </div>
       </div>

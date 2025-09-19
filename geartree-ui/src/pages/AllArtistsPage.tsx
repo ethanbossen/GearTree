@@ -1,6 +1,5 @@
-// src/pages/Artists.tsx
 import GenericListPage from "../components/GenericListPage";
-import { Artists } from "../api";
+import { useArtists } from "../api";
 import type { Artist } from "../types";
 import EntityCard from "../components/EntityCard";
 
@@ -57,10 +56,10 @@ function AllArtistsPage() {
   ];
 
   return (
-    <GenericListPage
+    <GenericListPage<Artist>
       title="Artists"
-      apiCall={Artists.list}
-      renderItem={(artist: Artist) => (
+      useQueryHook={useArtists} 
+      renderItem={(artist) => (
         <EntityCard
           id={artist.id}
           basePath="artists"
@@ -69,8 +68,8 @@ function AllArtistsPage() {
           photoUrl={artist.photoUrl}
         />
       )}
-      getItemKey={(artist: Artist) => artist.id}
-      searchFields={['name', 'summary', 'tagline'] as (keyof Artist)[]}
+      getItemKey={(artist) => artist.id}
+      searchFields={['name', 'summary', 'tagline']}
       filterConfigs={filterConfigs}
       sortOptions={[
         { value: "az", label: "A–Z" },
@@ -79,6 +78,7 @@ function AllArtistsPage() {
       sortFunction={artistSortFunction}
       filterFunction={artistFilterFunction}
       gridCols="sm:grid-cols-2 lg:grid-cols-3"
+      showRefreshButton
     />
   );
 }
