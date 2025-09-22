@@ -93,13 +93,21 @@ function Amplifiers() {
   const introContent = (
     <>
       <p className="text-lg text-gray-700 mb-4">
-        Guitar amplifiers are at the core of every great tone...
+        Guitar amplifiers are at the core of every great tone, transforming the vibrations of the strings into a voice that can fill a room or shake an arena.
+        They aren't just about volume—they shape the character, feel, and dynamics of a player's sound. From shimmering cleans to heavy distortion, 
+        the amp often defines the style of music as much as the guitar itself.
       </p>
       <p className="text-lg text-gray-700 mb-4">
-        Tube amps are celebrated for their warmth...
+        At their heart, amplifiers generally come in two main types: tube and
+        solid-state. Tube amps are celebrated for their warmth and responsive
+        feel, while solid-state amps deliver reliable performance and clean
+        tone. Both have their strengths, and many players use them side by
+        side.
       </p>
       <p className="text-lg text-gray-700 mb-4">
-        This section of the site is dedicated to exploring amplifiers...
+        This section of the site is dedicated to exploring amplifiers of all
+        kinds—from classic icons that defined generations to modern designs
+        pushing the limits of technology.
       </p>
     </>
   );

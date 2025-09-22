@@ -66,13 +66,26 @@ function Guitars() {
   const introContent = (
     <>
       <p className="text-lg text-gray-700 mb-4">
-        Guitars are the heart and soul of modern music...
+         Guitars are the heart and soul of modern music, capable of shaping
+        everything from delicate melodies to walls of sound. More than just an
+        instrument, the guitar has become a symbol of creativity, expression,
+        and cultural identity. Whether electric, acoustic, or hybrid, each
+        guitar carries a unique voice that inspires players and listeners
+        alike.
       </p>
       <p className="text-lg text-gray-700 mb-4">
-        Electric guitars revolutionized the sound of the 20th century...
+         Electric guitars in particular revolutionized the sound of the 20th
+        century, introducing sustain, feedback, and tonal flexibility that
+        reshaped entire genres. Acoustic guitars, with their resonance and
+        warmth, continue to provide the foundation for countless songs,
+        blending tradition with innovation.
       </p>
       <p className="text-lg text-gray-700">
-        This section is dedicated to exploring guitars of all kinds...
+        This section of the site is dedicated to exploring guitars of all
+        kinds—from legendary models that defined eras to modern instruments
+        that push boundaries. Here you can learn the stories, specs, and sound
+        of each guitar while discovering how they shaped the artists and music
+        we know today.
       </p>
     </>
   );
