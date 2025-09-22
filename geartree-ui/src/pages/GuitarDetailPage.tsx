@@ -1,5 +1,5 @@
 // src/pages/GuitarDetail.tsx
-import { Guitars } from "../api";
+import { useGuitar } from "../api";
 import type { GuitarDetail } from "../types";
 import GenericDetailPage from "../components/GenericDetailPage";
 
@@ -47,7 +47,7 @@ function GuitarDetailPage() {
 
   return (
     <GenericDetailPage
-      apiService={Guitars}
+      useDetailHook={useGuitar}
       entityName="guitar"
       renderMetadata={renderGuitarMetadata}
       getRelatedSections={getGuitarRelatedSections}

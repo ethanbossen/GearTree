@@ -184,7 +184,7 @@ function GenericListPage<T>({
   }
 
   return (
-    <div className="px-8 pt-5 max-w-7xl mx-auto">
+    <div className="pt-5 max-w-7xl mx-auto">
       {/* Intro Section */}
       {introContent && (
         <section className="prose max-w-none mb-10">

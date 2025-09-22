@@ -11,7 +11,7 @@ export default function Footer() {
 
   return (
     <footer className={classes.footer}>
-      <Container size="lg" className={classes.inner}>
+      <Container size="xl" className={classes.inner}>
         {/* Logo + Rights */}
         <Stack gap="xs" className={classes.left}>
           <Group>

@@ -9,12 +9,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-left: 2rem;
 }
 
 .logoSection {
   display: flex;
   align-items: center;
-  gap: 10px;
 }
 
 .brandText {

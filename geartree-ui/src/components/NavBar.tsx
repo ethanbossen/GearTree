@@ -38,7 +38,7 @@ export default function NavBar() {
 
   return (
     <header className={classes.header}>
-      <Container size="md" className={classes.inner}>
+      <Container size="xl" className={classes.inner}>
         {/* Logo */}
         <Link to="/" style={{ textDecoration: "none" }}>
           <div className={classes.logoSection}>

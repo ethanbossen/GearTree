@@ -82,9 +82,9 @@ function Amplifiers() {
       type: 'select' as const,
       placeholder: 'Choose...',
       options: [
-        { value: "0-15", label: "0–15W" },
-        { value: "15-30", label: "15–30W" },
-        { value: "30-60", label: "30–60W" },
+        { value: "0-15", label: "0-15W" },
+        { value: "15-30", label: "15-30W" },
+        { value: "30-60", label: "30-60W" },
         { value: "60+", label: "60W+" },
       ]
     }

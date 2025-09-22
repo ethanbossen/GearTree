@@ -1,10 +1,9 @@
 // src/components/GenericDetailPage.tsx
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Loader, Title } from "@mantine/core";
 import Carousel from "./Carousel";
 import EntityCard from "./EntityCard";
-import type { ApiService } from "../types";
+import ExternalLinkIcon from "../assets/external-link.svg";
 
 interface BaseEntity {
   id: number;
@@ -21,8 +20,6 @@ interface BaseEntity {
   }>;
 }
 
-
-// Configuration for related sections
 interface RelatedSection {
   key: string;
   title: string;
@@ -31,7 +28,12 @@ interface RelatedSection {
 }
 
 interface GenericDetailPageProps<T extends BaseEntity> {
-  apiService: ApiService<T>;
+  useDetailHook: (id: number) => {
+    data: T | undefined;
+    isLoading: boolean;
+    isError: boolean;
+    error: Error | null;
+  };
   entityName: string; // "guitar", "amplifier", etc.
   reverbSearchName?: (entity: T) => string; // Custom name for Reverb search
   renderMetadata: (entity: T) => React.ReactNode;
@@ -39,7 +41,7 @@ interface GenericDetailPageProps<T extends BaseEntity> {
 }
 
 function GenericDetailPage<T extends BaseEntity>({
-  apiService,
+  useDetailHook,
   entityName,
   reverbSearchName,
   renderMetadata,
@@ -47,29 +49,19 @@ function GenericDetailPage<T extends BaseEntity>({
 }: GenericDetailPageProps<T>) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [entity, setEntity] = useState<T | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  
+  const { data: entity, isLoading, isError, error } = useDetailHook(Number(id!));
 
-  useEffect(() => {
-    if (!id) return;
-    
-    apiService.get(Number(id), false)
-      .then((data) => {
-        setEntity(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (err.message.includes("404")) {
-          navigate("/404");
-        }
-        setError(err.message);
-        setLoading(false);
-      });
-  }, [id, apiService]);
-
-  if (loading) return <Loader className="mx-auto my-10" />;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (isLoading) return <Loader className="mx-auto my-10" />;
+  
+  if (isError) {
+    if (error?.message.includes("404")) {
+      navigate("/404", { replace: true });
+      return null;
+    }
+    return <p className="text-red-500">{error?.message}</p>;
+  }
+  
   if (!entity) return <p className="text-gray-500">No {entityName} found.</p>;
 
   const searchName = reverbSearchName ? reverbSearchName(entity) : entity.name;
@@ -111,6 +103,14 @@ function GenericDetailPage<T extends BaseEntity>({
             rel="noopener noreferrer"
             color="dark"
             className="w-full"
+            rightSection={
+              <img 
+                src={ExternalLinkIcon} 
+                alt="" 
+                className="h-4 w-4" 
+                style={{ filter: 'invert(1)' }} 
+              />
+            }
           >
             Search on Reverb
           </Button>
