@@ -110,7 +110,7 @@ http://localhost:5173
 ### 4. Open the App
 
 * Public catalog → `http://localhost:5173/`
-* Admin dashboard → `http://localhost:5173/admin`
+* Admin dashboard → `http://localhost:5173/admin` The Admin Dashboard is a work in progress, I would like to be able to add other users but with current deployment cannot do so without giving access to the whole database, this is obviously problematic and is something I plan to change if I come back to it. Thanks!
 
 ---
 
@@ -119,3 +119,4 @@ http://localhost:5173
 MIT License
 
 ---
+
