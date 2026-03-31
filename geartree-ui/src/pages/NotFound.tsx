@@ -1,7 +1,7 @@
 import Distortion from "../assets/Distortion.svg";
 import Flanger from "../assets/Flanger.svg";
 import MetalZone from "../assets/MetalZone.svg";
-import Overdrive from "../assets/Overdrive.svg";
+import Overdrive from "../assets/OverDrive.svg";
 import DigitalDelay from "../assets/DigitalDelay.svg";
 import Phaser from "../assets/Phaser.svg";
 
