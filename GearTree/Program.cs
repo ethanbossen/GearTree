@@ -64,11 +64,15 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 app.UseCors();
 app.MapControllers();
+
+// SPA fallback: serve index.html for any non-API, non-file route
+app.MapFallbackToFile("index.html");
 
 // -------------------------
 // Database Seeding
