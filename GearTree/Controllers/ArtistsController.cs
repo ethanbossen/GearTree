@@ -6,7 +6,7 @@ using GearTree.Models;
 using GearTree.Helpers;
 
 [ApiController]
-[Route("artists")]
+[Route("api/artists")]
 public class ArtistsController : ControllerBase
 {
     private readonly GearContext _db;

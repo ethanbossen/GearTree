@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.HttpOverrides;
 using System.Text.Json.Serialization;
 using GearTree.Data;
 using GearTree.Models;
@@ -37,6 +38,14 @@ builder.Services.AddDbContext<GearContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("GearDb") 
         ?? "Data Source=gear.db"));
 
+// Honor X-Forwarded-* from Fly's proxy so request.Scheme is https behind TLS termination
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 // Controllers
 builder.Services.AddControllers();
 
@@ -58,6 +67,8 @@ builder.Services.AddCors(options =>
 // App pipeline
 // -------------------------
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 if (app.Environment.IsDevelopment())
 {

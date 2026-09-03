@@ -1,5 +1,5 @@
 // src/api.ts
-const HOSTNAME = "http://localhost:5262";
+const HOSTNAME = import.meta.env.DEV ? "http://localhost:5262/api" : "/api";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type {
   Artist,

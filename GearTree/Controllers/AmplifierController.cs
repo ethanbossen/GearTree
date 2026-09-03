@@ -6,7 +6,7 @@ using GearTree.Dtos;
 using GearTree.Helpers;
 
 [ApiController]
-[Route("amps")]
+[Route("api/amps")]
 public class AmplifiersController : ControllerBase
 {
     private readonly GearContext _db;
