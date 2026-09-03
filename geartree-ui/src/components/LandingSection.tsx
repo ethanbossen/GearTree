@@ -13,7 +13,7 @@ const TAGLINES = [
   "Their Rigs, Your Tone.",
 ];
 
-const CYCLE_MS = 2400;
+const CYCLE_MS = 4200;
 
 export function LandingSection() {
   const navigate = useNavigate();
@@ -95,7 +95,7 @@ export function LandingSection() {
             className="inline-block"
             initial={reduceMotion ? false : { y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 300, damping: 12 }}
+            transition={{ type: "spring", stiffness: 180, damping: 14 }}
           >
             {TAGLINES[index]}
           </motion.span>
