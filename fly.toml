@@ -3,6 +3,7 @@ primary_region = 'ord'
 
 [build]
   [build.args]
+    VITE_FIREBASE_API_KEY = "AIzaSyAPSBMZSkp77r-iPWtR0qe9Hc-HuexEsQ4"
     VITE_FIREBASE_AUTH_DOMAIN = "geartree-aeab7.firebaseapp.com"
     VITE_FIREBASE_PROJECT_ID = "geartree-aeab7"
     VITE_FIREBASE_STORAGE_BUCKET = "geartree-aeab7.firebasestorage.app"
