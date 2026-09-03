@@ -8,7 +8,7 @@ export default function AmpsContainer() {
 
   return (
     <section className="px-8 py-12 max-w-7xl mx-auto">
-      <h2 className="text-3xl font-bold border-b-4 inline-block mb-8">
+      <h2 className="mb-8 inline-block border-b-4 border-[#B78BE6] text-3xl font-bold text-[#B78BE6]">
         Featured Amps:
       </h2>
 

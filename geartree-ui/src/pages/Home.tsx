@@ -39,40 +39,42 @@ export default function Home() {
     <div>
       <LandingSection />
 
-      {isMobile ? (
-        <div>
-          <h2 className="m-10 text-3xl font-bold border-b-4 inline-block mb-8">
-            Featured Artists:
-          </h2>
-          <Carousel
-            basePath="artists"
-            itemsPerPage={1}
-            items={featuredArtists.map(mapToCarouselItem)}
-          />
-
-          <h2 className="m-10 text-3xl font-bold border-b-4 inline-block mb-8">
-            Featured Amps:
-          </h2>
-          <Carousel
-            basePath="amplifiers"
-            itemsPerPage={1}
-            items={featuredAmps.map(mapToCarouselItem)}
-          />
-        </div>
-      ) : (
-        <div>
-          <section className="px-8 max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold border-b-4 inline-block">
+      <div className="bg-gradient-to-b from-black via-[#0d0a14] to-[#151020] pb-24">
+        {isMobile ? (
+          <div className="pt-12">
+            <h2 className="m-10 mb-8 inline-block border-b-4 border-[#B78BE6] text-3xl font-bold text-[#B78BE6]">
               Featured Artists:
             </h2>
             <Carousel
               basePath="artists"
+              itemsPerPage={1}
               items={featuredArtists.map(mapToCarouselItem)}
             />
-          </section>
-          <AmpsContainer />
-        </div>
-      )}
+
+            <h2 className="m-10 mb-8 inline-block border-b-4 border-[#B78BE6] text-3xl font-bold text-[#B78BE6]">
+              Featured Amps:
+            </h2>
+            <Carousel
+              basePath="amplifiers"
+              itemsPerPage={1}
+              items={featuredAmps.map(mapToCarouselItem)}
+            />
+          </div>
+        ) : (
+          <div>
+            <section className="px-8 max-w-7xl mx-auto pt-20">
+              <h2 className="inline-block border-b-4 border-[#B78BE6] text-3xl font-bold text-[#B78BE6]">
+                Featured Artists:
+              </h2>
+              <Carousel
+                basePath="artists"
+                items={featuredArtists.map(mapToCarouselItem)}
+              />
+            </section>
+            <AmpsContainer />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
